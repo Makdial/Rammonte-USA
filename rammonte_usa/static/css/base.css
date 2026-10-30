@@ -48,7 +48,9 @@ img, video {
     display: inline-block;
     vertical-align: middle;
     margin-right: 8px;
-    animation: brand-spin 8s linear infinite;
+    animation: brand-spin 4s linear infinite;
+    transform-origin: center center;
+    overflow: hidden;
     box-shadow: 0 0 0 2px var(--yt-border, #303030);
     flex: 0 0 40px;
 }
