@@ -41,8 +41,8 @@ img, video {
 
 /* Brand logo: circular and gently rotating like a planet. */
 .brand-logo {
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     object-fit: cover;
     display: inline-block;
@@ -50,6 +50,7 @@ img, video {
     margin-right: 8px;
     animation: brand-spin 8s linear infinite;
     box-shadow: 0 0 0 2px var(--yt-border, #303030);
+    flex: 0 0 40px;
 }
 
 @keyframes brand-spin {
