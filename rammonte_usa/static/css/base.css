@@ -19,7 +19,9 @@ body {
        and each platform picks a good Arabic face automatically. */
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif,
         'Segoe UI', 'Noto Sans Arabic', 'Geeza Pro', 'Arabic Typesetting', 'Tahoma';
-    background: var(--bg-primary);
+    background:
+        radial-gradient(1200px 600px at 50% -10%, rgba(255, 0, 0, 0.08), transparent 60%),
+        var(--bg-primary);
     color: var(--text-primary);
     min-height: 100vh;
     line-height: 1.6;
