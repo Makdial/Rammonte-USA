@@ -1,0 +1,1017 @@
+/**
+ * Custom HTML5 player. The native `controls` attribute is deliberately absent:
+ * the browser drew its own centred play button straight over the poster, hiding
+ * the frame it was announcing. Everything is positioned by hand instead.
+ */
+
+.video-player {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background: #000;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin-bottom: 24px;
+}
+
+.video-player video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* Large centred play button, shown whenever playback is paused. */
+.player-bigplay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    width: 76px;
+    height: 76px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    font-size: 1.9rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: 5px;
+    transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.player-bigplay:hover {
+    background: rgba(0, 0, 0, 0.78);
+    transform: translate(-50%, -50%) scale(1.06);
+}
+
+.player-bigplay[hidden] {
+    display: none;
+}
+
+/* On a desktop the button sits over the thumbnail, and a filled circle hid the
+   very image it was announcing. Keep only a ring and the glyph so the picture
+   shows through. */
+@media (min-width: 769px) {
+    .player-bigplay {
+        background: transparent;
+        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.75);
+        text-shadow: 0 2px 12px rgba(0, 0, 0, 0.95);
+    }
+
+    .player-bigplay:hover {
+        background: rgba(0, 0, 0, 0.25);
+        box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.9);
+    }
+}
+
+/* --- Control bar --------------------------------------------------------- */
+
+/* The bar is absolutely positioned against this box, which is exactly as tall
+   as the picture, so it sits flush against the bottom of the video. Declared
+   here as well as in videos.css because the two stylesheets load separately and
+   must not drift apart: without it the bar anchors to the page instead and
+   ends up over the comments far below the video. */
+.video-player-container {
+    position: relative;
+}
+
+/* Full-bleed tap target over the picture. It shows and hides the bar, and is
+   the only place a tap lands when the bar itself is hidden. */
+.player-tapzone {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+/* The bar floats over the bottom of the picture on a desktop, and fades away
+   entirely while the video plays so it never sits on top of the action. */
+.player-bar {
+    /* Light-on-dark, because on a desktop it always sits over the picture. */
+    --bar-fg: #fff;
+    --bar-btn: rgba(255, 255, 255, 0.18);
+    --bar-btn-hover: rgba(255, 255, 255, 0.34);
+    --bar-field: rgba(255, 255, 255, 0.18);
+
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    padding: 8px 10px 10px;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.85));
+    /* Match the picture's rounded corners so the bar reads as attached to it
+       rather than floating a little below. */
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    /* Deliberately visible: the caption (CC) menu opens upward out of the bar,
+       and `overflow: hidden` used to clip it to nothing, leaving the language
+       items invisible and unclickable. The background already follows the
+       rounded corners, so nothing else needs clipping. */
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    color: var(--bar-fg);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+}
+
+.player-bar.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Keep the picture fully lit while the bar is showing, so it does not read as
+   a half-faded frame. */
+.video-player.controls-visible::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.25);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.player-seek {
+    width: 100%;
+    height: 20px;
+    margin: 0;
+    accent-color: var(--accent-color, #ff4444);
+    cursor: pointer;
+}
+
+.player-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.player-btn {
+    background: var(--bar-btn);
+    border: none;
+    color: var(--bar-fg);
+    border-radius: var(--radius-sm, 6px);
+    min-width: 38px;
+    height: 34px;
+    padding: 0 8px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+}
+
+.player-btn:hover {
+    background: var(--bar-btn-hover);
+}
+
+.player-btn span {
+    font-size: 0.62rem;
+    line-height: 1;
+}
+
+.player-time {
+    color: var(--bar-fg);
+    font-size: 0.82rem;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.player-volume {
+    width: 80px;
+    accent-color: var(--bar-fg);
+    cursor: pointer;
+}
+
+.player-rate {
+    background: var(--bar-field);
+    color: var(--bar-fg);
+    border: none;
+    border-radius: var(--radius-sm, 6px);
+    height: 34px;
+    padding: 0 6px;
+    font-size: 0.82rem;
+    cursor: pointer;
+}
+
+.player-rate option {
+    color: #000;
+}
+
+@media (max-width: 560px) {
+    .player-volume {
+        display: none;
+    }
+
+    .player-rate {
+        display: none;
+    }
+}
+
+/* On a phone there is not enough picture to spare to cover it with controls, so
+   the bar drops below the video instead of floating over it. */
+@media (max-width: 768px) {
+    .video-player-container {
+        position: relative;
+    }
+
+    .video-player {
+        margin-bottom: 0;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    .player-bar {
+        /* Kept relative (not static) so the caption menu can be anchored to the
+           bar; a relative box still sits in the normal flow below the picture. */
+        position: relative;
+        /* Below the picture the bar no longer has a dark backdrop to hide
+           behind, so it follows the page theme. White-on-white made the
+           controls invisible in light mode. */
+        --bar-fg: var(--text-primary);
+        --bar-btn: var(--bg-tertiary);
+        --bar-btn-hover: var(--bg-hover, var(--bg-primary));
+        --bar-field: var(--bg-tertiary);
+
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-top: none;
+        border-bottom-left-radius: var(--radius-lg);
+        border-bottom-right-radius: var(--radius-lg);
+        padding: 10px 12px 12px;
+    }
+
+    /* A visible edge and a pressed state, so each control reads clearly
+       against either theme. */
+    .player-btn {
+        border: 1px solid var(--border-color);
+    }
+
+    .player-btn:active {
+        background: var(--bar-btn-hover);
+        transform: translateY(1px);
+    }
+
+    .player-rate {
+        border: 1px solid var(--border-color);
+    }
+
+    .player-bar .player-seek,
+    .player-bar .player-volume {
+        height: 26px;
+    }
+
+    /* Below the picture the bar is part of the page flow, so the language list
+       drops downward into the empty space instead of over the video. It is
+       anchored to the bar rather than the CC button, so on a narrow screen it
+       spans the bar instead of running off the edge. */
+    .player-bar .cc-menu {
+        position: static;
+    }
+
+    .player-bar .cc-list {
+        position: absolute;
+        top: calc(100% + 8px);
+        bottom: auto;
+        left: 0;
+        right: 0;
+        min-width: 0;
+        max-width: none;
+        background: var(--bg-secondary);
+        border-color: var(--border-color);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    .cc-item {
+        color: var(--text-primary);
+    }
+
+    .cc-item:hover {
+        background: var(--bg-tertiary);
+    }
+
+    .video-player.controls-visible::after {
+        display: none;
+    }
+}
+
+.video-error {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    text-align: center;
+    gap: 12px;
+}
+
+.error-icon {
+    font-size: 3rem;
+    color: var(--accent-red);
+}
+
+.video-error p {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.video-error small {
+    color: var(--text-secondary);
+}
+
+video::-webkit-media-controls {
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+}
+
+video::-webkit-media-controls-panel {
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+}
+
+/* Hide the browser's own caption rendering. The cues stay readable from
+   JavaScript ("hidden" mode) but the native box is never drawn, so the caption
+   below is the only one on screen and looks the same on every platform. */
+video::cue {
+    opacity: 0;
+}
+
+/* --- Captions (YouTube-style overlay) ------------------------------------ */
+
+/* Sits inside the picture, so it survives fullscreen and scales with the
+   video rather than the page. */
+.caption-layer {
+    position: absolute;
+    left: 0;
+    right: 0;
+    /* Clear of the control bar, which floats over the bottom of the picture. */
+    bottom: 12%;
+    z-index: 3;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+    padding: 0 6%;
+    opacity: 0;
+    transition: opacity 0.12s ease;
+}
+
+.caption-layer.is-visible {
+    opacity: 1;
+}
+
+.caption-text {
+    display: inline-block;
+    max-width: 100%;
+    padding: 4px 10px;
+    background: rgba(8, 8, 8, 0.75);
+    border-radius: 4px;
+    color: #fff;
+    font-size: 1.28rem;
+    font-weight: 500;
+    line-height: 1.35;
+    text-align: center;
+    /* A faint shadow keeps the text legible over a bright frame even before
+       the backdrop is painted. */
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+    white-space: pre-line;
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
+}
+
+/* A lyric track reads better centred and a little larger. */
+.video-player.audio-mode .caption-layer {
+    bottom: 6%;
+}
+
+/* On a phone the picture is small, so the text steps down with it. */
+@media (max-width: 768px) {
+    .caption-layer {
+        bottom: 14%;
+        padding: 0 4%;
+    }
+
+    .caption-text {
+        font-size: 1rem;
+        padding: 3px 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .caption-text {
+        font-size: 0.9rem;
+    }
+}
+
+/* Right-to-left captions (Arabic, Wolof is Latin but Arabic must not be
+   forced left-aligned). */
+[dir="rtl"] .caption-text {
+    direction: rtl;
+    text-align: center;
+}
+
+/* Audio-only ("Listen (MP3)") mode */
+.audio-player {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 88%;
+    z-index: 3;
+}
+
+/* In audio mode the picture is hidden, which would otherwise leave a black
+   rectangle. Show the video's own thumbnail as the cover instead. */
+.audio-cover {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: #000;
+    display: none;
+    z-index: 2;
+}
+
+.video-player.audio-mode .audio-cover {
+    display: block;
+}
+
+/* Playback-mode toggle + download buttons */
+.player-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: -8px 0 24px;
+}
+
+.mode-toggle {
+    display: inline-flex;
+    gap: 4px;
+    padding: 4px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-full);
+}
+
+.mode-btn {
+    padding: 8px 18px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.mode-btn:hover {
+    color: var(--text-primary);
+}
+
+.mode-btn.active {
+    background: var(--accent-red);
+    border-color: var(--accent-red);
+    color: #fff;
+}
+
+.player-downloads {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-full);
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all var(--transition-normal);
+}
+
+.download-btn:hover {
+    border-color: var(--accent-red);
+    color: var(--accent-red);
+}
+
+/* The "Save offline" button reuses the download button look. */
+.offline-btn {
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.offline-btn.is-saved {
+    border-color: var(--accent-red);
+    color: var(--accent-red);
+}
+
+/* Subtitle / lyrics viewer control, always visible below the player so nobody
+   has to tap the video to find it. */
+.subtitle-controls {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: -8px 0 24px;
+}
+
+/* The page-level CC menu is on the page background, not over the picture, so it
+   reads light-on-dark no more: it borrows the theme's own colours. */
+.subtitle-cc-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-full);
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.subtitle-cc-btn:hover {
+    border-color: var(--accent-red);
+}
+
+.subtitle-cc-btn .cc-badge {
+    padding: 1px 6px;
+    border: 1.5px solid currentColor;
+    border-radius: 4px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+}
+
+.subtitle-cc-btn .cc-current {
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.subtitle-cc-btn .cc-caret {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+}
+
+.subtitle-cc-btn.active {
+    border-color: var(--accent-red);
+}
+
+.subtitle-cc-btn.active .cc-badge {
+    background: var(--accent-red);
+    border-color: var(--accent-red);
+    color: #fff;
+}
+
+.subtitle-cc-btn.active .cc-current {
+    color: var(--text-primary);
+}
+
+/* The page-level list drops down into the page, not up over the video. */
+.subtitle-cc .cc-list {
+    top: calc(100% + 8px);
+    bottom: auto;
+    left: 0;
+    right: auto;
+    background: var(--bg-secondary);
+    border-color: var(--border-color);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.subtitle-cc .cc-item {
+    color: var(--text-primary);
+}
+
+.subtitle-cc .cc-item:hover {
+    background: var(--bg-tertiary);
+}
+
+/* CC button + language menu, inside the control bar so captions can be turned
+   on (and the language chosen) while watching, including fullscreen and the
+   audio-only player. */
+.cc-menu {
+    position: relative;
+    display: inline-flex;
+}
+
+.cc-btn {
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.cc-btn.active {
+    background: var(--bar-fg, #fff);
+    color: #111;
+}
+
+/* The list opens upward, since the bar sits at the bottom of the picture. */
+.cc-list {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    right: 0;
+    min-width: 160px;
+    max-width: 240px;
+    max-height: 60vh;
+    overflow-y: auto;
+    padding: 6px;
+    background: #1c1c1c;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: var(--radius-md);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+    display: none;
+    flex-direction: column;
+    gap: 2px;
+    z-index: 5;
+}
+
+.cc-menu.open .cc-list {
+    display: flex;
+}
+
+.cc-item {
+    display: block;
+    width: 100%;
+    padding: 8px 12px;
+    background: none;
+    border: none;
+    border-radius: var(--radius-sm, 6px);
+    color: #fff;
+    font-family: inherit;
+    font-size: 0.9rem;
+    text-align: left;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.cc-item:hover {
+    background: rgba(255, 255, 255, 0.14);
+}
+
+.cc-item.active {
+    background: var(--accent-red);
+    color: #fff;
+}
+
+/* Shown in place of the language list when a video has no captions yet, so the
+   menu explains itself instead of opening empty. */
+.cc-empty {
+    margin: 0;
+    padding: 8px 12px;
+    color: var(--text-secondary, #aaa);
+    font-size: 0.85rem;
+    line-height: 1.35;
+    white-space: normal;
+}
+
+/* The owner-facing action that fills the empty list. Reads as a menu item so
+   the menu stays a single, consistent list. */
+.cc-item.cc-generate {
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    color: var(--accent-red, #e50914);
+    font-weight: 600;
+    white-space: normal;
+}
+
+.cc-item.cc-generate:disabled {
+    opacity: 0.7;
+    cursor: default;
+    white-space: normal;
+}
+
+/* --- Fullscreen ---------------------------------------------------------- */
+/* The whole player is the fullscreen element, not just the picture: the
+   control bar is a sibling of the picture, so fullscreening only the picture
+   hid the bar - and with it the CC button and its language menu. */
+.video-player-container:fullscreen,
+.video-player-container:-webkit-full-screen {
+    width: 100%;
+    height: 100%;
+    background: #000;
+    border-radius: 0;
+}
+
+.video-player-container:fullscreen .video-player,
+.video-player-container:-webkit-full-screen .video-player {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: auto;
+    margin: 0;
+    border-radius: 0;
+}
+
+/* Float the bar over the picture on every screen size while fullscreen. */
+.video-player-container:fullscreen .player-bar,
+.video-player-container:-webkit-full-screen .player-bar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    padding: 8px 14px 14px;
+    border: none;
+    border-radius: 0;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.85));
+    --bar-fg: #fff;
+    --bar-btn: rgba(255, 255, 255, 0.18);
+    --bar-btn-hover: rgba(255, 255, 255, 0.34);
+    --bar-field: rgba(255, 255, 255, 0.18);
+}
+
+/* The bar now sits at the bottom of the picture, so the language list opens
+   upward rather than off the bottom of the screen. */
+.video-player-container:fullscreen .cc-list,
+.video-player-container:-webkit-full-screen .cc-list {
+    top: auto;
+    bottom: calc(100% + 8px);
+    left: auto;
+    right: 0;
+    min-width: 160px;
+    max-width: 240px;
+}
+
+.video-player-container:fullscreen .cc-item,
+.video-player-container:-webkit-full-screen .cc-item {
+    color: #fff;
+}
+
+.video-player-container:fullscreen .cc-item:hover,
+.video-player-container:-webkit-full-screen .cc-item:hover {
+    background: rgba(255, 255, 255, 0.14);
+}
+
+/* Subtitle admin panel (staff only) */
+.subtitle-admin {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-color);
+}
+
+.subtitle-admin h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 6px;
+}
+
+.subtitle-hint {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    margin: 0 0 16px;
+}
+
+.subtitle-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.subtitle-form .form-input {
+    flex: 1 1 180px;
+    padding: 8px 12px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-family: inherit;
+}
+
+.subtitle-form .btn-submit {
+    padding: 8px 18px;
+    white-space: nowrap;
+}
+
+.subtitle-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.subtitle-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 12px;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+}
+
+.subtitle-empty {
+    color: var(--text-secondary);
+    justify-content: flex-start !important;
+}
+
+/* ------------------------------------------------------------------ */
+/* Responsive (tablet and phones)                                     */
+/* ------------------------------------------------------------------ */
+
+@media (max-width: 768px) {
+    .player-controls {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .mode-toggle {
+        display: flex;
+        width: 100%;
+    }
+
+    .mode-btn {
+        flex: 1;
+        min-height: 44px;
+    }
+
+    .player-downloads {
+        width: 100%;
+    }
+
+    .download-btn {
+        flex: 1 1 140px;
+        justify-content: center;
+        min-height: 44px;
+    }
+
+    .subtitle-controls {
+        gap: 8px;
+    }
+
+    .subtitle-cc-btn {
+        min-height: 40px;
+        padding: 9px 16px;
+    }
+
+    .subtitle-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .subtitle-form .form-input {
+        flex: 1 1 auto;
+        width: 100%;
+    }
+
+    .subtitle-form .btn-submit {
+        width: 100%;
+    }
+
+    .subtitle-list li {
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 480px) {
+    .video-player {
+        border-radius: var(--radius-md);
+    }
+
+    .audio-player {
+        width: 94%;
+    }
+
+    .download-btn {
+        flex: 1 1 100%;
+    }
+
+    .audio-status {
+        flex-direction: column;
+        text-align: center;
+        gap: 8px;
+    }
+
+    .audio-status .download-btn {
+        width: auto;
+        margin-left: 0;
+    }
+}
+
+/* Audio generation status (shown while MP3 is being prepared) */
+.audio-status {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 0 16px;
+    padding: 12px 16px;
+    border-radius: var(--radius-md);
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.audio-spinner {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.25);
+    border-top-color: var(--text-secondary);
+    animation: spin 0.8s linear infinite;
+    flex: 0 0 16px;
+}
+
+.audio-status-error {
+    background: rgba(244, 67, 54, 0.18);
+    color: var(--text-primary);
+    border: 1px solid rgba(244, 67, 54, 0.55);
+}
+
+.audio-status-muted {
+    background: var(--bg-tertiary);
+    color: var(--text-muted);
+}
+
+.audio-status .download-btn {
+    margin-left: auto;
+    min-height: 40px;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Automatic subtitles panel (staff only) */
+.auto-sub-panel {
+    margin: 16px 0;
+    padding: 14px 16px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: var(--bg-secondary);
+}
+
+.auto-sub-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.auto-sub-title {
+    font-weight: 600;
+}
+
+.auto-sub-hint {
+    margin: 6px 0 10px;
+    color: var(--text-secondary);
+    font-size: 0.88rem;
+}
+
+.auto-sub-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.auto-sub-message {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.auto-sub-panel .badge {
+    margin-left: 0;
+}
+
+.btn-small[disabled] {
+    opacity: 0.55;
+    cursor: not-allowed;
+}

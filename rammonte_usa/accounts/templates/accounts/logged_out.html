@@ -1,0 +1,16 @@
+﻿{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Signed Out" %} - Rammonte USA{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="success-container">
+    <h1>{% trans "Signed Out" %}</h1>
+    <p>{% trans "You have been signed out..." %}</p>
+    <a href="{% url 'accounts:login' %}" class="btn btn-primary">{% trans "Sign In Again" %}</a>
+</div>
+{% endblock %}

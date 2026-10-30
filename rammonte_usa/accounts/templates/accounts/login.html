@@ -1,0 +1,56 @@
+﻿{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Sign In" %} - Rammonte USA{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-header">
+        <h1>{% trans "Welcome Back" %}</h1>
+        <p>{% trans "Sign in to continue with Rammonte USA" %}</p>
+    </div>
+
+    <form method="post" class="auth-form">
+        {% csrf_token %}
+
+        {% if form.errors %}
+            <ul class="error-list">
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <div class="form-group">
+            <label for="id_username">{% trans "Username" %}</label>
+            <input type="text" name="username" id="id_username" class="form-input"
+                placeholder="{% trans 'Enter your username' %}" required autofocus/>
+        </div>
+
+        <div class="form-group">
+            <label for="id_password">{% trans "Password" %}</label>
+            <input type="password" name="password" id="id_password" class="form-input"
+                placeholder="{% trans 'Enter your password' %}" required/>
+        </div>
+
+        <div class="auth-links">
+            <a href="{% url 'accounts:password_reset' %}">{% trans "Forgot your password?" %}</a>
+        </div>
+
+        <button type="submit" class="btn-submit">{% trans "Sign In" %}</button>
+    </form>
+
+    <div class="auth-footer">
+        {% trans "Don't have an account?" %} <a href="{% url 'accounts:register' %}">{% trans "Create One" %}</a>
+    </div>
+</div>
+{% endblock %}

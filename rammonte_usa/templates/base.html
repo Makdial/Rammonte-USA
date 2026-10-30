@@ -1,0 +1,136 @@
+﻿{% load static i18n %}<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:'en' }}" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" id="themeColor" content="#0f0f0f">
+    <title>{% block title %}Rammonte USA{% endblock %}</title>
+
+    {# Apply the saved theme before the stylesheets load to avoid a flash. #}
+    <script>
+        (function () {
+            try {
+                var stored = localStorage.getItem("fazakkir-theme");
+                var theme = stored || (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+                document.documentElement.setAttribute("data-theme", theme);
+                var meta = document.getElementById("themeColor");
+                if (meta) meta.setAttribute("content", theme === "light" ? "#ffffff" : "#0f0f0f");
+            } catch (e) { /* storage unavailable */ }
+        })();
+    </script>
+
+    <link rel="stylesheet" href="{% static 'css/variables.css' %}">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    {# Mirrors the layout for Arabic (right-to-left); inert for other languages. #}
+    <link rel="stylesheet" href="{% static 'css/rtl.css' %}">
+    <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/search.css' %}">
+    <link rel="stylesheet" href="{% static 'css/confirm.css' %}">
+    <link rel="stylesheet" href="{% static 'css/messages.css' %}">
+    <link rel="stylesheet" href="{% static 'css/buttons.css' %}">
+    <link rel="stylesheet" href="{% static 'css/forms.css' %}">
+
+    {# Installable web app (PWA) + offline audio support. #}
+    <link rel="manifest" href="{% url 'manifest' %}">
+    <link rel="icon" href="{% static 'icons/icon.svg' %}" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="{% static 'icons/icon.svg' %}">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Rammonte USA">
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="navbar-brand">
+            <span class="brand-icon">â–¶</span>
+            Rammonte USA
+        </a>
+
+        <button type="button" class="nav-toggle" id="navToggle"
+                aria-label="{% trans 'Menu' %}" aria-expanded="false" aria-controls="navMenu">
+            <span class="nav-toggle-bar" aria-hidden="true"></span>
+            <span class="nav-toggle-bar" aria-hidden="true"></span>
+            <span class="nav-toggle-bar" aria-hidden="true"></span>
+        </button>
+
+        <div class="navbar-actions" id="navMenu">
+            <form action="{% url 'videos:search' %}" method="get" class="nav-search" role="search">
+                <input type="search" name="q" class="nav-search-input"
+                       value="{{ request.GET.q|default:'' }}"
+                       placeholder="{% trans 'Search' %}"
+                       aria-label="{% trans 'Search videos' %}">
+                <button type="submit" class="nav-search-btn"
+                        aria-label="{% trans 'Search videos' %}">
+                    <span aria-hidden="true">ðŸ”</span>
+                </button>
+            </form>
+
+            <form action="{% url 'set_language' %}" method="post" class="language-form">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                {% get_current_language as CURRENT_LANGUAGE %}
+                {% get_available_languages as AVAILABLE_LANGUAGES %}
+                <div class="lang-toggle" role="group" aria-label="{% trans 'Language' %}">
+                    {% for code, name in AVAILABLE_LANGUAGES %}
+                        <button type="submit" name="language" value="{{ code }}"
+                                class="lang-option{% if code == CURRENT_LANGUAGE %} active{% endif %}"
+                                title="{{ name }}">{{ code|upper }}</button>
+                    {% endfor %}
+                </div>
+            </form>
+
+            <button type="button" class="theme-toggle" id="theme-toggle"
+                    aria-label="{% trans 'Toggle light and dark mode' %}"
+                    title="{% trans 'Toggle light and dark mode' %}">
+                <span class="theme-icon theme-icon-sun" aria-hidden="true">â˜€</span>
+                <span class="theme-icon theme-icon-moon" aria-hidden="true">ðŸŒ™</span>
+            </button>
+
+            <ul class="navbar-nav">
+                {% if can_write %}
+                    <li><a href="{% url 'videos:upload' %}" class="nav-link btn-upload">{% trans "Upload" %}</a></li>
+                {% endif %}
+                {% comment %}Every visitor gets a guest account automatically, so these are available without signing in.{% endcomment %}
+                <li><a href="{% url 'videos:playlists' %}" class="nav-link">{% trans "Playlists" %}</a></li>
+                <li><a href="{% url 'shorts:list' %}" class="nav-link">{% trans "Shorts" %}</a></li>
+                <li><a href="{% url 'videos:offline' %}" class="nav-link">{% trans "Offline" %}</a></li>
+                {% if can_read %}
+                    <li><a href="{% url 'dashboard:home' %}" class="nav-link">{% trans "Dashboard" %}</a></li>
+                    <li><a href="{% url 'accounts:manage_users' %}" class="nav-link">{% trans "Users" %}</a></li>
+                {% endif %}
+                {% if user.is_authenticated and not is_guest %}
+                    <li><span class="nav-username" title="{{ user.username }}"
+                              aria-label="{{ user.username }}">{{ user.username|slice:":1" }}</span></li>
+                    <li>
+                        <form method="post" action="{% url 'accounts:logout' %}" class="logout-form">
+                            {% csrf_token %}
+                            <button type="submit" class="nav-link btn-outline logout-btn">{% trans "Logout" %}</button>
+                        </form>
+                    </li>
+                {% elif is_guest %}
+                    <li><a href="{% url 'accounts:login' %}" class="nav-link btn-outline">{% trans "Sign in" %}</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li class="message {{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="{% static 'js/theme.js' %}"></script>
+    {# Loaded before offline.js so a page can confirm a removal straight away. #}
+    <script src="{% static 'js/confirm.js' %}"></script>
+    <script src="{% static 'js/navbar.js' %}"></script>
+    <script src="{% static 'js/offline.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

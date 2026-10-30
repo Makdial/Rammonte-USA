@@ -1,0 +1,28 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Collected by `manage.py collectstatic` (generated at deploy time)
+staticfiles/
+
+# Locally generated demo media (recreated by tools/demo/seed_demo.py)
+media/
+
+# Virtual environments
+.venv
+
+# Local environment / secrets
+.env
+.env.*
+!.env.example
+
+# Local database
+db.sqlite3
+
+# IDE
+.idea/
+.vscode/

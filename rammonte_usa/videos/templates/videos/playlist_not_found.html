@@ -1,0 +1,13 @@
+﻿{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Playlist unavailable" %} - Rammonte USA{% endblock %}
+
+{% block content %}
+<div class="empty-state">
+    <span class="empty-icon">ðŸ”’</span>
+    <h2>{% trans "Playlist unavailable" %}</h2>
+    <p>{% trans "This playlist does not exist or is private." %}</p>
+    <p><a class="nav-link" href="{% url 'videos:list' %}">{% trans "Back to videos" %}</a></p>
+</div>
+{% endblock %}

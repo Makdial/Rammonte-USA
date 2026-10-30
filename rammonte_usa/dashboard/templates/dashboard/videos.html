@@ -1,0 +1,234 @@
+﻿{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Manage videos" %} - Rammonte USA{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/social.css' %}">
+<link rel="stylesheet" href="{% static 'css/manage.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="section-header">
+    <h1>{% trans "Manage videos" %}</h1>
+    <p class="section-subtitle">
+        {% blocktrans count counter=total_videos %}{{ counter }} video{% plural %}{{ counter }} videos{% endblocktrans %}
+    </p>
+</div>
+
+{% include 'dashboard/_tabs.html' %}
+
+<div class="audio-admin">
+    <div class="audio-admin-info">
+        {% if missing_audio %}
+        <span class="badge badge-warning">
+            {% blocktrans count counter=missing_audio %}{{ counter }} video needs an MP3{% plural %}{{ counter }} videos need an MP3{% endblocktrans %}
+        </span>
+        {% else %}
+        <span class="badge badge-ok">{% trans "Every video has an MP3" %}</span>
+        {% endif %}
+        {% if no_audio_count %}
+        <span class="dash-hint">
+            {% blocktrans count counter=no_audio_count %}{{ counter }} video has no audio track{% plural %}{{ counter }} videos have no audio track{% endblocktrans %}
+        </span>
+        {% endif %}
+    </div>
+    {% if can_write and missing_audio %}
+    <button type="button" class="btn-small" id="generateAudioBtn"
+            data-generate-url="{% url 'dashboard:audio_generate' %}"
+            data-status-url="{% url 'dashboard:audio_status' %}">
+        {% trans "Generate missing MP3s" %}
+    </button>
+    {% endif %}
+</div>
+
+<div class="audio-progress" id="audioProgress" hidden>
+    <span class="audio-progress-text" id="audioProgressText"></span>
+    <div class="progress">
+        <div class="progress-fill" id="audioProgressBar" style="width: 0"></div>
+    </div>
+</div>
+
+<div class="audio-admin">
+    <div class="audio-admin-info">
+        <span class="dash-hint">{% trans "Captions are made with the speech-to-text service." %}</span>
+    </div>
+    {% if can_write %}
+    <button type="button" class="btn-small" id="generateSubtitlesBtn"
+            data-generate-url="{% url 'dashboard:subtitle_generate' %}"
+            data-status-url="{% url 'dashboard:subtitle_status' %}">
+        {% trans "Generate subtitles for all" %}
+    </button>
+    {% endif %}
+</div>
+
+<div class="audio-progress" id="subtitleProgress" hidden>
+    <span class="audio-progress-text" id="subtitleProgressText"></span>
+    <div class="progress">
+        <div class="progress-fill" id="subtitleProgressBar" style="width: 0"></div>
+    </div>
+</div>
+
+<form method="get" class="dash-search">
+    <input type="search" name="q" value="{{ query }}" class="form-input"
+           placeholder="{% trans 'Search by title or uploader' %}">
+    <button type="submit" class="btn-small">{% trans "Search" %}</button>
+    {% if query %}<a href="{% url 'dashboard:videos' %}" class="btn-small btn-outline">{% trans "Clear" %}</a>{% endif %}
+</form>
+
+{% if rows %}
+<div class="manage-table-wrap">
+    <table class="manage-table">
+        <thead>
+            <tr>
+                <th>{% trans "Video" %}</th>
+                <th>{% trans "Uploader" %}</th>
+                <th>{% trans "Views" %}</th>
+                <th>{% trans "Comments" %}</th>
+                <th>{% trans "Size" %}</th>
+                <th>{% trans "MP3" %}</th>
+                <th>{% trans "Captions" %}</th>
+                <th>{% trans "Added" %}</th>
+                <th class="col-actions">{% trans "Actions" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in rows %}
+            <tr data-video="{{ row.video.id }}">
+                <td>
+                    <a href="{% url 'videos:detail' row.video.id %}">{{ row.video.title }}</a>
+                </td>
+                <td>{{ row.video.user.username }}</td>
+                <td>{{ row.video.views }}</td>
+                <td>{{ row.comment_total }}</td>
+                <td>{{ row.size_display }}</td>
+                <td>
+                    {% if row.audio_class == 'muted' %}
+                    <span class="muted">{{ row.audio_label }}</span>
+                    {% else %}
+                    <span class="badge {{ row.audio_class }}">{{ row.audio_label }}</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if row.caption_class == 'muted' %}
+                    <span class="muted">{{ row.caption_label }}</span>
+                    {% else %}
+                    <span class="badge {{ row.caption_class }}"
+                          {% if row.video.auto_subtitle_error %}
+                          title="{{ row.video.auto_subtitle_error|truncatechars:300 }}"
+                          {% endif %}>{{ row.caption_label }}</span>
+                    {% endif %}
+                </td>
+                <td>{{ row.video.created_at|date:"SHORT_DATE_FORMAT" }}</td>
+                <td class="col-actions">
+                    {% if can_write %}
+                    <button type="button" class="btn-small btn-danger"
+                            onclick="deleteVideo({{ row.video.id }}, '{{ row.video.title|escapejs }}')">
+                        {% trans "Delete" %}
+                    </button>
+                    {% else %}<span class="muted">â€”</span>{% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="empty-state">
+    <span class="empty-icon">ðŸŽ¬</span>
+    <h2>{% trans "No videos found" %}</h2>
+    <p>{% trans "Nothing matches your search." %}</p>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+{% if can_write %}
+<script>
+const dashCsrf = '{{ csrf_token }}';
+const VIDEO_DELETE_URL = "{% url 'videos:delete' 0 %}";
+
+function deleteVideo(videoId, title) {
+    if (!confirm(`{% trans "Delete" %} "${title}"? {% trans 'This cannot be undone.' %}`)) return;
+    fetch(VIDEO_DELETE_URL.replace("/0/", `/${videoId}/`), {
+        method: "POST",
+        headers: { "X-CSRFToken": dashCsrf },
+    })
+        .then(r => r.json())
+        .then(data => { if (data.success) location.reload(); else alert(data.error || "{% trans 'Failed.' %}"); })
+        .catch(() => alert("{% trans 'Failed.' %}"));
+}
+
+// --- Bulk MP3 generation ---------------------------------------------------
+const generateAudioBtn = document.getElementById("generateAudioBtn");
+if (generateAudioBtn) {
+    const progress = document.getElementById("audioProgress");
+    const progressText = document.getElementById("audioProgressText");
+    const progressBar = document.getElementById("audioProgressBar");
+
+    const pollAudio = () => {
+        fetch(generateAudioBtn.dataset.statusUrl)
+            .then(r => r.json())
+            .then(data => {
+                if (!data.running) { location.reload(); return; }
+                const pct = data.total ? Math.round((data.done / data.total) * 100) : 0;
+                progressBar.style.width = pct + "%";
+                progressText.textContent =
+                    `{% trans "Generating MP3sâ€¦" %} ${data.done}/${data.total}`;
+                setTimeout(pollAudio, 1500);
+            })
+            .catch(() => setTimeout(pollAudio, 3000));
+    };
+
+    generateAudioBtn.addEventListener("click", () => {
+        generateAudioBtn.disabled = true;
+        progress.hidden = false;
+        progressText.textContent = "{% trans 'Startingâ€¦' %}";
+        fetch(generateAudioBtn.dataset.generateUrl, {
+            method: "POST",
+            headers: { "X-CSRFToken": dashCsrf },
+        })
+            .then(r => r.json())
+            .then(() => pollAudio())
+            .catch(() => { generateAudioBtn.disabled = false; });
+    });
+}
+
+// --- Bulk caption generation ------------------------------------------------
+const generateSubtitlesBtn = document.getElementById("generateSubtitlesBtn");
+if (generateSubtitlesBtn) {
+    const progress = document.getElementById("subtitleProgress");
+    const progressText = document.getElementById("subtitleProgressText");
+    const progressBar = document.getElementById("subtitleProgressBar");
+
+    const pollSubtitles = () => {
+        fetch(generateSubtitlesBtn.dataset.statusUrl)
+            .then(r => r.json())
+            .then(data => {
+                if (!data.running) { location.reload(); return; }
+                const pct = data.total ? Math.round((data.done / data.total) * 100) : 0;
+                progressBar.style.width = pct + "%";
+                progressText.textContent =
+                    `{% trans "Generating subtitlesâ€¦" %} ${data.done}/${data.total}`;
+                setTimeout(pollSubtitles, 3000);
+            })
+            .catch(() => setTimeout(pollSubtitles, 5000));
+    };
+
+    generateSubtitlesBtn.addEventListener("click", () => {
+        generateSubtitlesBtn.disabled = true;
+        progress.hidden = false;
+        progressText.textContent = "{% trans 'Startingâ€¦' %}";
+        fetch(generateSubtitlesBtn.dataset.generateUrl, {
+            method: "POST",
+            headers: { "X-CSRFToken": dashCsrf },
+        })
+            .then(r => r.json())
+            .then(() => pollSubtitles())
+            .catch(() => { generateSubtitlesBtn.disabled = false; });
+    });
+}
+</script>
+{% endif %}
+{% endblock %}

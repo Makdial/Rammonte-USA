@@ -1,0 +1,21 @@
+{% load i18n %}
+<nav class="dash-tabs" aria-label="{% trans 'Dashboard sections' %}">
+    <a href="{% url 'dashboard:home' %}" class="dash-tab{% if active_tab == 'home' %} active{% endif %}">
+        {% trans "Overview" %}
+    </a>
+    <a href="{% url 'dashboard:videos' %}" class="dash-tab{% if active_tab == 'videos' %} active{% endif %}">
+        {% trans "Videos" %}
+    </a>
+    <a href="{% url 'dashboard:video_order' %}" class="dash-tab{% if active_tab == 'order' %} active{% endif %}">
+        {% trans "Home order" %}
+    </a>
+    <a href="{% url 'dashboard:comments' %}" class="dash-tab{% if active_tab == 'comments' %} active{% endif %}">
+        {% trans "Comments" %}
+    </a>
+    <a href="{% url 'dashboard:usage' %}" class="dash-tab{% if active_tab == 'usage' %} active{% endif %}">
+        {% trans "Usage" %}
+    </a>
+    <a href="{% url 'accounts:manage_users' %}" class="dash-tab">
+        {% trans "Users" %}
+    </a>
+</nav>

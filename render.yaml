@@ -1,0 +1,112 @@
+﻿# Render blueprint for Rammonte USA.
+#
+# Connect a repository on https://render.com and pick this file; every setting
+# below is applied for you. Secrets still have to be entered in the dashboard
+# (Render never reads them from the repository).
+#
+# NOTE: Render's free web services have an *ephemeral* filesystem, so the local
+# SQLite file is destroyed on every deploy and spin-down. Set DATABASE_URL to a
+# hosted Postgres (Neon and Supabase both have a permanent free tier) before
+# using the free tier, or add a persistent disk to the service.
+services:
+  - type: web
+    name: rammonte-usa
+    runtime: python
+    plan: free
+    region: oregon
+    branch: master
+    buildCommand: pip install -r requirements.txt && python rammonte_usa/manage.py migrate --noinput && python rammonte_usa/manage.py collectstatic --noinput && python rammonte_usa/manage.py compiletranslations
+    startCommand: gunicorn rammonte_usa.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --threads 4 --timeout 120
+    healthCheckPath: /manifest.webmanifest
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.5
+      - key: DEBUG
+        value: "0"
+      # Generate a private key: python -c "from django.core.management.utils
+      # import get_random_secret_key as k; print(k())"
+      - key: SECRET_KEY
+        sync: false
+      # The Render hostname is not known up front; set this to your domain.
+      - key: ALLOWED_HOSTS
+        sync: false
+      - key: CSRF_TRUSTED_ORIGINS
+        sync: false
+      - key: USE_X_FORWARDED_PROTO
+        value: "1"
+      - key: FORCE_HTTPS_COOKIES
+        value: "1"
+      - key: DJANGO_SETTINGS_MODULE
+        value: rammonte_usa.settings
+      # Hosted Postgres. Required on the free tier: without it the SQLite file
+      # is wiped whenever the service restarts.
+      - key: DATABASE_URL
+        sync: false
+      - key: JOB_STALE_MINUTES
+        value: "30"
+      # Cloudflare R2 (find these in your local .env, they are git-ignored).
+      - key: R2_ACCOUNT_ID
+        sync: false
+      - key: R2_ACCESS_KEY_ID
+        sync: false
+      - key: R2_SECRET_ACCESS_KEY
+        sync: false
+      - key: R2_BUCKET
+        value: rammonte
+      - key: R2_PUBLIC_BASE_URL
+        sync: false
+      # Separate Cloudflare R2 bucket for Shorts (falls back to the main R2
+      # settings above when these are left blank).
+      - key: R2_SHORTS_ACCOUNT_ID
+        sync: false
+      - key: R2_SHORTS_ACCESS_KEY_ID
+        sync: false
+      - key: R2_SHORTS_SECRET_ACCESS_KEY
+        sync: false
+      - key: R2_SHORTS_BUCKET
+        value: fazakkir-shorts
+      - key: R2_SHORTS_PUBLIC_BASE_URL
+        sync: false
+      # Free a background conversion that a restart interrupted.
+      - key: STORAGE_QUOTA_BYTES
+        value: "10737418240"
+      - key: DATABASE_QUOTA_BYTES
+        value: "1073741824"
+      - key: STORAGE_ALERT_THRESHOLD_PERCENT
+        value: "90"
+      - key: STORAGE_ALERT_EMAIL
+        value: makhoutech@gmail.com
+      # Automatic subtitles (optional). Use "openai", "google" or "elevenlabs"
+      # and set the matching API key; leave the others blank.
+      - key: SUBTITLE_PROVIDER
+        value: openai
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: GOOGLE_API_KEY
+        sync: false
+      - key: GOOGLE_SPEECH_MODEL
+        value: latest_long
+      - key: GOOGLE_TRANSLATE_MODEL
+        value: nmt
+      - key: ELEVENLABS_API_KEY
+        sync: false
+      - key: ELEVENLABS_STT_MODEL
+        value: scribe_v2
+      - key: ELEVENLABS_LANGUAGE_CODE
+        value: ""
+      - key: SUBTITLE_SOURCE_LANGUAGE
+        value: ar
+      - key: SUBTITLE_TARGET_LANGUAGES
+        value: fr,en
+      # Gmail alerts (optional; needs an App password).
+      - key: EMAIL_HOST
+        value: smtp.gmail.com
+      - key: EMAIL_PORT
+        value: "587"
+      - key: EMAIL_HOST_USER
+        value: makhoutech@gmail.com
+      - key: EMAIL_HOST_PASSWORD
+        sync: false
+      - key: EMAIL_USE_TLS
+        value: "1"

@@ -1,0 +1,1209 @@
+# Wolof translation of Fazakkir.
+# Copyright (C) the Fazakkir authors.
+# This file is distributed under the same licence as the Fazakkir package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Fazakkir\n"
+"Report-Msgid-Bugs-To: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: wo\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Already have an account?"
+msgstr "Doyt konto?"
+
+msgid "An MP3 audio file is generated automatically."
+msgstr "Li fichier audio MP3 di dor automatic."
+
+msgid "Arabic"
+msgstr "Arab"
+
+msgid "Are you sure you want to delete this video?"
+msgstr "Ndof dal defa, s NGOs Video bi?"
+
+msgid "At least 8 characters, not entirely numeric."
+msgstr "Là yéem bu bees, teul dëgg biir lamay?"
+
+msgid "Choose a username"
+msgstr "Raay sopso liggéey nga"
+
+msgid "Choose a valid language."
+msgstr "Raay kan yéem."
+
+msgid "Click to select a thumbnail"
+msgstr "Sorli click bu sor soun picture bi"
+
+msgid "Click to select a video file"
+msgstr "Sorli click bu sor fichier vidéo bi"
+
+msgid "Confirm Password"
+msgstr "Seal password bi"
+
+msgid "Confirm your password"
+msgstr "Seal te nga password bi"
+
+msgid "Create Account"
+msgstr "Sos Konto"
+
+msgid "Create One"
+msgstr "Sos benn"
+
+msgid "Create a password"
+msgstr "Sos password"
+
+msgid "Delete"
+msgstr "Supprimer"
+
+msgid "Delete video"
+msgstr "Supprimer vidéo"
+
+msgid "Description"
+msgstr "Baygal"
+
+msgid "Don't have an account?"
+msgstr "Doyt konto?"
+
+msgid "Download MP3"
+msgstr "Yees MP3"
+
+msgid "Download video"
+msgstr "Yees vidéo"
+
+msgid "Email"
+msgstr "Imel"
+
+msgid "English"
+msgstr "Anglais"
+
+msgid "Enter video description"
+msgstr "Mbati baygal video bi"
+
+msgid "Enter video title"
+msgstr "Mbati titre vidéo bi"
+
+msgid "Enter your email"
+msgstr "Mbati imel nga"
+
+msgid "Enter your password"
+msgstr "Mbati password nga"
+
+msgid "Enter your username"
+msgstr "Mbati non nga"
+
+msgid "Failed to delete."
+msgstr "Supprimer bi defaamu."
+
+msgid "French"
+msgstr "Français"
+
+msgid "Invalid vote"
+msgstr "Vote bi bon ngaay"
+
+msgid "Join Fazakkir and start sharing"
+msgstr "Dugg Fazakkir, te dey talal"
+
+msgid "Language"
+msgstr "Kan"
+
+msgid "Leave empty to auto-generate a thumbnail from your video"
+msgstr "Nene soxla, teul soxta soun picture bi ci térmél bi"
+
+msgid "Listen (MP3)"
+msgstr "Degg (MP3)"
+
+msgid "Logout"
+msgstr "Seb"
+
+msgid "Lyrics"
+msgstr "Kërlu yi"
+
+msgid "Menu"
+msgstr "Menu"
+
+msgid "MP4, WebM, MOV or AVI. Max 3 GB."
+msgstr "MP4, WebM, MOV wala AVI. 3 GB benn nu soxla."
+
+msgid "New videos will appear here once the administrator uploads them."
+msgstr "Vidéos yaa yóbba dinen ci kosa, subaaga amin administrator."
+
+msgid "No Videos Yet"
+msgstr "Vidéo yi ngun defreen"
+
+msgid "No subtitles yet."
+msgstr "Sous-titrage yi ngun defreen."
+
+msgid "Off"
+msgstr "Sequel"
+
+msgid "Only .vtt, .srt or .txt files are supported."
+msgstr "Faar nu bëccëg .vtt, .srt wala .txt dolo."
+
+msgid "Only administrators can manage videos."
+msgstr "Gaar administrators nga dund vidéo yi."
+
+msgid "Password"
+msgstr "Mot de passe"
+
+msgid "Playback mode"
+msgstr "Kilin defay"
+
+msgid "Please choose a subtitle file."
+msgstr "Jox bu fa ànd sous-titrage bi."
+
+msgid "Please don't close this page"
+msgstr "Bu tus dal page bi"
+
+msgid "Remove this subtitle track?"
+msgstr "Kat ànd sous-titrage bi?"
+
+msgid "Sign In"
+msgstr "Dugg"
+
+msgid "Sign In Again"
+msgstr "Dugg ci lok"
+
+msgid "Sign Up"
+msgstr "Sos Konto"
+
+msgid "Sign in to continue with Fazakkir"
+msgstr "Dugg bu topp Fazakkir"
+
+msgid "Signed Out"
+msgstr "Nga dugg ba teul nga ci tees"
+
+msgid "Subtitle removed"
+msgstr "Sous-titrage bi nébbu"
+
+msgid "Subtitle saved"
+msgstr "Sous-titrage bi bi kon jënd"
+
+msgid "Subtitles"
+msgstr "Sous-titrage"
+
+msgid "Caption language"
+msgstr "Làkk sous-titrage"
+
+msgid "Subtitle language"
+msgstr "Làkk sous-titrage"
+
+msgid "Subtitles & lyrics"
+msgstr "Sous-titrage ak kërlu yi"
+
+msgid "The video file could not be loaded."
+msgstr "Fichier vidéo bi I téj bu sangu."
+
+msgid "This channel hasn't uploaded any videos yet."
+msgstr "Kàsa bi xoola vidéo subgraph."
+
+msgid "This video type is not allowed."
+msgstr "Li type vidéo bi, defu soxla."
+
+msgid "Thumbnail (optional)"
+msgstr "Soun picture (optional)"
+
+msgid "Title"
+msgstr "Titre"
+
+msgid "Toggle light and dark mode"
+msgstr "Bëccëgaay clair/sombre"
+
+msgid "Upload"
+msgstr "Yees"
+
+msgid "Upload Video"
+msgstr "Yees Vidéo"
+
+msgid "Upload a .vtt, .srt or .txt file for each language. Viewers can turn them on or off."
+msgstr "Yees fichier .vtt, .srt wala .txt bu bees kan. Fracti yi di bëccëga on walla off."
+
+msgid "Upload complete!"
+msgstr "Yees bi Tookh!"
+
+msgid "Upload failed"
+msgstr "Yees bi defaamu"
+
+msgid "Upload in progress"
+msgstr "Yees bi dëgg dó"
+
+msgid "Upload subtitle"
+msgstr "Yees sous-titrage"
+
+msgid "Uploading Video..."
+msgstr "Vidéo bi dëgg yees..."
+
+msgid "Username"
+msgstr "Non"
+
+msgid "Video"
+msgstr "Vidéo"
+
+msgid "Video File"
+msgstr "Fichier Vidéo"
+
+msgid "Video Unavailable"
+msgstr "Vidéo di Found Defeen"
+
+msgid "Video deleted"
+msgstr "Vidéo bi bi Supprimé"
+
+msgid "Video must be under 3 GB."
+msgstr "Vidéo bi waral 3 GB."
+
+msgid "Video storage is not configured yet. Add your Cloudflare R2 credentials to the .env file."
+msgstr "Stockage vidéo mi kenn defu paramétré. Ràng Cloudflare R2 infos nga fichier .env."
+
+msgid "Video uploaded successfully"
+msgstr "Vidéo bi yees ba wóot sag"
+
+msgid "Videos"
+msgstr "Vidéos"
+
+msgid "Welcome Back"
+msgstr "Dalal"
+
+msgid "You have been signed out..."
+msgstr "Nga tees..."
+
+msgid "You must be signed in to vote."
+msgstr "Säpp nga dugg wala vote."
+
+msgid "%(counter)s view"
+msgid_plural "%(counter)s views"
+msgstr[0] "%(counter)s vue"
+msgstr[1] "%(counter)s vues"
+
+msgid "%(counter)s video"
+msgid_plural "%(counter)s videos"
+msgstr[0] "%(counter)s vidéo"
+msgstr[1] "%(counter)s vidéos"
+
+msgid "%(counter)s account"
+msgid_plural "%(counter)s accounts"
+msgstr[0] "%(counter)s konto"
+msgstr[1] "%(counter)s konto"
+
+msgid "Access"
+msgstr "Dugg"
+
+msgid "Access updated"
+msgstr "Dugg bi mbay"
+
+msgid "Actions"
+msgstr "Bëccëgu"
+
+msgid "Active"
+msgstr "Sall"
+
+msgid "Add a comment…"
+msgstr "Mbëccëg commentaire..."
+
+msgid "Back to videos"
+msgstr "Dellool zu vidéo"
+
+msgid "Block"
+msgstr "Gàkk"
+
+msgid "Blocked"
+msgstr "Gakk"
+
+msgid "Comment"
+msgstr "Commentaire"
+
+msgid "Comments"
+msgstr "Commentaires"
+
+msgid "Could not create the playlist."
+msgstr "Txtà playlist bi amu."
+
+msgid "Create"
+msgstr "Sos"
+
+msgid "Create your first playlist to organise videos."
+msgstr "Sos playlist bi bees, teul classe vidéo."
+
+msgid "Delete playlist"
+msgstr "Supprimer playlist"
+
+msgid "Delete this comment?"
+msgstr "Kat supprimé commentaire bi?"
+
+msgid "Delete this playlist?"
+msgstr "Kat supprimé playlist bi?"
+
+msgid "Failed."
+msgstr "Defaamu."
+
+msgid "Give your playlist a name."
+msgstr "Saxaan playlist bi non."
+
+msgid "Invalid access level."
+msgstr "Niveau accès bi bon ngaay."
+
+msgid "Manage users"
+msgstr "Giddu utilisateurs"
+
+msgid "Member"
+msgstr "Membre"
+
+msgid "My Playlists"
+msgstr "Sàkk su playlists"
+
+msgid "New playlist name"
+msgstr "Non playlist yi bees"
+
+msgid "No comments yet. Be the first!"
+msgstr "Commentaire yi ngun defreen. Nga ley benn!"
+
+msgid "No playlists yet"
+msgstr "Playlist yi ngun defreen"
+
+msgid "No playlists yet."
+msgstr "Playlist yi ngun defreen."
+
+msgid "Only a superuser can manage another superuser."
+msgstr "Superuser nga dund superuser."
+
+msgid "Only administrators can view this page."
+msgstr "Gaar administrators nga gis page bi."
+
+msgid "Playlist deleted"
+msgstr "Playlist bi supprimé"
+
+msgid "Playlist not found."
+msgstr "Playlist bi amu."
+
+msgid "Playlist unavailable"
+msgstr "Playlist bi amu faat"
+
+msgid "Playlist updated"
+msgstr "Playlist bi mbay"
+
+msgid "Playlists"
+msgstr "Playlists"
+
+msgid "Private"
+msgstr "Privé"
+
+msgid "Profile"
+msgstr "Profil"
+
+msgid "Profiles"
+msgstr "Profils"
+
+msgid "Public"
+msgstr "Publique"
+
+msgid "Public playlists can be viewed by anyone."
+msgstr "Kër ñépp di gam playlist publique yi."
+
+msgid "Read & write"
+msgstr "Kaa & bind"
+
+msgid "Read-only"
+msgstr "Kaa dolo"
+
+msgid "Read-only staff can view this page; read & write staff can also upload, moderate and manage users."
+msgstr "Gaar kaa dolo di gam page bi; gaar kaa & bind di koñ yees, modéré ak giddu utilisateurs."
+
+msgid "Remove"
+msgstr "Jéem"
+
+msgid "Removed from playlist"
+msgstr "Népp playlist bi"
+
+msgid "Save"
+msgstr "Kön"
+
+msgid "Save to playlist"
+msgstr "Kön playlist bi"
+
+msgid "Sign in"
+msgstr "Dugg"
+
+msgid "Status"
+msgstr "État"
+
+msgid "Superuser"
+msgstr "Superuser"
+
+msgid "This also deletes their videos and comments."
+msgstr "Lii di supprimé vidéo g ak commentaires yi."
+
+msgid "This playlist does not exist or is private."
+msgstr "Playlist bi amu wala privé."
+
+msgid "This playlist is empty"
+msgstr "Playlist bi nekk"
+
+msgid "Unblock"
+msgstr "Dégg gàkk"
+
+msgid "Use the “Save” button on any video to add it here."
+msgstr "Itgal bouton «Kön» ci vidéo bala, teul mbiddi li ci kosa."
+
+msgid "User"
+msgstr "Utilisateur"
+
+msgid "User blocked"
+msgstr "Utilisateur gakk"
+
+msgid "User deleted"
+msgstr "Utilisateur supprimé"
+
+msgid "User unblocked"
+msgstr "Utilisateur dégg gàkk"
+
+msgid "Users"
+msgstr "Utilisateurs"
+
+msgid "Write something first."
+msgstr "Sëgg tegali lem."
+
+msgid "You"
+msgstr "Yé"
+
+msgid "You cannot change your own account here."
+msgstr "Doydëgg mbiddi konto nga ci kosa."
+
+msgid "You cannot delete this comment."
+msgstr "Doydëgg supprimé commentaire bi."
+
+msgid "You must be signed in."
+msgstr "Wàr nga dugg."
+
+msgid "You must be signed in to comment."
+msgstr "Wàr nga dugg teul commentaire."
+
+msgid "to add a comment."
+msgstr "te commenteer."
+
+msgid "Dashboard"
+msgstr "Tableau de bord"
+
+msgid "Dashboard sections"
+msgstr "Rubriques tableau de bord"
+
+msgid "Overview"
+msgstr "Vue d'ensemble"
+
+msgid "Control the videos, the users, the comments and the storage in one place."
+msgstr "Maîtrise vidéo, utilisateur, commentaire ak stockage ci benn kosa."
+
+msgid "Stored files"
+msgstr "Fichiers stockés"
+
+msgid "Storage"
+msgstr "Stockage"
+
+msgid "Full"
+msgstr "Tëddi"
+
+msgid "Nearly full"
+msgstr "Tëddi werse"
+
+msgid "OK"
+msgstr "Baax"
+
+msgid "Measured"
+msgstr "Mesuré"
+
+msgid "Refresh"
+msgstr "Rafraîchir"
+
+msgid "Cloudflare R2 is not configured, so the media usage cannot be measured. Add the R2 credentials to your .env file."
+msgstr "Cloudflare R2 mi kenn defu paramétré, waxy usage média di bëgg mesuré. Ràng infos R2 fichier .env."
+
+msgid "Media storage (Cloudflare R2)"
+msgstr "Stockage média (Cloudflare R2)"
+
+msgid "Database (SQLite)"
+msgstr "Base de données (SQLite)"
+
+msgid "%(free)s free"
+msgstr "%(free)s libre"
+
+msgid "Alerts"
+msgstr "Alertes"
+
+msgid "An email is sent to %(email)s once the storage passes the alert threshold."
+msgstr "Imel di enforceable léotoom %(email)s ci nga sooner stockage tawata seuil alerte."
+
+msgid "The alert triggers at %(threshold)s percent or more, and again when the storage is completely full."
+msgstr "Seuil alerte di jaar ci %(threshold)s pour cent wala ci kaw, ak checkiku stockage li tëddi ras."
+
+msgid "Media quota (GB)"
+msgstr "Quota média (Go)"
+
+msgid "Database quota (GB)"
+msgstr "Quota base de données (Go)"
+
+msgid "Alert threshold (%)"
+msgstr "Seuil alerte (%)"
+
+msgid "Notification email"
+msgstr "Imel de notification"
+
+msgid "Save settings"
+msgstr "Kön les paramètres"
+
+msgid "Send test email"
+msgstr "Envoie imel test"
+
+msgid "Largest videos"
+msgstr "Vidéos yi ley yóbba yërë yi"
+
+msgid "Manage all"
+msgstr "Maîtrise tout"
+
+msgid "Uploader"
+msgstr "Uploader"
+
+msgid "No videos yet."
+msgstr "Vidéo yi ngun defreen."
+
+msgid "Reclaimable space"
+msgstr "Espace récupérable"
+
+msgid "Files left behind by interrupted uploads:"
+msgstr "Fichiers yi dëgg ci ték Format yees:"
+
+msgid "Deleting them frees space without touching any video."
+msgstr "Supprimé yi di liber espace, teul tocc bi mbir teul yërë."
+
+msgid "Free this space"
+msgstr "Libérer espace bi"
+
+msgid "Deleting a video removes it from the database and from Cloudflare R2."
+msgstr "Supprimé vidéo bi di dëgg li ci base de données ak Cloudflare R2."
+
+msgid "Read-only staff can view the dashboard; read & write staff can also delete videos and free space."
+msgstr "Gaar kaa dolo di gam tableau de bord; gaar kaa & bind di koñ supprimé vidéo ak liber espace."
+
+msgid "This cannot be undone."
+msgstr "Lii di def defra."
+
+msgid "Saved."
+msgstr "Könn."
+
+msgid "Sent."
+msgstr "Envoie."
+
+msgid "Delete the files that no video uses?"
+msgstr "Kat supprimé fichiers yi vidéo bi amu tëgg?"
+
+msgid "Space freed:"
+msgstr "Espace libéré:"
+
+msgid "Manage videos"
+msgstr "Maîtrise vidéo"
+
+msgid "Manage comments"
+msgstr "Maîtrise commentaires"
+
+msgid "Search by title or uploader"
+msgstr "Recherche titre wala uploader"
+
+msgid "Search"
+msgstr "Recherche"
+
+msgid "Clear"
+msgstr "Efface"
+
+msgid "Added"
+msgstr "Ajouté"
+
+msgid "No videos found"
+msgstr "Vidéo bi amu"
+
+msgid "Nothing matches your search."
+msgstr "Do yu correspond lépp recherche nga."
+
+msgid "Search by author or text"
+msgstr "Recherche auteur wala texte"
+
+msgid "Author"
+msgstr "Auteur"
+
+msgid "Posted"
+msgstr "Publié"
+
+msgid "No comments found"
+msgstr "Commentaire bi amu"
+
+msgid "Storage settings saved."
+msgstr "Paramètres stockage bi bi kon jënd."
+
+msgid "Test email sent to %(email)s."
+msgstr "Imel test bi enforceable léotoom %(email)s."
+
+msgid "Could not send the email."
+msgstr "Envoie imel bi defaamu."
+
+msgid "Storage monitor"
+msgstr "Moniteur stockage"
+
+msgid "Media quota (bytes)"
+msgstr "Quota média (octets)"
+
+msgid "How much room the Cloudflare R2 bucket has."
+msgstr "Espace disponib ci Cloudflare R2 bucket."
+
+msgid "Database quota (bytes)"
+msgstr "Quota base de données (octets)"
+
+msgid "Soft limit for the SQLite database file."
+msgstr "Limite indicatif fichier base de données SQLite."
+
+msgid "Send an email once this percentage of the space is used."
+msgstr "Envoie imel ci nga sooner espace utilisë so percentage bi."
+
+msgid "%(counter)s comment"
+msgid_plural "%(counter)s comments"
+msgstr[0] "%(counter)s commentaire"
+msgstr[1] "%(counter)s commentaires"
+
+msgid "Offline"
+msgstr "Hors ligne"
+
+msgid "Offline listening"
+msgstr "Écoute hors ligne"
+
+msgid "Audio you saved plays here even without an internet connection."
+msgstr "Audio nga bindi di defay ci kosa, même te internet bu amay."
+
+msgid "You have not saved any audio yet."
+msgstr "Doyt bindi audio mbir."
+
+msgid "Tip: open a video and press “Save offline” to keep its MP3 on this device."
+msgstr "Astuce: lii vidéo, teul press «Kön hors ligne», teul waxtaan MP3 bi ci saf bi sa."
+
+msgid "Save offline"
+msgstr "Kön hors ligne"
+
+msgid "Saved offline"
+msgstr "Könn hors ligne"
+
+msgid "Remove download"
+msgstr "Supprimer téléchargement"
+
+msgid "Could not update the offline copy. Check your connection."
+msgstr "Copie hors ligne bi di tegali defo. Gis connexion nga."
+
+msgid "Watch and listen to videos, online or offline."
+msgstr "Gis ak degg vidéo, connexion wala hors ligne."
+
+msgid "Preparing the audio (MP3) for this video…"
+msgstr "Li daba dioyy audio (MP3) bu vidéo bi..."
+
+msgid "The audio could not be generated."
+msgstr "Audio bi defaamu woy teul dor."
+
+msgid "Try again"
+msgstr "Hawta"
+
+msgid "This video has no audio track."
+msgstr "Vidéo bi amay piste audio."
+
+msgid "Not generated"
+msgstr "Dor defreen"
+
+msgid "Generating"
+msgstr "Li_generation"
+
+msgid "Ready"
+msgstr "Prêt"
+
+msgid "No audio track"
+msgstr "Piste audio amay"
+
+msgid "Failed"
+msgstr "Defaamu"
+
+msgid "MP3"
+msgstr "MP3"
+
+msgid "Every video has an MP3"
+msgstr "Video bi amay MP3"
+
+msgid "%(counter)s video needs an MP3"
+msgid_plural "%(counter)s videos need an MP3"
+msgstr[0] "%(counter)s vidéo bi biry def MP3"
+msgstr[1] "%(counter)s vidéos bi biry def MP3"
+
+msgid "%(counter)s video has no audio track"
+msgid_plural "%(counter)s videos have no audio track"
+msgstr[0] "%(counter)s vidéo bi amay piste audio"
+msgstr[1] "%(counter)s vidéos bi amay piste audio"
+
+msgid "Generate missing MP3s"
+msgstr "Generer MP3 yi bi defeen"
+
+msgid "Generating MP3s…"
+msgstr "Li_generation MP3..."
+
+msgid "Starting…"
+msgstr "Li top..."
+
+msgid "Generating missing MP3s in the background."
+msgstr "Li generaat MP3 yi bi defeen en arrière-plan."
+
+msgid "An MP3 generation run is already in progress."
+msgstr "Li génération MP3 di.screen bajal."
+
+msgid "Automatic subtitles"
+msgstr "Sous-titrage automatique"
+
+msgid "Not configured"
+msgstr "Kenn defu paramétré"
+
+msgid "Transcribe the audio and translate it automatically, without uploading a file."
+msgstr "Transcribe audio bi ak Ji di tradui li, teul yees aucun fichier."
+
+msgid "Generate subtitles"
+msgstr "Generer sous-titrage"
+
+msgid "Generate captions"
+msgstr "Generer sous-titrage"
+
+msgid "No captions for this video yet."
+msgstr "Sous-titrage amul ci vidéo bii ba noppi."
+
+msgid "Regenerate subtitles"
+msgstr "Regenerer sous-titrage"
+
+msgid "Transcribing and translating…"
+msgstr "Transcription ak traduction..."
+
+msgid "Generating subtitles in the background."
+msgstr "Li generaat sous-titrage en arrière-plan."
+
+msgid "A subtitle run is already in progress for this video."
+msgstr "Sous-titrage di.screen bajal ci vidéo bi."
+
+msgid "Automatic subtitles are not configured. Set %(key)s in the .env file to enable them."
+msgstr "Sous-titrage automatique mi kenn defu paramétré. Ràng %(key)s fichier .env."
+
+msgid "This video has no audio track yet. Generate its MP3 first, then create the subtitles."
+msgstr "Vidéo bi amay piste audio. Generer MP3 bi lépp bu soxla, teul generaat sous-titrage."
+
+msgid "Audio File (MP3)"
+msgstr "Faar bu MP3"
+
+msgid "Back 10 seconds"
+msgstr "Dee 10 seconds"
+
+msgid "Back to sign in"
+msgstr "Dellool ci mbirtee mi"
+
+msgid "Cancel"
+msgstr "Ma§çoç"
+
+msgid "Check Your Email"
+msgstr "Check mbir bu email bu yër"
+
+msgid "Check your email"
+msgstr "Check mbir bu email bu yër"
+
+msgid "Choose a New Password"
+msgstr "Tannale mbirtee mi"
+
+msgid "Choose a new password"
+msgstr "Tannale mbirtee mi"
+
+msgid "Click to select an MP3 file"
+msgstr "Click wala faar bu MP3"
+
+msgid "Confirm new password"
+msgstr "Confirme mbirtee mi"
+
+msgid "Copy this link:"
+msgstr "Koppi link bi:"
+
+msgid "Current thumbnail"
+msgstr "Thumbnail bi lay bi"
+
+msgid "Edit"
+msgstr "Soppi"
+
+msgid "Edit Video"
+msgstr "Soppi video bi"
+
+msgid "Enter your email address"
+msgstr "Bamba mbir bu email bu yër"
+
+msgid "Enter your email address and we will send you a link to choose a new one."
+msgstr "Bamba mbir bu email bu yër, dundëi laye mbirtee bu lay yi lay dusk ci dund mbirtee bees."
+
+msgid "Fazakkir"
+msgstr "Fazakkir"
+
+msgid "Forgot your password?"
+msgstr "Mbirtee bi mbàddu?"
+
+msgid "Forward 10 seconds"
+msgstr "Tetel 10 seconds"
+
+msgid "Fullscreen"
+msgstr "Sër sa bopp"
+
+msgid "If you did not ask for this, you can ignore this message and nothing will change."
+msgstr "Su kenn ma kenn sa kës bu lay defar, wacis ci bir, kenn bu lay dukay door."
+
+msgid "Link copied"
+msgstr "Link bi joy"
+
+msgid "MP3 link"
+msgstr "Link bu MP3"
+
+msgid "MP3 link copied"
+msgstr "Link bu MP3 bi joy"
+
+msgid "MP3 only. This becomes the track friends can stream and download."
+msgstr "MP3 took. Mi laye rek bu mbirto-yóbbu topp kisi topp tekki."
+
+msgid "Mute"
+msgstr "Tama"
+
+msgid "New password"
+msgstr "Mbirtee mi"
+
+msgid "No results"
+msgstr "Benni bir"
+
+msgid "Nothing matched. Try a different word, or a year such as 2000."
+msgstr "Benni bir. Jëmm ci saf kumam wala sa cascadeur man ni 2000."
+
+msgid "Not the one you wanted? The rest may be on YouTube."
+msgstr "Moo xaajoo? Yeneen yi man nañu nekk ci YouTube."
+
+msgid "Still looking? This video may be on YouTube."
+msgstr "Ba léegi di seet? Video bii man na nekk ci YouTube."
+
+msgid "Search YouTube for %(query)s"
+msgstr "Seet %(query)s ci YouTube"
+
+msgid "Opens YouTube in a new tab."
+msgstr "Mu day ubbi YouTube ci ab tab bu bees."
+
+msgid "Open the link below to choose a new one:"
+msgstr "Ubbi link mi ci ndaw yi teg bir mbirtee bees:"
+
+msgid "Password Changed"
+msgstr "Mbirtee bi buute"
+
+msgid "Pause"
+msgstr "Seckan"
+
+msgid "Picture in picture"
+msgstr "Ndox ci ndox"
+
+msgid "Play"
+msgstr "Topp"
+
+msgid "Playback speed"
+msgstr "Speed bu topp"
+
+msgid "Request a new link"
+msgstr "Sann link bu bees"
+
+msgid "Reset Password"
+msgstr "Sala mbirtee"
+
+msgid "Save New Password"
+msgstr "Engg mbirtee mi"
+
+msgid "Save changes"
+msgstr "Engg yi soppi"
+
+msgid "Search by title, name or year"
+msgstr "Lah mbir yuwa, tur wala sa cascadeur"
+
+msgid "Search videos"
+msgstr "Lah ci video yi"
+
+msgid "Seek"
+msgstr "Sala"
+
+msgid "Send Reset Link"
+msgstr "Yubbi link bu sala mbirtee"
+
+msgid "Share"
+msgstr "Bolli"
+
+msgid "Share this video"
+msgstr "Bolli video bi"
+
+msgid "Show or hide the player controls"
+msgstr "Wone wallis masalan wii topper"
+
+msgid "Size"
+msgstr "Taay"
+
+msgid "The address does not match any account. Check it and try again, or ask an administrator to add an email address to your profile."
+msgstr "Email bi mi kenn danger béccëg bu bees kenn man. Check ko, far ta, wala soxla ndox mi dokku ngay def teɲɲi email yi mbir bu yër."
+
+msgid "This reset link is invalid, most likely because it has already been used or has expired. Please request a new one."
+msgstr "Link bu sala mbirtee bi danger nun. Fànk nga laye kennu kenn bi lay defar wala sa bopp kenn. Lékkal teg bir link bu bees."
+
+msgid "Type a few words from a title, the uploader's name, or a year such as 2000."
+msgstr "Ciw bii yi ci tur wala tur u saf, wala sa cascadeur man ni 2000."
+
+msgid "Video link"
+msgstr "Link bu video"
+
+msgid "Views"
+msgstr "Looku"
+
+msgid "Volume"
+msgstr "Degg bu teg"
+
+msgid "You can now sign in with your new password."
+msgstr "Teugg ci mbirtee mi teg dib mbirtee."
+
+msgid "Your password has been changed"
+msgstr "Mbirtee bu yër bi buute"
+
+msgid "for"
+msgstr "bu"
+
+msgid "%(counter)s result"
+msgid_plural "%(counter)s result"
+msgstr[0] "%(counter)s biy bu nekk"
+msgstr[1] "%(counter)s yi nekk"
+
+msgid "Delete permanently"
+msgstr "Fucc bu bees"
+
+msgid "Delete this video?"
+msgstr "Facc video bi?"
+
+msgid "Delete unused files"
+msgstr "Fucc fiili yi amu fës"
+
+msgid "Every object in Cloudflare R2 that no video references is deleted permanently. Videos, their MP3s and their thumbnails are kept, and offline copies on visitors' devices are not affected."
+msgstr "Li bees ci Cloudflare R2 ma kenn video teg mooy fucc bu bees. Video yi, MP3 yi te thumbnail yi di tigid, te kopp yi teg tees tekk yi ala ayoba wul_bindu bu marseen te ma dhil."
+
+msgid "The comment will be removed and cannot be recovered."
+msgstr "Comment bi laye dugg, te kenn it tegit ul i seen."
+
+msgid "The playlist is removed. The videos in it are not deleted."
+msgstr "Playlist bi laye fucc. Video yi te leem ci makkan gu dugga."
+
+msgid "The subtitles and lyrics for this language will be deleted."
+msgstr "Subtitle yi ak baat yi bu lann bi laye dugg."
+
+msgid "This permanently removes the recording, its MP3 and its thumbnail from Cloudflare storage. This cannot be undone."
+msgstr "Mi laye nga def dicc recording bi, MP3 bi ak thumbnail bi ci tekk Cloudflare. Li mana dug it."
+
+msgid "This permanently removes the recording, its MP3 and its thumbnail from Cloudflare storage. Visitors who saved it offline keep their local copy until they remove it."
+msgstr "Mi laye nga def dicc recording bi, MP3 bi ak thumbnail bi ci tekk Cloudflare. Marseen yi yeccu ko tekkin teg maamaral ngi kenn tegit."
+
+msgid "Remove this download?"
+msgstr "Leyy teg bir bi?"
+
+msgid "The saved audio will be deleted from this device. You can download it again later."
+msgstr "Sag bu yóbbu laye dugg ci sa mbir mi. Mëddi laye wala ngi sax te it."
+
+msgid "Are you sure?"
+msgstr "Dëgg ding?"
+
+msgid "Reset your Fazakkir password"
+msgstr "Sala mbirtee bu konto bu Fazakkir"
+
+msgid "Someone asked to reset the password for your Fazakkir account."
+msgstr "Kennu kennu nekk sala mbirtee bu konto bu yër bu Fazakkir."
+
+msgid "If an account exists for %(email)s, a message with a reset link is on its way. The link expires shortly, so use it soon."
+msgstr "Su kennu konto bi amu email %(email)s, araama bi lay doyiba ci biy gu sala mbirtee. Link bi di woy tegora, tambali seddu ci waxtaan."
+
+msgid "Search results for %(query)s"
+msgstr "Nettiya lu lah mbir %(query)s"
+
+msgid "Up next"
+msgstr "Li ci topp"
+
+msgid "Exit fullscreen"
+msgstr "Génn ci fàww"
+
+msgid "Upload Audio"
+msgstr "Yebal ci def"
+
+msgid "Uploading Audio..."
+msgstr "Mi ngi yebal..."
+
+msgid "Audio"
+msgstr "Audio"
+
+msgid "Drag a row, or use the arrows, then save."
+msgstr "Tëddal benn rëdd, walla jëfandikoo fànn yi, teeloo ko."
+
+msgid "Drag the rows to choose what visitors see first on the home page."
+msgstr "Tëddal rëdd yi ngir tànn li gan yi di gis ci njëlbéen bi."
+
+msgid "Home order"
+msgstr "Tolluwaay kër bi"
+
+msgid "Home page order"
+msgstr "Tolluwaay xëtu kër bi"
+
+msgid "Move down"
+msgstr "Wàññi"
+
+msgid "Move up"
+msgstr "Yéeg"
+
+msgid "Nothing to arrange yet"
+msgstr "Amul dara bu ñu lay tolloo"
+
+msgid "Order saved."
+msgstr "Tolluwaay bi denc nañu ko."
+
+msgid "Playlist cover"
+msgstr "Kubersu playlist bi"
+
+msgid "Remove this video?"
+msgstr "Dindi vidiyo bii?"
+
+msgid "Remove “%(title)s” from this playlist?"
+msgstr "Dindi «%(title)s» ci playlist bii?"
+
+msgid "Save order"
+msgstr "Denc tolluwaay bi"
+
+msgid "Upload a video or an audio file and it will appear here."
+msgstr "Yónnee vidiyo walla fichye audio, dina feeñ fii."
+
+msgid "this video"
+msgstr "vidiyo bii"
+
+msgid "Cover photo"
+msgstr "Nataal kubers bi"
+
+msgid "Captions are made with the speech-to-text service."
+msgstr "Li nekkuti yi teccit ci seen birim"
+
+msgid "Generate subtitles for all"
+msgstr "Sos nekkuti yi jamu wene bi"
+
+msgid "Generating subtitles…"
+msgstr "Ndongo nekkuti yi…"
+
+msgid "A subtitle run is already in progress."
+msgstr "Njëkk ndiaga teccit yi ci doon."
+
+msgid "An audio upload has no picture of its own, so choose one to show on the card"
+msgstr "Waaxtu mbir mi am ci seen, fecc sa yi mbir bu lay tegal ci karte"
+
+msgid "That picture could not be prepared. Please choose a smaller image."
+msgstr "Nakaaneen ndakaale bi. Tannal benn ndakaale bu ndaw."
+
+msgid "This file is too large for the server. Please choose a smaller file."
+msgstr "Fiye bi dafa yaatu lool ci serwëer bi. Tannal fiye bu ndaw."
+
+msgid "The upload was refused by the server. Please try again."
+msgstr "Serwëer bi bañ na yebbi bi. Jéemaatalaat."
+
+msgid "That thumbnail is not a picture. Please choose an image."
+msgstr "Nattukaay bii du ndakaale. Tannal benn ndakaale."
+
+msgid "That picture is too large. Please choose a smaller one."
+msgstr "Ndakaale bii dafa yaatu lool. Tannal benn bu ndaw."
+
+msgid "That picture could not be read. Please choose another one."
+msgstr "Manuñu jàng ndakaale bii. Tannal beneen."
+
+msgid "That file is not a picture the site can show. Please choose a JPEG or PNG image."
+msgstr "Fiye bii du ndakaale bu site bi mën a wone. Tannal JPEG walla PNG."
+
+msgid "The file was saved, but its picture could not be stored."
+msgstr "Fiye bi denc nañu ko, waaye manuñu denc ndakaale bi."
+
+msgid "MP3, WAV, M4A, OGG or AAC. Anything else is converted to MP3."
+msgstr "MP3, WAV, M4A, OGG walla AAC. Leneen mën nañu ko soppi ci MP3."
+
+msgid "That file has no sound in it. Please choose an audio file."
+msgstr "Amul bàyyi ndox ci fiye bii. Tannal benn fiye bu baax."
+
+msgid "That file could not be read as audio. Please choose an MP3, WAV or M4A file."
+msgstr "Manuñu jàng fiye bii ni baax. Tannal MP3, WAV walla M4A."
+
+msgid "That file could not be converted to MP3. Please choose another file."
+msgstr "Manuñu soppi fiye bii ci MP3. Tannal beneen fiye."
+
+msgid "Captions"
+msgstr "Nattukaay yi"
+
+msgid "Working"
+msgstr "Mungi dox"
+
+msgid "lyrics"
+msgstr "baat yi"
+
+msgid "Active users"
+msgstr ""
+
+msgid "Audio plays"
+msgstr ""
+
+msgid "Daily usage"
+msgstr ""
+
+msgid "Date"
+msgstr ""
+
+msgid "Guests"
+msgstr ""
+
+msgid "How many users (guests and registered) use the app each day, and which recordings they play."
+msgstr ""
+
+msgid "Last 14 days"
+msgstr ""
+
+msgid "No audio plays recorded for this day."
+msgstr ""
+
+msgid "No views recorded for this day."
+msgstr ""
+
+msgid "Plays"
+msgstr ""
+
+msgid "Registered"
+msgstr ""
+
+msgid "Show"
+msgstr ""
+
+msgid "Today"
+msgstr ""
+
+msgid "Top played audio"
+msgstr ""
+
+msgid "Top viewed videos"
+msgstr ""
+
+msgid "Usage"
+msgstr ""
+
+msgid "Video views"
+msgstr ""
+
+msgid "No shorts yet."
+msgstr ""
+
+msgid "Short vertical videos."
+msgstr ""
+
+msgid "Shorts"
+msgstr ""
+
+msgid "Storage is not configured."
+msgstr ""
+
+msgid "Upload short"
+msgstr ""

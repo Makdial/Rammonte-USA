@@ -1,0 +1,1233 @@
+# Arabic translation of Fazakkir.
+# Copyright (C) the Fazakkir authors.
+# This file is distributed under the same licence as the Fazakkir package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Fazakkir\n"
+"Report-Msgid-Bugs-To: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ar\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n"
+
+msgid "Already have an account?"
+msgstr "هل لديك حساب بالفعل؟"
+
+msgid "An MP3 audio file is generated automatically."
+msgstr "يتم إنشاء ملف صوتي MP3 تلقائيًا."
+
+msgid "Arabic"
+msgstr "العربية"
+
+msgid "Are you sure you want to delete this video?"
+msgstr "هل أنت متأكد من حذف هذا الفيديو؟"
+
+msgid "At least 8 characters, not entirely numeric."
+msgstr "ثمانية أحرف على الأقل، وليست أرقامًا بالكامل."
+
+msgid "Choose a username"
+msgstr "اختر اسم المستخدم"
+
+msgid "Choose a valid language."
+msgstr "اختر لغة صالحة."
+
+msgid "Click to select a thumbnail"
+msgstr "انقر لاختيار صورة مصغرة"
+
+msgid "Click to select a video file"
+msgstr "انقر لاختيار ملف فيديو"
+
+msgid "Confirm Password"
+msgstr "تأكيد كلمة المرور"
+
+msgid "Confirm your password"
+msgstr "أكّد كلمة المرور"
+
+msgid "Create Account"
+msgstr "إنشاء حساب"
+
+msgid "Create One"
+msgstr "أنشئ واحدًا"
+
+msgid "Create a password"
+msgstr "أنشئ كلمة مرور"
+
+msgid "Delete"
+msgstr "حذف"
+
+msgid "Delete video"
+msgstr "حذف الفيديو"
+
+msgid "Description"
+msgstr "الوصف"
+
+msgid "Don't have an account?"
+msgstr "ليس لديك حساب؟"
+
+msgid "Download MP3"
+msgstr "تحميل MP3"
+
+msgid "Download video"
+msgstr "تحميل الفيديو"
+
+msgid "Email"
+msgstr "البريد الإلكتروني"
+
+msgid "English"
+msgstr "الإنجليزية"
+
+msgid "Enter video description"
+msgstr "أدخل وصف الفيديو"
+
+msgid "Enter video title"
+msgstr "أدخل عنوان الفيديو"
+
+msgid "Enter your email"
+msgstr "أدخل بريدك الإلكتروني"
+
+msgid "Enter your password"
+msgstr "أدخل كلمة المرور"
+
+msgid "Enter your username"
+msgstr "أدخل اسم المستخدم"
+
+msgid "Failed to delete."
+msgstr "تعذّر الحذف."
+
+msgid "French"
+msgstr "الفرنسية"
+
+msgid "Invalid vote"
+msgstr "تصويت غير صالح"
+
+msgid "Join Fazakkir and start sharing"
+msgstr "انضم إلى فزاكير وابدأ المشاركة"
+
+msgid "Language"
+msgstr "اللغة"
+
+msgid "Leave empty to auto-generate a thumbnail from your video"
+msgstr "اتركه فارغًا لإنشاء صورة مصغرة تلقائيًا من الفيديو"
+
+msgid "Listen (MP3)"
+msgstr "استماع (MP3)"
+
+msgid "Logout"
+msgstr "تسجيل الخروج"
+
+msgid "Lyrics"
+msgstr "كلمات الأغنية"
+
+msgid "Menu"
+msgstr "القائمة"
+
+msgid "MP4, WebM, MOV or AVI. Max 3 GB."
+msgstr "MP4 أو WebM أو MOV أو AVI. بحد أقصى 3 غيغابايت."
+
+msgid "New videos will appear here once the administrator uploads them."
+msgstr "ستظهر الفيديوهات الجديدة هنا بمجرد أن يرفعها المشرف."
+
+msgid "No Videos Yet"
+msgstr "لا توجد فيديوهات بعد"
+
+msgid "No subtitles yet."
+msgstr "لا توجد ترجمات بعد."
+
+msgid "Off"
+msgstr "إيقاف"
+
+msgid "Only .vtt, .srt or .txt files are supported."
+msgstr "الملفات المدعومة هي ‎.vtt و .srt و .txt فقط."
+
+msgid "Only administrators can manage videos."
+msgstr "المشرفون فقط يمكنهم إدارة الفيديوهات."
+
+msgid "Password"
+msgstr "كلمة المرور"
+
+msgid "Playback mode"
+msgstr "وضع التشغيل"
+
+msgid "Please choose a subtitle file."
+msgstr "يرجى اختيار ملف ترجمة."
+
+msgid "Please don't close this page"
+msgstr "يرجى عدم إغلاق هذه الصفحة"
+
+msgid "Remove this subtitle track?"
+msgstr "هل تريد إزالة هذا مسار الترجمة؟"
+
+msgid "Sign In"
+msgstr "تسجيل الدخول"
+
+msgid "Sign In Again"
+msgstr "تسجيل الدخول مرة أخرى"
+
+msgid "Sign Up"
+msgstr "إنشاء حساب"
+
+msgid "Sign in to continue with Fazakkir"
+msgstr "سجّل الدخول للمتابعة مع فزاكير"
+
+msgid "Signed Out"
+msgstr "تم تسجيل الخروج"
+
+msgid "Subtitle removed"
+msgstr "تمت إزالة الترجمة"
+
+msgid "Subtitle saved"
+msgstr "تم حفظ الترجمة"
+
+msgid "Subtitles"
+msgstr "الترجمات"
+
+msgid "Caption language"
+msgstr "لغة الترجمات"
+
+msgid "Subtitle language"
+msgstr "لغة الترجمات"
+
+msgid "Subtitles & lyrics"
+msgstr "الترجمات وكلمات الأغاني"
+
+msgid "The video file could not be loaded."
+msgstr "تعذّر تحميل ملف الفيديو."
+
+msgid "This channel hasn't uploaded any videos yet."
+msgstr "لم ترفع هذه القناة أي فيديو بعد."
+
+msgid "This video type is not allowed."
+msgstr "نوع الفيديو غير مسموح به."
+
+msgid "Thumbnail (optional)"
+msgstr "الصورة المصغرة (اختياري)"
+
+msgid "Title"
+msgstr "العنوان"
+
+msgid "Toggle light and dark mode"
+msgstr "التبديل بين الوضع الفاتح والداكن"
+
+msgid "Upload"
+msgstr "رفع"
+
+msgid "Upload Video"
+msgstr "رفع فيديو"
+
+msgid "Upload a .vtt, .srt or .txt file for each language. Viewers can turn them on or off."
+msgstr "ارفع ملف ‎.vtt أو ‎.srt أو ‎.txt لكل لغة. يمكن للمشاهدين تشغيلها أو إيقافها."
+
+msgid "Upload complete!"
+msgstr "اكتمل الرفع!"
+
+msgid "Upload failed"
+msgstr "فشل الرفع"
+
+msgid "Upload in progress"
+msgstr "جارٍ الرفع"
+
+msgid "Upload subtitle"
+msgstr "رفع ترجمة"
+
+msgid "Uploading Video..."
+msgstr "جارٍ رفع الفيديو..."
+
+msgid "Username"
+msgstr "اسم المستخدم"
+
+msgid "Video"
+msgstr "الفيديو"
+
+msgid "Video File"
+msgstr "ملف الفيديو"
+
+msgid "Video Unavailable"
+msgstr "الفيديو غير متاح"
+
+msgid "Video deleted"
+msgstr "تم حذف الفيديو"
+
+msgid "Video must be under 3 GB."
+msgstr "يجب أن يكون الفيديو أقل من 3 غيغابايت."
+
+msgid "Video storage is not configured yet. Add your Cloudflare R2 credentials to the .env file."
+msgstr "لم يتم إعداد تخزين الفيديو بعد. أضف بيانات Cloudflare R2 إلى ملف ‎.env."
+
+msgid "Video uploaded successfully"
+msgstr "تم رفع الفيديو بنجاح"
+
+msgid "Videos"
+msgstr "الفيديوهات"
+
+msgid "Welcome Back"
+msgstr "مرحبًا بعودتك"
+
+msgid "You have been signed out..."
+msgstr "تم تسجيل خروجك..."
+
+msgid "You must be signed in to vote."
+msgstr "يجب تسجيل الدخول للتصويت."
+
+msgid "%(counter)s view"
+msgid_plural "%(counter)s views"
+msgstr[0] "لا توجد مشاهدات"
+msgstr[1] "مشاهدة واحدة"
+msgstr[2] "مشاهدتان"
+msgstr[3] "%(counter)s مشاهدات"
+msgstr[4] "%(counter)s مشاهدة"
+msgstr[5] "%(counter)s مشاهدة"
+
+msgid "%(counter)s video"
+msgid_plural "%(counter)s videos"
+msgstr[0] "لا توجد فيديوهات"
+msgstr[1] "فيديو واحد"
+msgstr[2] "فيديوهان"
+msgstr[3] "%(counter)s فيديوهات"
+msgstr[4] "%(counter)s فيديو"
+msgstr[5] "%(counter)s فيديو"
+
+msgid "%(counter)s account"
+msgid_plural "%(counter)s accounts"
+msgstr[0] "لا توجد حسابات"
+msgstr[1] "حساب واحد"
+msgstr[2] "حسابان"
+msgstr[3] "%(counter)s حسابات"
+msgstr[4] "%(counter)s حسابًا"
+msgstr[5] "%(counter)s حساب"
+
+msgid "Access"
+msgstr "الوصول"
+
+msgid "Access updated"
+msgstr "تم تحديث الوصول"
+
+msgid "Actions"
+msgstr "إجراءات"
+
+msgid "Active"
+msgstr "نشط"
+
+msgid "Add a comment…"
+msgstr "أضف تعليقًا…"
+
+msgid "Back to videos"
+msgstr "العودة إلى الفيديوهات"
+
+msgid "Block"
+msgstr "حظر"
+
+msgid "Blocked"
+msgstr "محظور"
+
+msgid "Comment"
+msgstr "تعليق"
+
+msgid "Comments"
+msgstr "التعليقات"
+
+msgid "Could not create the playlist."
+msgstr "تعذّر إنشاء قائمة التشغيل."
+
+msgid "Create"
+msgstr "إنشاء"
+
+msgid "Create your first playlist to organise videos."
+msgstr "أنشئ أول قائمة تشغيل لتنظيم الفيديوهات."
+
+msgid "Delete playlist"
+msgstr "حذف قائمة التشغيل"
+
+msgid "Delete this comment?"
+msgstr "هل تريد حذف هذا التعليق؟"
+
+msgid "Delete this playlist?"
+msgstr "هل تريد حذف قائمة التشغيل هذه؟"
+
+msgid "Failed."
+msgstr "فشل."
+
+msgid "Give your playlist a name."
+msgstr "امنح قائمة التشغيل اسمًا."
+
+msgid "Invalid access level."
+msgstr "مستوى وصول غير صالح."
+
+msgid "Manage users"
+msgstr "إدارة المستخدمين"
+
+msgid "Member"
+msgstr "عضو"
+
+msgid "My Playlists"
+msgstr "قوائم التشغيل الخاصة بي"
+
+msgid "New playlist name"
+msgstr "اسم قائمة التشغيل الجديدة"
+
+msgid "No comments yet. Be the first!"
+msgstr "لا توجد تعليقات بعد. كن أول من يكتب تعليقًا!"
+
+msgid "No playlists yet"
+msgstr "لا توجد قوائم تشغيل بعد"
+
+msgid "No playlists yet."
+msgstr "لا توجد قوائم تشغيل بعد."
+
+msgid "Only a superuser can manage another superuser."
+msgstr "المشرف العام فقط يمكنه إدارة مشرف عام آخر."
+
+msgid "Only administrators can view this page."
+msgstr "المشرفون فقط يمكنهم عرض هذه الصفحة."
+
+msgid "Playlist deleted"
+msgstr "تم حذف قائمة التشغيل"
+
+msgid "Playlist not found."
+msgstr "لم يتم العثور على قائمة التشغيل."
+
+msgid "Playlist unavailable"
+msgstr "قائمة التشغيل غير متاحة"
+
+msgid "Playlist updated"
+msgstr "تم تحديث قائمة التشغيل"
+
+msgid "Playlists"
+msgstr "قوائم التشغيل"
+
+msgid "Private"
+msgstr "خاص"
+
+msgid "Profile"
+msgstr "الملف الشخصي"
+
+msgid "Profiles"
+msgstr "الملفات الشخصية"
+
+msgid "Public"
+msgstr "عام"
+
+msgid "Public playlists can be viewed by anyone."
+msgstr "يمكن لأي شخص عرض قوائم التشغيل العامة."
+
+msgid "Read & write"
+msgstr "قراءة وكتابة"
+
+msgid "Read-only"
+msgstr "قراءة فقط"
+
+msgid "Read-only staff can view this page; read & write staff can also upload, moderate and manage users."
+msgstr "يمكن للموظفين ذوي صلاحية القراءة فقط عرض هذه الصفحة؛ ويمكن أيضًا لمن لديهم صلاحية القراءة والكتابة الرفع والإشراف وإدارة المستخدمين."
+
+msgid "Remove"
+msgstr "إزالة"
+
+msgid "Removed from playlist"
+msgstr "تمت الإزالة من قائمة التشغيل"
+
+msgid "Save"
+msgstr "حفظ"
+
+msgid "Save to playlist"
+msgstr "الحفظ في قائمة تشغيل"
+
+msgid "Sign in"
+msgstr "تسجيل الدخول"
+
+msgid "Status"
+msgstr "الحالة"
+
+msgid "Superuser"
+msgstr "مشرف عام"
+
+msgid "This also deletes their videos and comments."
+msgstr "سيؤدي هذا أيضًا إلى حذف فيديوهاته وتعليقاته."
+
+msgid "This playlist does not exist or is private."
+msgstr "قائمة التشغيل هذه غير موجودة أو خاصة."
+
+msgid "This playlist is empty"
+msgstr "قائمة التشغيل هذه فارغة"
+
+msgid "Unblock"
+msgstr "رفع الحظر"
+
+msgid "Use the “Save” button on any video to add it here."
+msgstr "استخدم زر «حفظ» في أي فيديو لإضافته إلى هنا."
+
+msgid "User"
+msgstr "المستخدم"
+
+msgid "User blocked"
+msgstr "تم حظر المستخدم"
+
+msgid "User deleted"
+msgstr "تم حذف المستخدم"
+
+msgid "User unblocked"
+msgstr "تم رفع الحظر عن المستخدم"
+
+msgid "Users"
+msgstr "المستخدمون"
+
+msgid "Write something first."
+msgstr "اكتب شيئًا أولًا."
+
+msgid "You"
+msgstr "أنت"
+
+msgid "You cannot change your own account here."
+msgstr "لا يمكنك تغيير حسابك الخاص من هنا."
+
+msgid "You cannot delete this comment."
+msgstr "لا يمكنك حذف هذا التعليق."
+
+msgid "You must be signed in."
+msgstr "يجب تسجيل الدخول."
+
+msgid "You must be signed in to comment."
+msgstr "يجب تسجيل الدخول للتعليق."
+
+msgid "to add a comment."
+msgstr "لإضافة تعليق."
+
+msgid "Dashboard"
+msgstr "لوحة التحكم"
+
+msgid "Dashboard sections"
+msgstr "أقسام لوحة التحكم"
+
+msgid "Overview"
+msgstr "نظرة عامة"
+
+msgid "Control the videos, the users, the comments and the storage in one place."
+msgstr "تحكّم في الفيديوهات والمستخدمين والتعليقات والتخزين في مكان واحد."
+
+msgid "Stored files"
+msgstr "الملفات المخزنة"
+
+msgid "Storage"
+msgstr "التخزين"
+
+msgid "Full"
+msgstr "ممتلئ"
+
+msgid "Nearly full"
+msgstr "شبه ممتلئ"
+
+msgid "OK"
+msgstr "سليم"
+
+msgid "Measured"
+msgstr "تم القياس"
+
+msgid "Refresh"
+msgstr "تحديث"
+
+msgid "Cloudflare R2 is not configured, so the media usage cannot be measured. Add the R2 credentials to your .env file."
+msgstr "لم يتم إعداد Cloudflare R2، لذا لا يمكن قياس استخدام الوسائط. أضف بيانات R2 إلى ملف ‎.env."
+
+msgid "Media storage (Cloudflare R2)"
+msgstr "تخزين الوسائط (Cloudflare R2)"
+
+msgid "Database (SQLite)"
+msgstr "قاعدة البيانات (SQLite)"
+
+msgid "%(free)s free"
+msgstr "%(free)s متاحة"
+
+msgid "Alerts"
+msgstr "التنبيهات"
+
+msgid "An email is sent to %(email)s once the storage passes the alert threshold."
+msgstr "يُرسل بريد إلكتروني إلى %(email)s بمجرد تجاوز التخزين لعتبة التنبيه."
+
+msgid "The alert triggers at %(threshold)s percent or more, and again when the storage is completely full."
+msgstr "يُطلق التنبيه عند %(threshold)s بالمئة أو أكثر، وعند امتلاء التخزين تمامًا."
+
+msgid "Media quota (GB)"
+msgstr "حصة الوسائط (غيغابايت)"
+
+msgid "Database quota (GB)"
+msgstr "حصة قاعدة البيانات (غيغابايت)"
+
+msgid "Alert threshold (%)"
+msgstr "عتبة التنبيه (بالمئة)"
+
+msgid "Notification email"
+msgstr "بريد التنبيهات"
+
+msgid "Save settings"
+msgstr "حفظ الإعدادات"
+
+msgid "Send test email"
+msgstr "إرسال بريد تجريبي"
+
+msgid "Largest videos"
+msgstr "أكبر الفيديوهات"
+
+msgid "Manage all"
+msgstr "إدارة الكل"
+
+msgid "Uploader"
+msgstr "الرافع"
+
+msgid "No videos yet."
+msgstr "لا توجد فيديوهات بعد."
+
+msgid "Reclaimable space"
+msgstr "مساحة قابلة للاستعادة"
+
+msgid "Files left behind by interrupted uploads:"
+msgstr "ملفات متبقية من عمليات رفع متوقفة:"
+
+msgid "Deleting them frees space without touching any video."
+msgstr "حذفها يحرر مساحة دون المساس بأي فيديو."
+
+msgid "Free this space"
+msgstr "حرّر هذه المساحة"
+
+msgid "Deleting a video removes it from the database and from Cloudflare R2."
+msgstr "حذف الفيديو يزيله من قاعدة البيانات ومن Cloudflare R2."
+
+msgid "Read-only staff can view the dashboard; read & write staff can also delete videos and free space."
+msgstr "يمكن للموظفين ذوي صلاحية القراءة فقط عرض لوحة التحكم؛ ويمكن أيضًا لمن لديهم صلاحية القراءة والكتابة حذف الفيديوهات وتحرير المساحة."
+
+msgid "This cannot be undone."
+msgstr "لا يمكن التراجع عن هذا."
+
+msgid "Saved."
+msgstr "تم الحفظ."
+
+msgid "Sent."
+msgstr "تم الإرسال."
+
+msgid "Delete the files that no video uses?"
+msgstr "هل تريد حذف الملفات التي لا يستخدمها أي فيديو؟"
+
+msgid "Space freed:"
+msgstr "المساحة المحررة:"
+
+msgid "Manage videos"
+msgstr "إدارة الفيديوهات"
+
+msgid "Manage comments"
+msgstr "إدارة التعليقات"
+
+msgid "Search by title or uploader"
+msgstr "ابحث بالعنوان أو الرافع"
+
+msgid "Search"
+msgstr "بحث"
+
+msgid "Clear"
+msgstr "مسح"
+
+msgid "Added"
+msgstr "أُضيف"
+
+msgid "No videos found"
+msgstr "لم يتم العثور على فيديوهات"
+
+msgid "Nothing matches your search."
+msgstr "لا توجد نتائج مطابقة لبحثك."
+
+msgid "Search by author or text"
+msgstr "ابحث بالمؤلف أو بالنص"
+
+msgid "Author"
+msgstr "المؤلف"
+
+msgid "Posted"
+msgstr "نُشر"
+
+msgid "No comments found"
+msgstr "لم يتم العثور على تعليقات"
+
+msgid "Storage settings saved."
+msgstr "تم حفظ إعدادات التخزين."
+
+msgid "Test email sent to %(email)s."
+msgstr "تم إرسال بريد تجريبي إلى %(email)s."
+
+msgid "Could not send the email."
+msgstr "تعذّر إرسال البريد الإلكتروني."
+
+msgid "Storage monitor"
+msgstr "مراقب التخزين"
+
+msgid "Media quota (bytes)"
+msgstr "حصة الوسائط (بايت)"
+
+msgid "How much room the Cloudflare R2 bucket has."
+msgstr "المساحة المتاحة في حاوية Cloudflare R2."
+
+msgid "Database quota (bytes)"
+msgstr "حصة قاعدة البيانات (بايت)"
+
+msgid "Soft limit for the SQLite database file."
+msgstr "حد استرشادي لملف قاعدة بيانات SQLite."
+
+msgid "Send an email once this percentage of the space is used."
+msgstr "أرسل بريدًا إلكترونيًا بمجرد استخدام هذه النسبة من المساحة."
+
+msgid "%(counter)s comment"
+msgid_plural "%(counter)s comments"
+msgstr[0] "لا توجد تعليقات"
+msgstr[1] "تعليق واحد"
+msgstr[2] "تعليقان"
+msgstr[3] "%(counter)s تعليقات"
+msgstr[4] "%(counter)s تعليقًا"
+msgstr[5] "%(counter)s تعليق"
+
+msgid "Offline"
+msgstr "غير متصل"
+
+msgid "Offline listening"
+msgstr "الاستماع دون اتصال"
+
+msgid "Audio you saved plays here even without an internet connection."
+msgstr "الصوت الذي حفظته يُشغَّل هنا حتى بدون اتصال بالإنترنت."
+
+msgid "You have not saved any audio yet."
+msgstr "لم تحفظ أي صوت بعد."
+
+msgid "Tip: open a video and press “Save offline” to keep its MP3 on this device."
+msgstr "نصيحة: افتح فيديو واضغط «الحفظ دون اتصال» للاحتفاظ بملف MP3 على هذا الجهاز."
+
+msgid "Save offline"
+msgstr "الحفظ دون اتصال"
+
+msgid "Saved offline"
+msgstr "محفوظ دون اتصال"
+
+msgid "Remove download"
+msgstr "حذف التنزيل"
+
+msgid "Could not update the offline copy. Check your connection."
+msgstr "تعذّر تحديث النسخة المحفوظة. تحقق من اتصالك."
+
+msgid "Watch and listen to videos, online or offline."
+msgstr "شاهد واستمع إلى الفيديوهات، متصلًا أو دون اتصال."
+
+msgid "Preparing the audio (MP3) for this video…"
+msgstr "جارٍ تجهيز الصوت (MP3) لهذا الفيديو…"
+
+msgid "The audio could not be generated."
+msgstr "تعذّر إنشاء الصوت."
+
+msgid "Try again"
+msgstr "حاول مرة أخرى"
+
+msgid "This video has no audio track."
+msgstr "لا يحتوي هذا الفيديو على مسار صوتي."
+
+msgid "Not generated"
+msgstr "لم يتم الإنشاء"
+
+msgid "Generating"
+msgstr "جارٍ الإنشاء"
+
+msgid "Ready"
+msgstr "جاهز"
+
+msgid "No audio track"
+msgstr "لا يوجد مسار صوتي"
+
+msgid "Failed"
+msgstr "فشل"
+
+msgid "MP3"
+msgstr "MP3"
+
+msgid "Every video has an MP3"
+msgstr "كل فيديو لديه ملف MP3"
+
+msgid "%(counter)s video needs an MP3"
+msgid_plural "%(counter)s videos need an MP3"
+msgstr[0] "لا توجد فيديوهات تحتاج إلى MP3"
+msgstr[1] "فيديو واحد يحتاج إلى MP3"
+msgstr[2] "فيديوهان يحتاجان إلى MP3"
+msgstr[3] "%(counter)s فيديوهات تحتاج إلى MP3"
+msgstr[4] "%(counter)s فيديو يحتاج إلى MP3"
+msgstr[5] "%(counter)s فيديو يحتاج إلى MP3"
+
+msgid "%(counter)s video has no audio track"
+msgid_plural "%(counter)s videos have no audio track"
+msgstr[0] "لا توجد فيديوهات بلا مسار صوتي"
+msgstr[1] "فيديو واحد بلا مسار صوتي"
+msgstr[2] "فيديوهان بلا مسار صوتي"
+msgstr[3] "%(counter)s فيديوهات بلا مسار صوتي"
+msgstr[4] "%(counter)s فيديو بلا مسار صوتي"
+msgstr[5] "%(counter)s فيديو بلا مسار صوتي"
+
+msgid "Generate missing MP3s"
+msgstr "إنشاء ملفات MP3 المفقودة"
+
+msgid "Generating MP3s…"
+msgstr "جارٍ إنشاء ملفات MP3…"
+
+msgid "Starting…"
+msgstr "جارٍ البدء…"
+
+msgid "Generating missing MP3s in the background."
+msgstr "جارٍ إنشاء ملفات MP3 المفقودة في الخلفية."
+
+msgid "An MP3 generation run is already in progress."
+msgstr "هناك عملية إنشاء MP3 قيد التنفيذ بالفعل."
+
+msgid "Automatic subtitles"
+msgstr "الترجمات التلقائية"
+
+msgid "Not configured"
+msgstr "غير مُعد"
+
+msgid "Transcribe the audio and translate it automatically, without uploading a file."
+msgstr "انسخ الصوت وترجمه تلقائيًا دون رفع أي ملف."
+
+msgid "Generate subtitles"
+msgstr "إنشاء الترجمات"
+
+msgid "Generate captions"
+msgstr "إنشاء الترجمات"
+
+msgid "No captions for this video yet."
+msgstr "لا توجد ترجمات لهذا الفيديو بعد."
+
+msgid "Regenerate subtitles"
+msgstr "إعادة إنشاء الترجمات"
+
+msgid "Transcribing and translating…"
+msgstr "جارٍ النسخ والترجمة…"
+
+msgid "Generating subtitles in the background."
+msgstr "جارٍ إنشاء الترجمات في الخلفية."
+
+msgid "A subtitle run is already in progress for this video."
+msgstr "هناك عملية إنشاء ترجمات قيد التنفيذ لهذا الفيديو بالفعل."
+
+msgid "Automatic subtitles are not configured. Set %(key)s in the .env file to enable them."
+msgstr "الترجمات التلقائية غير مُعدّة. عيّن %(key)s في ملف ‎.env لتفعيلها."
+
+msgid "This video has no audio track yet. Generate its MP3 first, then create the subtitles."
+msgstr "لا يحتوي هذا الفيديو بعد على مسار صوتي. أنشئ ملف MP3 أولًا، ثم أنشئ الترجمات."
+
+msgid "Audio File (MP3)"
+msgstr "ملف صوتي (MP3)"
+
+msgid "Back 10 seconds"
+msgstr "رجوع 10 ثوانٍ"
+
+msgid "Back to sign in"
+msgstr "العودة إلى تسجيل الدخول"
+
+msgid "Cancel"
+msgstr "إلغاء"
+
+msgid "Check Your Email"
+msgstr "تحقق من بريدك الإلكتروني"
+
+msgid "Check your email"
+msgstr "تحقق من بريدك الإلكتروني"
+
+msgid "Choose a New Password"
+msgstr "اختر كلمة مرور جديدة"
+
+msgid "Choose a new password"
+msgstr "اختر كلمة مرور جديدة"
+
+msgid "Click to select an MP3 file"
+msgstr "اضغط لاختيار ملف MP3"
+
+msgid "Confirm new password"
+msgstr "تأكيد كلمة المرور الجديدة"
+
+msgid "Copy this link:"
+msgstr "انسخ هذا الرابط:"
+
+msgid "Current thumbnail"
+msgstr "الصورة المصغّرة الحالية"
+
+msgid "Edit"
+msgstr "تعديل"
+
+msgid "Edit Video"
+msgstr "تعديل الفيديو"
+
+msgid "Enter your email address"
+msgstr "أدخل بريدك الإلكتروني"
+
+msgid "Enter your email address and we will send you a link to choose a new one."
+msgstr "أدخل بريدك الإلكتروني وسنرسل لك رابطًا لاختيار كلمة مرور جديدة."
+
+msgid "Fazakkir"
+msgstr "فَذَكِّرْ"
+
+msgid "Forgot your password?"
+msgstr "هل نسيت كلمة المرور؟"
+
+msgid "Forward 10 seconds"
+msgstr "تقديم 10 ثوانٍ"
+
+msgid "Fullscreen"
+msgstr "ملء الشاشة"
+
+msgid "If you did not ask for this, you can ignore this message and nothing will change."
+msgstr "إذا لم تطلب ذلك، فيمكنك تجاهل هذه الرسالة ولن يتغيّر شيء."
+
+msgid "Link copied"
+msgstr "تم نسخ الرابط"
+
+msgid "MP3 link"
+msgstr "رابط MP3"
+
+msgid "MP3 link copied"
+msgstr "تم نسخ رابط MP3"
+
+msgid "MP3 only. This becomes the track friends can stream and download."
+msgstr "MP3 فقط. هذا هو المقطع الذي يمكن لأصدقائك تشغيله وتحميله."
+
+msgid "Mute"
+msgstr "كتم الصوت"
+
+msgid "New password"
+msgstr "كلمة المرور الجديدة"
+
+msgid "No results"
+msgstr "لا توجد نتائج"
+
+msgid "Nothing matched. Try a different word, or a year such as 2000."
+msgstr "لا توجد نتائج. جرّب كلمة أخرى أو سنة مثل 2000."
+
+msgid "Not the one you wanted? The rest may be on YouTube."
+msgstr "لم تجد ما تريد؟ البقية قد تكون على يوتيوب."
+
+msgid "Still looking? This video may be on YouTube."
+msgstr "ما زلت تبحث؟ قد يكون هذا المقطع على يوتيوب."
+
+msgid "Search YouTube for %(query)s"
+msgstr "ابحث عن %(query)s على يوتيوب"
+
+msgid "Opens YouTube in a new tab."
+msgstr "يفتح يوتيوب في تبويب جديد."
+
+msgid "Open the link below to choose a new one:"
+msgstr "افتح الرابط أدناه لاختيار كلمة مرور جديدة:"
+
+msgid "Password Changed"
+msgstr "تم تغيير كلمة المرور"
+
+msgid "Pause"
+msgstr "إيقاف مؤقت"
+
+msgid "Picture in picture"
+msgstr "صورة داخل صورة"
+
+msgid "Play"
+msgstr "تشغيل"
+
+msgid "Playback speed"
+msgstr "سرعة التشغيل"
+
+msgid "Request a new link"
+msgstr "اطلب رابطًا جديدًا"
+
+msgid "Reset Password"
+msgstr "إعادة تعيين كلمة المرور"
+
+msgid "Save New Password"
+msgstr "حفظ كلمة المرور الجديدة"
+
+msgid "Save changes"
+msgstr "حفظ التغييرات"
+
+msgid "Search by title, name or year"
+msgstr "ابحث بالعنوان أو الاسم أو السنة"
+
+msgid "Search videos"
+msgstr "ابحث في الفيديوهات"
+
+msgid "Seek"
+msgstr "الانتقال"
+
+msgid "Send Reset Link"
+msgstr "إرسال رابط إعادة التعيين"
+
+msgid "Share"
+msgstr "مشاركة"
+
+msgid "Share this video"
+msgstr "شارك هذا الفيديو"
+
+msgid "Show or hide the player controls"
+msgstr "إظهار أو إخفاء أدوات المشغّل"
+
+msgid "Size"
+msgstr "الحجم"
+
+msgid "The address does not match any account. Check it and try again, or ask an administrator to add an email address to your profile."
+msgstr "هذا البريد لا يطابق أي حساب. تحقّق منه وحاول مرة أخرى، أو اطلب من المسؤول إضافة بريد إلكتروني إلى ملفك الشخصي."
+
+msgid "This reset link is invalid, most likely because it has already been used or has expired. Please request a new one."
+msgstr "رابط إعادة التعيين غير صالح، على الأرجح لأنه استُخدم من قبل أو انتهت صلاحيته. يُرجى طلب رابط جديد."
+
+msgid "Type a few words from a title, the uploader's name, or a year such as 2000."
+msgstr "اكتب بعض كلمات من العنوان أو اسم الناشر أو سنة مثل 2000."
+
+msgid "Video link"
+msgstr "رابط الفيديو"
+
+msgid "Views"
+msgstr "المشاهدات"
+
+msgid "Volume"
+msgstr "مستوى الصوت"
+
+msgid "You can now sign in with your new password."
+msgstr "يمكنك الآن تسجيل الدخول بكلمة المرور الجديدة."
+
+msgid "Your password has been changed"
+msgstr "تم تغيير كلمة المرور الخاصة بك"
+
+msgid "for"
+msgstr "عن"
+
+msgid "%(counter)s result"
+msgid_plural "%(counter)s result"
+msgstr[0] "%(counter)s نتيجة"
+msgstr[1] "%(counter)s نتائج"
+
+msgid "Delete permanently"
+msgstr "حذف نهائي"
+
+msgid "Delete this video?"
+msgstr "هل تريد حذف هذا الفيديو؟"
+
+msgid "Delete unused files"
+msgstr "حذف الملفات غير المستخدمة"
+
+msgid "Every object in Cloudflare R2 that no video references is deleted permanently. Videos, their MP3s and their thumbnails are kept, and offline copies on visitors' devices are not affected."
+msgstr "يُحذف كل عنصر في Cloudflare R2 لا يشير إليه أي فيديو نهائيًا. تُحفظ الفيديوهات وملفات MP3 الخاصة بها وصورها المصغّرة، ولا تتأثر النسخ المحفوظة دون اتصال على أجهزة الزوار."
+
+msgid "The comment will be removed and cannot be recovered."
+msgstr "سيُحذف التعليق ولا يمكن استرجاعه."
+
+msgid "The playlist is removed. The videos in it are not deleted."
+msgstr "تُحذف قائمة التشغيل. الفيديوهات التي بداخلها لا تُحذف."
+
+msgid "The subtitles and lyrics for this language will be deleted."
+msgstr "سيتم حذف الترجمة والكلمات لهذه اللغة."
+
+msgid "This permanently removes the recording, its MP3 and its thumbnail from Cloudflare storage. This cannot be undone."
+msgstr "يؤدي هذا إلى حذف التسجيل وملف MP3 والصورة المصغّرة نهائيًا من تخزين Cloudflare. لا يمكن التراجع عن ذلك."
+
+msgid "This permanently removes the recording, its MP3 and its thumbnail from Cloudflare storage. Visitors who saved it offline keep their local copy until they remove it."
+msgstr "يؤدي هذا إلى حذف التسجيل وملف MP3 والصورة المصغّرة نهائيًا من تخزين Cloudflare. يحتفظ الزوار الذين حفظوه دون اتصال بنسختهم المحلية حتى يقرّرون حذفها."
+
+msgid "Remove this download?"
+msgstr "هل تريد إزالة هذا التنزيل؟"
+
+msgid "The saved audio will be deleted from this device. You can download it again later."
+msgstr "سيُحذف الصوت المحفوظ من هذا الجهاز. يمكنك تنزيله مرة أخرى لاحقًا."
+
+msgid "Are you sure?"
+msgstr "هل أنت متأكد؟"
+
+msgid "Reset your Fazakkir password"
+msgstr "أعد تعيين كلمة مرور حسابك في فَذَكِّرْ"
+
+msgid "Someone asked to reset the password for your Fazakkir account."
+msgstr "طلب أحدهم إعادة تعيين كلمة المرور لحسابك في فَذَكِّرْ."
+
+msgid "If an account exists for %(email)s, a message with a reset link is on its way. The link expires shortly, so use it soon."
+msgstr "إذا كان هناك حساب مرتبط بـ %(email)s، فقد أُرسلت رسالة تحتوي على رابط إعادة التعيين. تنتهي صلاحية الرابط قريبًا، لذا استخدمه بسرعة."
+
+msgid "Search results for %(query)s"
+msgstr "نتائج البحث عن %(query)s"
+
+msgid "Up next"
+msgstr "التالي"
+
+msgid "Exit fullscreen"
+msgstr "إنهاء ملء الشاشة"
+
+msgid "Upload Audio"
+msgstr "رفع ملف صوتي"
+
+msgid "Uploading Audio..."
+msgstr "جاري رفع الملف الصوتي..."
+
+msgid "Audio"
+msgstr "صوت"
+
+msgid "Drag a row, or use the arrows, then save."
+msgstr "اسحب صفًا، أو استخدم الأسهم، ثم احفظ."
+
+msgid "Drag the rows to choose what visitors see first on the home page."
+msgstr "اسحب الصفوف لاختيار ما يراه الزوار أولًا في الصفحة الرئيسية."
+
+msgid "Home order"
+msgstr "ترتيب الرئيسية"
+
+msgid "Home page order"
+msgstr "ترتيب الصفحة الرئيسية"
+
+msgid "Move down"
+msgstr "تحريك للأسفل"
+
+msgid "Move up"
+msgstr "تحريك للأعلى"
+
+msgid "Nothing to arrange yet"
+msgstr "لا يوجد شيء لترتيبه بعد"
+
+msgid "Order saved."
+msgstr "تم حفظ الترتيب."
+
+msgid "Playlist cover"
+msgstr "غلاف قائمة التشغيل"
+
+msgid "Remove this video?"
+msgstr "هل تريد إزالة هذا الفيديو؟"
+
+msgid "Remove “%(title)s” from this playlist?"
+msgstr "هل تريد إزالة «%(title)s» من قائمة التشغيل هذه؟"
+
+msgid "Save order"
+msgstr "حفظ الترتيب"
+
+msgid "Upload a video or an audio file and it will appear here."
+msgstr "ارفع فيديو أو ملفًا صوتيًا وسيظهر هنا."
+
+msgid "this video"
+msgstr "هذا الفيديو"
+
+msgid "Cover photo"
+msgstr "صورة الغلاف"
+
+msgid "Captions are made with the speech-to-text service."
+msgstr "يتم إنتاج الترجمات من خدمة تحويل الكلام إلى نص."
+
+msgid "Generate subtitles for all"
+msgstr "إنشاء ترجمات لكل الفيديوهات"
+
+msgid "Generating subtitles…"
+msgstr "جارٍ إنشاء الترجمات…"
+
+msgid "A subtitle run is already in progress."
+msgstr "هناك بالفعل عملية إنشاء ترجمات قيد التقدم."
+
+msgid "An audio upload has no picture of its own, so choose one to show on the card"
+msgstr "لا للصوت صورة خاصة به، اختر صورة تظهر على البطاقة"
+
+msgid "That picture could not be prepared. Please choose a smaller image."
+msgstr "تعذر تجهيز هذه الصورة. اختر صورة أصغر."
+
+msgid "This file is too large for the server. Please choose a smaller file."
+msgstr "هذا الملف أكبر من أن يستقبله الخادم. اختر ملفا أصغر."
+
+msgid "The upload was refused by the server. Please try again."
+msgstr "رفض الخادم عملية الرفع. حاول مرة أخرى."
+
+msgid "That thumbnail is not a picture. Please choose an image."
+msgstr "هذه الصورة المصغرة ليست صورة. اختر صورة."
+
+msgid "That picture is too large. Please choose a smaller one."
+msgstr "هذه الصورة كبيرة جدا. اختر صورة أصغر."
+
+msgid "That picture could not be read. Please choose another one."
+msgstr "تعذر قراءة هذه الصورة. اختر صورة أخرى."
+
+msgid "That file is not a picture the site can show. Please choose a JPEG or PNG image."
+msgstr "هذا الملف ليس صورة يمكن عرضها. اختر صورة JPEG أو PNG."
+
+msgid "The file was saved, but its picture could not be stored."
+msgstr "تم حفظ الملف، لكن تعذر تخزين صورته."
+
+msgid "MP3, WAV, M4A, OGG or AAC. Anything else is converted to MP3."
+msgstr "MP3 أو WAV أو M4A أو OGG أو AAC. ما عدا ذلك يحول إلى MP3."
+
+msgid "That file has no sound in it. Please choose an audio file."
+msgstr "لا يحتوي هذا الملف على صوت. اختر ملفا صوتيا."
+
+msgid "That file could not be read as audio. Please choose an MP3, WAV or M4A file."
+msgstr "تعذر قراءة هذا الملف كصوت. اختر ملف MP3 أو WAV أو M4A."
+
+msgid "That file could not be converted to MP3. Please choose another file."
+msgstr "تعذر تحويل هذا الملف إلى MP3. اختر ملفا آخر."
+
+msgid "Captions"
+msgstr "الترجمة"
+
+msgid "Working"
+msgstr "جارٍ"
+
+msgid "lyrics"
+msgstr "الكلمات"
+
+msgid "Active users"
+msgstr ""
+
+msgid "Audio plays"
+msgstr ""
+
+msgid "Daily usage"
+msgstr ""
+
+msgid "Date"
+msgstr ""
+
+msgid "Guests"
+msgstr ""
+
+msgid "How many users (guests and registered) use the app each day, and which recordings they play."
+msgstr ""
+
+msgid "Last 14 days"
+msgstr ""
+
+msgid "No audio plays recorded for this day."
+msgstr ""
+
+msgid "No views recorded for this day."
+msgstr ""
+
+msgid "Plays"
+msgstr ""
+
+msgid "Registered"
+msgstr ""
+
+msgid "Show"
+msgstr ""
+
+msgid "Today"
+msgstr ""
+
+msgid "Top played audio"
+msgstr ""
+
+msgid "Top viewed videos"
+msgstr ""
+
+msgid "Usage"
+msgstr ""
+
+msgid "Video views"
+msgstr ""
+
+msgid "No shorts yet."
+msgstr ""
+
+msgid "Short vertical videos."
+msgstr ""
+
+msgid "Shorts"
+msgstr ""
+
+msgid "Storage is not configured."
+msgstr ""
+
+msgid "Upload short"
+msgstr ""

@@ -1,0 +1,181 @@
+/* --- Search page --------------------------------------------------------- */
+
+.search-page {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.search-page-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 24px;
+}
+
+.search-page-input {
+    flex: 1;
+    padding: 12px 14px;
+    font-size: 1rem;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+}
+
+.search-page-input:focus {
+    outline: 2px solid var(--accent-red);
+    outline-offset: -1px;
+}
+
+.search-page-button {
+    padding: 12px 22px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    background: var(--accent-red);
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.search-page-button:hover {
+    filter: brightness(1.1);
+}
+
+.search-summary {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin: 0 0 18px;
+}
+
+.search-hint {
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+/* --- "Not here? Try YouTube" fallback ------------------------------------ */
+
+.youtube-fallback {
+    margin-top: 24px;
+    padding: 20px;
+    text-align: center;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+}
+
+.youtube-fallback-text {
+    margin: 0 0 14px;
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+.youtube-fallback-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 22px;
+    background: var(--accent-red);
+    color: #fff;
+    font-weight: 600;
+    font-size: 1rem;
+    text-decoration: none;
+    border-radius: var(--radius-full);
+    transition: filter var(--transition-fast), transform var(--transition-fast);
+}
+
+.youtube-fallback-link:hover {
+    filter: brightness(1.1);
+}
+
+.youtube-fallback-link:active {
+    transform: translateY(1px);
+}
+
+.youtube-fallback-link:focus-visible {
+    outline: 2px solid var(--text-primary);
+    outline-offset: 2px;
+}
+
+.youtube-fallback-icon {
+    font-size: 0.85rem;
+}
+
+.youtube-fallback-note {
+    margin: 12px 0 0;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+/* --- Search box in the navbar ------------------------------------------- */
+
+/* YouTube's search: a rounded pill with a hairline border and a button fused to
+   its right edge. The pill grows to fill the space between the brand and the
+   account actions, which is what pushes the actions to the right edge. */
+.nav-search {
+    display: flex;
+    align-items: stretch;
+    flex: 1 1 240px;
+    max-width: 620px;
+    min-width: 0;
+    height: 40px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    background: transparent;
+}
+
+.nav-search:focus-within {
+    border-color: var(--info-blue);
+}
+
+.nav-search-input {
+    flex: 1;
+    min-width: 0;
+    padding: 0 16px;
+    font-size: 0.95rem;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: none;
+    border-radius: 0;
+    font-family: inherit;
+}
+
+.nav-search-input::placeholder {
+    color: var(--text-secondary);
+}
+
+.nav-search-input:focus {
+    outline: none;
+}
+
+.nav-search-btn {
+    flex: none;
+    width: 60px;
+    border: none;
+    border-left: 1px solid var(--border-color);
+    background: var(--yt-chip);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background var(--transition-fast);
+}
+
+.nav-search-btn:hover {
+    background: var(--yt-chip-hover);
+}
+
+/* On a phone the search becomes the first row of the dropdown panel. */
+@media (max-width: 768px) {
+    .nav-search {
+        order: 10;
+        flex-basis: auto;
+        width: 100%;
+        max-width: none;
+        margin-bottom: 10px;
+    }
+}

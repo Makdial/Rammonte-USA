@@ -1,0 +1,25 @@
+﻿{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Offline" %} - Rammonte USA{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/offline.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="offline-page">
+    <h1>{% trans "Offline listening" %}</h1>
+    <p class="offline-intro">
+        {% trans "Audio you saved plays here even without an internet connection." %}
+    </p>
+
+    <div id="offlineList" class="offline-list"
+         data-empty="{% trans 'You have not saved any audio yet.' %}"
+         data-remove="{% trans 'Remove download' %}"></div>
+
+    <p class="offline-hint">
+        {% trans "Tip: open a video and press â€œSave offlineâ€ to keep its MP3 on this device." %}
+    </p>
+</div>
+{% endblock %}

@@ -1,0 +1,185 @@
+﻿{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block title %}{{ playlist.title }} - Rammonte USA{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/videos.css' %}">
+<link rel="stylesheet" href="{% static 'css/social.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="playlist-header">
+    <label for="playlistCoverInput" class="playlist-header-cover{% if playlist.display_cover_url %} has-cover{% endif %}{% if not is_owner %} no-edit{% endif %}">
+        {% if playlist.display_cover_url %}
+        <img src="{{ playlist.display_cover_url }}" alt="{% trans 'Playlist cover' %}">
+        {% else %}
+        â–¶
+        {% endif %}
+    </label>
+    {% if is_owner %}
+    <input type="file" id="playlistCoverInput" accept="image/*" style="display:none;">
+    {% endif %}
+    <div class="playlist-header-info">
+        <h1>{{ playlist.title }}</h1>
+        <p class="video-meta">
+            {{ playlist.user.first_name|default:playlist.user.username }} Â·
+            {% blocktrans count counter=items|length %}{{ counter }} video{% plural %}{{ counter }} videos{% endblocktrans %}
+            Â· {% if playlist.is_public %}{% trans "Public" %}{% else %}{% trans "Private" %}{% endif %}
+        </p>
+        {% if playlist.description %}<p class="video-description">{{ playlist.description }}</p>{% endif %}
+    </div>
+</div>
+
+{% if is_owner %}
+<div class="owner-panel">
+    <form id="editPlaylistForm" class="playlist-edit-form">
+        {% csrf_token %}
+        <input type="text" id="editPlaylistTitle" class="form-input" value="{{ playlist.title }}" maxlength="120">
+        <input type="text" id="editPlaylistDescription" class="form-input"
+               value="{{ playlist.description }}" placeholder="{% trans 'Description' %}">
+        <label class="checkbox-inline">
+            <input type="checkbox" id="editPlaylistPublic" {% if playlist.is_public %}checked{% endif %}>
+            {% trans "Public" %}
+        </label>
+        <div class="owner-panel-actions">
+            <button type="submit" class="btn btn-primary">{% trans "Save" %}</button>
+            <button type="button" class="delete-btn" onclick="deletePlaylist()">{% trans "Delete playlist" %}</button>
+        </div>
+    </form>
+</div>
+{% endif %}
+
+{% if items %}
+<div class="playlist-items">
+    {% for item in items %}
+    <div class="playlist-item" data-video="{{ item.video.id }}">
+        <a class="playlist-item-link" href="{% url 'videos:detail' item.video.id %}">
+            <div class="playlist-item-thumb">
+                {% if item.video.display_thumbnail_url %}
+                    <img src="{{ item.video.display_thumbnail_url }}" alt="{{ item.video.title }}" loading="lazy">
+                {% else %}
+                    <span class="thumbnail-placeholder">â–¶</span>
+                {% endif %}
+                {% if item.video.duration_seconds %}
+                <span class="video-duration">{{ item.video.duration_formatted }}</span>
+                {% endif %}
+            </div>
+            <div class="playlist-item-info">
+                <h3>{{ item.video.title }}</h3>
+                <p class="video-meta">{{ item.video.user.username }} Â·
+                    {% blocktrans count counter=item.video.views %}{{ counter }} view{% plural %}{{ counter }} views{% endblocktrans %}
+                </p>
+            </div>
+        </a>
+        {% if is_owner %}
+        <button type="button" class="icon-btn" title="{% trans 'Remove' %}"
+                onclick="removeFromPlaylist({{ item.video.id }}, '{{ item.video.title|escapejs }}')">âœ•</button>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <span class="empty-icon">ðŸ“‚</span>
+    <h2>{% trans "This playlist is empty" %}</h2>
+    <p>{% trans "Use the â€œSaveâ€ button on any video to add it here." %}</p>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const csrf = '{{ csrf_token }}';
+const playlistId = {{ playlist.id }};
+{% if is_owner %}
+const updateUrl = "{% url 'videos:playlist_update' playlist.id %}";
+const deleteUrl = "{% url 'videos:playlist_delete' playlist.id %}";
+{% endif %}
+
+{% if is_owner %}
+document.getElementById("editPlaylistForm").addEventListener("submit", function (event) {
+    event.preventDefault();
+    const body = new URLSearchParams({
+        title: document.getElementById("editPlaylistTitle").value.trim(),
+        description: document.getElementById("editPlaylistDescription").value.trim(),
+        is_public: document.getElementById("editPlaylistPublic").checked ? "1" : "0",
+    });
+    fetch(updateUrl, {
+        method: "POST",
+        headers: { "X-CSRFToken": csrf, "Content-Type": "application/x-www-form-urlencoded" },
+        body: body.toString(),
+    })
+        .then(r => r.json())
+        .then(data => { if (data.success) location.reload(); else alert(data.error || "{% trans 'Failed.' %}"); })
+        .catch(() => alert("{% trans 'Failed.' %}"));
+});
+
+function deletePlaylist() {
+    fazakkirConfirm({
+        title: "{% trans 'Delete this playlist?' %}",
+        message: "{% trans 'The playlist is removed. The videos in it are not deleted.' %}",
+        confirmLabel: "{% trans 'Delete playlist' %}",
+    }).then(function (ok) {
+        if (!ok) return;
+        fetch(deleteUrl, { method: "POST", headers: { "X-CSRFToken": csrf } })
+            .then(r => r.json())
+            .then(data => { if (data.success) window.location.href = "{% url 'videos:playlists' %}"; })
+            .catch(() => alert("{% trans 'Failed.' %}"));
+    });
+}
+
+function removeFromPlaylist(videoId, title) {
+    fazakkirConfirm({
+        title: "{% trans 'Remove this video?' %}",
+        message: "{% blocktrans %}Remove â€œ{{ title }}â€ from this playlist?{% endblocktrans %}".replace("{{ title }}", title || "{% trans 'this video' %}"),
+        confirmLabel: "{% trans 'Remove' %}",
+    }).then(function (ok) {
+        if (!ok) return;
+        fetch(`/playlists/${playlistId}/remove/${videoId}/`, {
+            method: "POST", headers: { "X-CSRFToken": csrf },
+        })
+            .then(r => r.json())
+            .then(data => { if (data.success) location.reload(); })
+            .catch(() => alert("{% trans 'Failed.' %}"));
+    });
+}
+
+const coverInput = document.getElementById("playlistCoverInput");
+if (coverInput) {
+    coverInput.addEventListener("change", function (event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        // Shrink the picture first so a full-size phone photo still fits in
+        // the request size limit.
+        const reader = new FileReader();
+        reader.onload = function (ev) {
+            const img = new Image();
+            img.onload = function () {
+                const maxSize = 640;
+                const scale = Math.min(1, maxSize / Math.max(img.width, img.height));
+                const canvas = document.createElement("canvas");
+                canvas.width = Math.max(1, Math.round(img.width * scale));
+                canvas.height = Math.max(1, Math.round(img.height * scale));
+                canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+                const body = new URLSearchParams({
+                    cover_data: canvas.toDataURL("image/jpeg", 0.85),
+                });
+                fetch(updateUrl, {
+                    method: "POST",
+                    headers: { "X-CSRFToken": csrf, "Content-Type": "application/x-www-form-urlencoded" },
+                    body: body.toString(),
+                })
+                    .then(r => r.json())
+                    .then(data => { if (data.success) location.reload(); else alert(data.error || "{% trans 'Failed.' %}"); })
+                    .catch(() => alert("{% trans 'Failed.' %}"));
+            };
+            img.onerror = function () { alert("{% trans 'Failed.' %}"); };
+            img.src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+}
+{% endif %}
+</script>
+{% endblock %}

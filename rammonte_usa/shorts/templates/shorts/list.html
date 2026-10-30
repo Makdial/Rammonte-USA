@@ -1,0 +1,27 @@
+﻿{% extends 'base.html' %}
+{% load static i18n %}
+{% block title %}{% trans "Shorts" %} - Rammonte USA{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/videos.css' %}">
+{% endblock %}
+{% block content %}
+<div class="section-header">
+    <h1>{% trans "Shorts" %}</h1>
+    <p class="section-subtitle">{% trans "Short vertical videos." %}</p>
+</div>
+{% if can_write %}
+<p><a href="{% url 'shorts:upload' %}" class="btn btn-primary">{% trans "Upload short" %}</a></p>
+{% endif %}
+<div class="shorts-grid">
+    {% for short in shorts %}
+    <a class="short-card" href="{% url 'shorts:detail' short.id %}">
+        {% if short.display_thumbnail_url %}
+        <img src="{{ short.display_thumbnail_url }}" alt="{{ short.title }}" loading="lazy">
+        {% endif %}
+        <span class="short-title">{{ short.title }}</span>
+    </a>
+    {% empty %}
+    <p>{% trans "No shorts yet." %}</p>
+    {% endfor %}
+</div>
+{% endblock %}

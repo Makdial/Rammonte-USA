@@ -1,0 +1,1784 @@
+﻿{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block title %}{{ video.title }} - Rammonte USA{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/videos.css' %}">
+<link rel="stylesheet" href="{% static 'css/videoplayer.css' %}">
+<link rel="stylesheet" href="{% static 'css/social.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="watch-layout">
+    <div class="watch-main">
+
+        <div class="video-player-container">
+            <div class="video-player{% if is_audio_only %} audio-mode{% endif %}" id="playerStage">
+                {% comment %}
+                    No poster and no native controls. The browser drew its own centred
+                    play button straight over the poster image, hiding the very frame it
+                    was meant to announce; dropping the poster removes that clash, and
+                    the control bar below puts every control where we want it. The Media
+                    Session wiring (see further down) is independent of the `controls`
+                    attribute, so background playback still works.
+
+                    An audio-only upload has no picture at all, so it starts in the same
+                    cover-art layout that "Listen (MP3)" switches into.
+                {% endcomment %}
+                <video id="video-player" playsinline preload="metadata"
+                       src="{{ video.playback_url }}"
+                       {% if is_audio_only %}style="display: none;"{% endif %}>
+                    {% for track in subtitle_tracks %}
+                    <track id="track-{{ track.language_code }}"
+                           kind="subtitles"
+                           srclang="{% if track.is_lyrics %}und{% else %}{{ track.language_code }}{% endif %}"
+                           label="{{ track.display_label }}"
+                           src="{% url 'videos:subtitle_file' video.id track.language_code %}">
+                    {% endfor %}
+                </video>
+                <audio id="audio-player" preload="metadata" class="audio-player"
+                       {% if not is_audio_only %}style="display: none;"{% endif %}
+                       src="{% if is_audio_only %}{% url 'videos:audio_stream' video.id %}{% endif %}">
+                    {% for track in subtitle_tracks %}
+                    <track id="atrack-{{ track.language_code }}"
+                           kind="subtitles"
+                           srclang="{% if track.is_lyrics %}und{% else %}{{ track.language_code }}{% endif %}"
+                           label="{{ track.display_label }}"
+                           src="{% url 'videos:subtitle_file' video.id track.language_code %}">
+                    {% endfor %}
+                </audio>
+                {% if video.display_thumbnail_url %}
+                <img id="audioCover" class="audio-cover"
+                     src="{{ video.display_thumbnail_url }}" alt="{{ video.title }}"
+                     loading="lazy">
+                {% endif %}
+                {% comment %}
+                    Captions are drawn here rather than by the browser, so they
+                    can look the same on every platform and stay put in
+                    fullscreen. The browser's own rendering is hidden by hiding
+                    the text tracks from it (see applySubtitle).
+                {% endcomment %}
+                <div class="caption-layer" id="captionLayer" aria-live="polite" aria-atomic="true">
+                    <span class="caption-text" id="captionText"></span>
+                </div>
+                <div id="video-error" class="video-error" style="display: none;">
+                    <span class="error-icon">âš </span>
+                    <p>{% trans "Video Unavailable" %}</p>
+                    <small>{% trans "The video file could not be loaded." %}</small>
+                </div>
+                <button type="button" class="player-tapzone" id="tapZone"
+                        aria-label="{% trans 'Show or hide the player controls' %}"></button>
+                <button type="button" class="player-bigplay" id="bigPlay"
+                        aria-label="{% trans 'Play' %}">â–¶</button>
+            </div>
+
+            <div class="player-bar" id="playerBar">
+                <input type="range" class="player-seek" id="seekBar" value="0" min="0" max="100" step="0.1"
+                       aria-label="{% trans 'Seek' %}">
+                <div class="player-bar-row">
+                    <button type="button" class="player-btn" id="playPauseBtn"
+                            aria-label="{% trans 'Play' %}">â–¶</button>
+                    <button type="button" class="player-btn" id="backBtn"
+                            aria-label="{% trans 'Back 10 seconds' %}">â†º<span>10</span></button>
+                    <button type="button" class="player-btn" id="fwdBtn"
+                            aria-label="{% trans 'Forward 10 seconds' %}"><span>10</span>â†»</button>
+                    <span class="player-time"><span id="currentTime">0:00</span> / <span id="duration">0:00</span></span>
+                    <button type="button" class="player-btn" id="muteBtn"
+                            aria-label="{% trans 'Mute' %}">ðŸ”Š</button>
+                    <input type="range" class="player-volume" id="volumeBar" value="1" min="0" max="1" step="0.05"
+                           aria-label="{% trans 'Volume' %}">
+                    <select class="player-rate" id="rateSelect" aria-label="{% trans 'Playback speed' %}">
+                        <option value="0.5">0.5Ã—</option>
+                        <option value="0.75">0.75Ã—</option>
+                        <option value="1" selected>1Ã—</option>
+                        <option value="1.25">1.25Ã—</option>
+                        <option value="1.5">1.5Ã—</option>
+                        <option value="2">2Ã—</option>
+                    </select>
+                    <button type="button" class="player-btn" id="pipBtn" hidden
+                            aria-label="{% trans 'Picture in picture' %}">â§‰</button>
+                    <div class="cc-menu" id="ccMenu">
+                        <button type="button" class="player-btn cc-btn" id="ccBtn"
+                                aria-haspopup="true" aria-expanded="false"
+                                aria-controls="ccList"
+                                aria-label="{% trans 'Subtitles' %}">CC</button>
+                        <div class="cc-list" id="ccList" role="menu"
+                             aria-label="{% trans 'Caption language' %}">
+                            <button type="button" class="cc-item active" role="menuitem"
+                                    data-lang="" onclick="setSubtitle('')">
+                                {% trans "Off" %}
+                            </button>
+                            {% for track in subtitle_tracks %}
+                            <button type="button" class="cc-item" role="menuitem"
+                                    data-lang="{{ track.language_code }}"
+                                    onclick="setSubtitle('{{ track.language_code }}')">
+                                {% if track.is_lyrics %}â™ª {% endif %}{{ track.display_label }}
+                            </button>
+                            {% empty %}
+                            <p class="cc-empty">{% trans "No captions for this video yet." %}</p>
+                            {% if can_write %}
+                            <button type="button" class="cc-item cc-generate"
+                                    onclick="closeCcMenus(); generateSubtitles(this)">
+                                {% trans "Generate captions" %}
+                            </button>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <button type="button" class="player-btn" id="fullscreenBtn"
+                            aria-label="{% trans 'Fullscreen' %}">â›¶</button>
+                </div>
+            </div>
+            {# Closes .video-player-container, so the bar anchors to the video, not the page. #}
+        </div>
+
+        {% comment %}
+            Always shown, even when the video has no captions yet: a viewer
+            should be able to see that the feature exists and what it is set to,
+            rather than hunting for a control that is not drawn at all.
+        {% endcomment %}
+        <div class="subtitle-controls">
+            <div class="cc-menu subtitle-cc" id="subtitleCcMenu">
+                <button type="button" class="cc-btn subtitle-cc-btn" id="subtitleCcBtn"
+                        aria-haspopup="true" aria-expanded="false"
+                        aria-controls="subtitleCcList"
+                        aria-label="{% trans 'Subtitles' %}">
+                    <span class="cc-badge" aria-hidden="true">CC</span>
+                    <span class="cc-current" id="subtitleCcCurrent">{% trans "Off" %}</span>
+                    <span class="cc-caret" aria-hidden="true">â–¾</span>
+                </button>
+                <div class="cc-list" id="subtitleCcList" role="menu"
+                     aria-label="{% trans 'Caption language' %}">
+                    <button type="button" class="cc-item active" role="menuitem"
+                            data-lang="" onclick="setSubtitle('')">
+                        {% trans "Off" %}
+                    </button>
+                    {% for track in subtitle_tracks %}
+                    <button type="button" class="cc-item" role="menuitem"
+                            data-lang="{{ track.language_code }}"
+                            onclick="setSubtitle('{{ track.language_code }}')">
+                        {% if track.is_lyrics %}â™ª {% endif %}{{ track.display_label }}
+                    </button>
+                    {% empty %}
+                    {% comment %}
+                        An owner can fix this from here; a viewer is told plainly
+                        that there is nothing to turn on, rather than being left
+                        wondering whether the control is broken.
+                    {% endcomment %}
+                    <p class="cc-empty">{% trans "No captions for this video yet." %}</p>
+                    {% if can_write %}
+                    <button type="button" class="cc-item cc-generate"
+                            onclick="closeCcMenus(); generateSubtitles(this)">
+                        {% trans "Generate captions" %}
+                    </button>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        {% if audio_pending %}
+        <div class="audio-status" id="audioStatus"
+             data-status-url="{% url 'videos:audio_status' video.id %}"
+             data-generate-url="{% url 'videos:audio_generate' video.id %}">
+            <span class="audio-spinner" aria-hidden="true"></span>
+            <span>{% trans "Preparing the audio (MP3) for this videoâ€¦" %}</span>
+        </div>
+        {% elif audio_failed %}
+        <div class="audio-status audio-status-error" id="audioStatus"
+             data-status-url="{% url 'videos:audio_status' video.id %}"
+             data-generate-url="{% url 'videos:audio_generate' video.id %}">
+            <span>{% trans "The audio could not be generated." %}</span>
+            <button type="button" class="download-btn" onclick="retryAudio(this)">{% trans "Try again" %}</button>
+        </div>
+        {% elif audio_none %}
+        <div class="audio-status audio-status-muted">
+            <span>{% trans "This video has no audio track." %}</span>
+        </div>
+        {% endif %}
+
+        {% if video.has_audio or video.video_download_url %}
+        <div class="player-controls">
+            {% if video.has_audio and not is_audio_only %}
+            <div class="mode-toggle" role="group" aria-label="{% trans 'Playback mode' %}">
+                <button type="button" id="mode-video" class="mode-btn active"
+                        onclick="setMode('video')">{% trans "Video" %}</button>
+                <button type="button" id="mode-audio" class="mode-btn"
+                        onclick="setMode('audio')">{% trans "Listen (MP3)" %}</button>
+            </div>
+            {% endif %}
+            <div class="player-downloads">
+                {% if video.video_download_url %}
+                <a class="download-btn" href="{{ video.video_download_url }}" download>â¬‡ {% trans "Download video" %}</a>
+                {% endif %}
+                {% if video.has_audio %}
+                <a class="download-btn" href="{{ video.audio_download_url }}" download>â¬‡ {% trans "Download MP3" %}</a>
+                <button type="button" class="download-btn offline-btn" id="offlineToggle"
+                        data-offline-url="{% url 'videos:audio_stream' video.id %}"
+                        data-offline-title="{{ video.title }}"
+                        data-label-save="{% trans 'Save offline' %}"
+                        data-label-saved="{% trans 'Saved offline' %}"
+                        data-label-remove="{% trans 'Remove download' %}"
+                        data-label-error="{% trans 'Could not update the offline copy. Check your connection.' %}">â¤“ {% trans "Save offline" %}</button>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="video-details">
+            <h1>{{ video.title }}</h1>
+
+            <div class="video-stats">
+                <span class="video-stats-left">
+                    {% blocktrans count counter=video.views %}{{ counter }} view{% plural %}{{ counter }} views{% endblocktrans %}
+                    | {{ video.created_at|date:"M d, Y" }}
+                </span>
+                <div class="video-actions">
+                    <button class="vote-btn {% if user_vote == 1 %}active{% endif %}" data-vote="like" onclick="vote({{ video.id }}, 'like')">
+                        ðŸ‘ <span id="like-count">{{ video.likes }}</span>
+                    </button>
+                    {% if user.is_authenticated %}
+                    <button type="button" class="vote-btn" id="saveToggle" aria-expanded="false" onclick="toggleSaveMenu()">
+                        ï¼‹ {% trans "Save" %}
+                    </button>
+                    {% endif %}
+                    <button type="button" class="vote-btn" id="shareToggle" aria-expanded="false"
+                            aria-controls="sharePanel" onclick="toggleShareMenu()">
+                        â†— {% trans "Share" %}
+                    </button>
+                    {% if can_write %}
+                    <a class="vote-btn" href="{% url 'videos:edit' video.id %}">âœŽ {% trans "Edit" %}</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if user.is_authenticated %}
+            <div class="save-panel" id="savePanel" hidden>
+                <div class="save-panel-head">{% trans "Save to playlist" %}</div>
+                <ul class="save-panel-list">
+                    {% for pl in user_playlists %}
+                    <li>
+                        <label class="save-item">
+                            <input type="checkbox" data-playlist="{{ pl.id }}"
+                                   {% if pl.id in playlist_ids_with_video %}checked{% endif %}
+                                   onchange="togglePlaylist({{ pl.id }}, this)">
+                            <span class="save-item-title">{{ pl.title }}</span>
+                            <span class="save-count">{{ pl.item_count }}</span>
+                        </label>
+                    </li>
+                    {% empty %}
+                    <li class="save-empty">{% trans "No playlists yet." %}</li>
+                    {% endfor %}
+                </ul>
+                <form class="save-new" onsubmit="return createPlaylistFromSave(event)">
+                    <div class="save-new-row">
+                        <input type="text" id="saveNewTitle" class="form-input"
+                               placeholder="{% trans 'New playlist name' %}" maxlength="120">
+                        <button type="submit" class="btn-small">{% trans "Create" %}</button>
+                    </div>
+                    <label class="playlist-cover-picker" title="{% trans 'Cover photo' %}">
+                        <input type="file" id="saveNewCover" accept="image/*" hidden>
+                        <span id="saveNewCoverName">{% trans "Cover photo" %}</span>
+                    </label>
+                </form>
+            </div>
+            {% endif %}
+
+            <div class="share-panel" id="sharePanel" hidden>
+                <div class="share-panel-head">{% trans "Share this video" %}</div>
+                <div class="share-targets">
+                    <button type="button" class="share-target" data-share="video">
+                        <span class="share-target-icon">ðŸŽ¬</span>
+                        <span class="share-target-label">{% trans "Video link" %}</span>
+                    </button>
+                    {% if share_audio_url %}
+                    <button type="button" class="share-target" data-share="audio">
+                        <span class="share-target-icon">ðŸŽµ</span>
+                        <span class="share-target-label">{% trans "MP3 link" %}</span>
+                    </button>
+                    {% endif %}
+                </div>
+                <div class="share-networks">
+                    <a class="share-network share-network-whatsapp" target="_blank" rel="noopener"
+                       data-share-network="whatsapp" data-share-kind="video">WhatsApp</a>
+                    <a class="share-network share-network-telegram" target="_blank" rel="noopener"
+                       data-share-network="telegram" data-share-kind="video">Telegram</a>
+                    <a class="share-network share-network-facebook" target="_blank" rel="noopener"
+                       data-share-network="facebook" data-share-kind="video">Facebook</a>
+                    <a class="share-network share-network-x" target="_blank" rel="noopener"
+                       data-share-network="x" data-share-kind="video">X</a>
+                </div>
+                <p class="share-hint" id="shareHint" hidden></p>
+            </div>
+
+            <div class="video-channel">
+                <div class="channel-avatar">{{ video.user.username|slice:":1" }}</div>
+                <a href="{% url 'videos:channel' video.user.username %}" class="channel-name">{{ video.user.username }}</a>
+            </div>
+
+            {% if video.description %}
+            <p class="video-description">{{ video.description }}</p>
+            {% endif %}
+
+            {% if can_write %}
+            <div class="auto-sub-panel" id="autoSubPanel"
+                 data-generate-url="{% url 'videos:subtitles_generate' video.id %}"
+                 data-status-url="{% url 'videos:subtitles_status' video.id %}">
+                <div class="auto-sub-head">
+                    <span class="auto-sub-title">{% trans "Automatic subtitles" %}</span>
+                    {% if not subtitles_configured %}
+                    <span class="badge badge-warning">{% trans "Not configured" %}</span>
+                    {% elif subtitles_failed %}
+                    <span class="badge badge-critical">{% trans "Failed" %}</span>
+                    {% elif subtitles_pending %}
+                    <span class="badge badge-warning" id="autoSubBadge">{% trans "Not generated" %}</span>
+                    {% else %}
+                    <span class="badge badge-ok" id="autoSubBadge">{% trans "Ready" %}</span>
+                    {% endif %}
+                </div>
+                <p class="auto-sub-hint">
+                    {% trans "Transcribe the audio and translate it automatically, without uploading a file." %}
+                </p>
+                <div class="auto-sub-actions">
+                    <button type="button" class="btn-small" id="autoSubBtn"
+                            {% if not subtitles_configured or not video.has_audio %}disabled{% endif %}>
+                        {% if subtitles_pending %}{% trans "Generate subtitles" %}{% else %}{% trans "Regenerate subtitles" %}{% endif %}
+                    </button>
+                    <span class="auto-sub-message" id="autoSubMessage" role="status"></span>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="comments-section">
+                <h2 class="comments-title">
+                    {% trans "Comments" %} <span class="comments-count" id="commentsCount">{{ comment_count }}</span>
+                </h2>
+
+                <form class="comment-form" onsubmit="return postComment(event)">
+                    <textarea id="commentBody" class="form-input" rows="2" maxlength="2000"
+                              placeholder="{% trans 'Add a commentâ€¦' %}" required></textarea>
+                    <button type="submit" class="btn btn-primary btn-comment">{% trans "Comment" %}</button>
+                </form>
+
+                <div class="comment-list" id="commentList">
+                    {% for comment in comments %}
+                    <div class="comment" data-comment="{{ comment.id }}">
+                        <span class="comment-avatar">{{ comment.user.first_name|default:comment.user.username|slice:":1"|upper }}</span>
+                        <div class="comment-body">
+                            <div class="comment-head">
+                                <span class="comment-author">{{ comment.user.first_name|default:comment.user.username }}</span>
+                                <span class="comment-date">{{ comment.created_at|date:"M d, Y H:i" }}</span>
+                            </div>
+                            <p class="comment-text">{{ comment.body }}</p>
+                        </div>
+                        {% if comment.user_id == user.id or can_write %}
+                        <button type="button" class="icon-btn" title="{% trans 'Delete' %}"
+                                onclick="deleteComment({{ comment.id }})">âœ•</button>
+                        {% endif %}
+                    </div>
+                    {% empty %}
+                    <p class="comment-empty" id="commentEmpty">{% trans "No comments yet. Be the first!" %}</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            {% if can_write %}
+            <div class="video-owner-actions">
+                <button class="delete-btn" type="button" onclick="deleteVideo({{ video.id }})">{% trans "Delete video" %}</button>
+            </div>
+
+            <div class="subtitle-admin">
+                <h2>{% trans "Subtitles & lyrics" %}</h2>
+                <p class="subtitle-hint">
+                    {% trans "Upload a .vtt, .srt or .txt file for each language. Viewers can turn them on or off." %}
+                </p>
+
+                <form id="subtitleForm" class="subtitle-form" onsubmit="return uploadSubtitle(event)">
+                    <select id="subtitleLanguage" class="form-input" aria-label="{% trans 'Subtitle language' %}">
+                        {% for code, name in subtitle_choices %}
+                        <option value="{{ code }}">{{ name }}</option>
+                        {% endfor %}
+                    </select>
+                    <input type="file" id="subtitleFile" class="form-input" accept=".vtt,.srt,.txt" required>
+                    <button type="submit" class="btn-submit">{% trans "Upload subtitle" %}</button>
+                </form>
+
+                <ul class="subtitle-list">
+                    {% for track in subtitle_tracks %}
+                    <li>
+                        <span>{% if track.is_lyrics %}â™ª {% endif %}{{ track.display_label }}</span>
+                        <button type="button" class="delete-btn"
+                                onclick="deleteSubtitle('{{ track.language_code }}')">{% trans "Delete" %}</button>
+                    </li>
+                    {% empty %}
+                    <li class="subtitle-empty">{% trans "No subtitles yet." %}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+
+    </div>
+
+    {% if related_videos %}
+    <aside class="watch-aside" aria-label="{% trans 'Up next' %}">
+        <h2 class="watch-aside-title">{% trans "Up next" %}</h2>
+        {% for related in related_videos %}
+        <a class="related-card" href="{% url 'videos:detail' related.id %}">
+            <div class="related-thumb">
+                {% if related.display_thumbnail_url %}
+                <img src="{{ related.display_thumbnail_url }}" alt="{{ related.title }}" loading="lazy">
+                {% else %}
+                <span class="thumbnail-placeholder">â–¶</span>
+                {% endif %}
+                {% if related.duration_seconds %}
+                <span class="video-duration">{{ related.duration_formatted }}</span>
+                {% endif %}
+            </div>
+            <div class="related-info">
+                <h3 class="related-title">{{ related.title }}</h3>
+                <p class="related-meta">{{ related.user.username }}</p>
+                <p class="related-meta">
+                    {% blocktrans count counter=related.views %}{{ counter }} view{% plural %}{{ counter }} views{% endblocktrans %}
+                    Â· {{ related.created_at|date:"Y" }}
+                </p>
+            </div>
+        </a>
+        {% endfor %}
+    </aside>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const videoPlayer = document.getElementById("video-player")
+const audioPlayer = document.getElementById("audio-player")
+const audioSrc = "{% url 'videos:audio_stream' video.id %}"
+const videoError = document.getElementById("video-error")
+const videoId = {{ video.id }}
+
+// --- Automatic MP3 generation -------------------------------------------
+// The detail view starts generating a missing MP3 in the background. While
+// that runs we poll for completion and reload the page once it is ready so the
+// Listen / Download MP3 controls appear without a manual refresh.
+const audioStatusEl = document.getElementById("audioStatus")
+if (audioStatusEl && audioStatusEl.dataset.statusUrl &&
+        !audioStatusEl.classList.contains("audio-status-error")) {
+    const statusUrl = audioStatusEl.dataset.statusUrl
+    const pollAudio = () => {
+        fetch(statusUrl)
+            .then(r => r.json())
+            .then(data => {
+                if (data.has_audio || !data.pending) window.location.reload()
+                else setTimeout(pollAudio, 5000)
+            })
+            .catch(() => setTimeout(pollAudio, 8000))
+    }
+    setTimeout(pollAudio, 4000)
+}
+
+function retryAudio(button) {
+    const el = document.getElementById("audioStatus")
+    const url = el ? el.dataset.generateUrl : ""
+    if (!url) return
+    button.disabled = true
+    fetch(url, { method: "POST", headers: { "X-CSRFToken": csrf } })
+        .then(() => window.location.reload())
+        .catch(() => { button.disabled = false })
+}
+
+if (videoPlayer) {
+    videoPlayer.addEventListener("error", () => {
+        videoPlayer.style.display = "none"
+        videoError.style.display = "flex"
+    })
+}
+
+function setMode(mode) {
+    if (!audioPlayer || !videoPlayer) return
+
+    const videoBtn = document.getElementById("mode-video")
+    const audioBtn = document.getElementById("mode-audio")
+    const stage = document.getElementById("playerStage")
+
+    if (mode === "audio") {
+        if (!audioPlayer.getAttribute("src")) audioPlayer.setAttribute("src", audioSrc)
+        videoPlayer.pause()
+        videoPlayer.style.display = "none"
+        audioPlayer.style.display = "block"
+        // Swap the black rectangle for the video's own thumbnail.
+        if (stage) stage.classList.add("audio-mode")
+        setActivePlayer(audioPlayer)
+        audioPlayer.play().catch(() => {})
+        audioBtn.classList.add("active")
+        videoBtn.classList.remove("active")
+    } else {
+        audioPlayer.pause()
+        audioPlayer.style.display = "none"
+        videoPlayer.style.display = ""
+        if (stage) stage.classList.remove("audio-mode")
+        setActivePlayer(videoPlayer)
+        videoBtn.classList.add("active")
+        audioBtn.classList.remove("active")
+    }
+    syncPlaybackState()
+    applySubtitle(currentSubtitle)
+    // The bar reads from whichever element is active, so refresh it here too.
+    if (typeof refreshAllControls === "function") refreshAllControls()
+}
+
+// --- Media Session: playback in the background ------------------------------
+// Registers the current media with the OS so that playback survives the screen
+// locking / the app being backgrounded, and so the lock-screen, headset and
+// notification-panel controls work on mobile, tablet and desktop alike.
+// Without this some browsers pause or hide the player when the page is hidden.
+const mediaSession = navigator.mediaSession || null
+// An audio-only upload has no picture, so the controls must drive the MP3 from
+// the outset rather than a hidden <video>.
+// Rendered as a bare boolean, not a quoted string: "false" is a non-empty
+// string and therefore truthy in JavaScript, which made every control drive the
+// audio element instead of the video.
+const audioOnly = {% if is_audio_only %}true{% else %}false{% endif %}
+let activePlayer = audioOnly ? audioPlayer : videoPlayer
+
+function mediaMetadata() {
+    const metadata = {
+        title: "{{ video.title|escapejs }}",
+        artist: "{{ video.user.username|escapejs }}",
+        album: "{% trans 'Rammonte USA' %}",
+    }
+    const artwork = "{{ video.display_thumbnail_url|escapejs }}"
+    if (artwork) {
+        metadata.artwork = [{ src: artwork, sizes: "512x512", type: "image/jpeg" }]
+    }
+    return new MediaMetadata(metadata)
+}
+
+function setActivePlayer(player) {
+    activePlayer = player || null
+    if (!mediaSession) return
+    try { mediaSession.metadata = mediaMetadata() } catch (e) {}
+}
+
+function syncPlaybackState() {
+    if (!mediaSession) return
+    try {
+        mediaSession.playbackState =
+            activePlayer && !activePlayer.paused ? "playing" : "paused"
+    } catch (e) {}
+}
+
+function bindMediaSession() {
+    if (!mediaSession) return
+
+    // Listen on both elements so switching mode keeps the state correct.
+    [videoPlayer, audioPlayer].forEach(el => {
+        if (!el) return
+        ;["play", "pause", "ended", "emptied"].forEach(name =>
+            el.addEventListener(name, syncPlaybackState))
+    })
+
+    const seekBy = (delta) => {
+        if (!activePlayer) return
+        const length = activePlayer.duration
+        if (!isFinite(length)) return
+        activePlayer.currentTime = Math.max(0, Math.min(length, activePlayer.currentTime + delta))
+    }
+
+    const handlers = {
+        play:  () => activePlayer && activePlayer.play().catch(() => {}),
+        pause: () => activePlayer && activePlayer.pause(),
+        seekbackward: () => seekBy(-10),
+        seekforward: () => seekBy(10),
+        stop:  () => {
+            if (!activePlayer) return
+            activePlayer.pause()
+            try { activePlayer.currentTime = 0 } catch (e) {}
+        },
+    }
+    Object.keys(handlers).forEach(action => {
+        // Not every browser supports every action; unsupported ones throw.
+        try { mediaSession.setActionHandler(action, handlers[action]) } catch (e) {}
+    })
+
+    try { mediaSession.metadata = mediaMetadata() } catch (e) {}
+    syncPlaybackState()
+}
+
+bindMediaSession()
+
+// --- Custom control bar ------------------------------------------------------
+// Replaces the browser's native `controls` attribute. Everything here drives
+// `activePlayer`, so the bar keeps working after switching between the video and
+// the MP3 without being rewired.
+const playerStage = document.getElementById("playerStage")
+const playerBar = document.getElementById("playerBar")
+const seekBar = document.getElementById("seekBar")
+const playPauseBtn = document.getElementById("playPauseBtn")
+const currentTimeEl = document.getElementById("currentTime")
+const durationEl = document.getElementById("duration")
+const muteBtn = document.getElementById("muteBtn")
+const volumeBar = document.getElementById("volumeBar")
+const rateSelect = document.getElementById("rateSelect")
+const pipBtn = document.getElementById("pipBtn")
+const fullscreenBtn = document.getElementById("fullscreenBtn")
+let scrubbing = false
+
+function formatTime(seconds) {
+    if (!isFinite(seconds) || seconds < 0) return "0:00"
+    const whole = Math.floor(seconds)
+    const hours = Math.floor(whole / 3600)
+    const minutes = Math.floor((whole % 3600) / 60)
+    const secs = String(whole % 60).padStart(2, "0")
+    return hours
+        ? `${hours}:${String(minutes).padStart(2, "0")}:${secs}`
+        : `${minutes}:${secs}`
+}
+
+function refreshPlayPauseIcon() {
+    if (!playPauseBtn || !activePlayer) return
+    const playing = !activePlayer.paused && !activePlayer.ended
+    playPauseBtn.textContent = playing ? "âšâš" : "â–¶"
+    playPauseBtn.setAttribute(
+        "aria-label", playing ? "{% trans 'Pause' %}" : "{% trans 'Play' %}"
+    )
+}
+
+function refreshSeekBar() {
+    if (!seekBar || !activePlayer) return
+    const duration = activePlayer.duration
+    if (scrubbing) return
+    if (isFinite(duration) && duration > 0) {
+        seekBar.value = String((activePlayer.currentTime / duration) * 100)
+    }
+}
+
+function refreshVolume() {
+    if (!activePlayer || !volumeBar || !muteBtn) return
+    volumeBar.value = String(activePlayer.volume)
+    muteBtn.textContent = activePlayer.muted || activePlayer.volume === 0 ? "ðŸ”‡" : "ðŸ”Š"
+}
+
+function refreshAllControls() {
+    refreshPlayPauseIcon()
+    refreshSeekBar()
+    refreshVolume()
+    if (activePlayer && isFinite(activePlayer.duration)) {
+        durationEl.textContent = formatTime(activePlayer.duration)
+    }
+}
+
+function togglePlayPause() {
+    if (!activePlayer) return
+    if (activePlayer.paused) {
+        activePlayer.play().catch(err => {
+            // Usually the browser's autoplay policy. Reveal the bar so the
+            // play button is reachable rather than failing silently.
+            if (typeof showControls === "function") showControls()
+            if (window.console) console.warn("playback was refused", err)
+        })
+    } else {
+        activePlayer.pause()
+    }
+}
+
+function seekBy(delta) {
+    if (!activePlayer) return
+    const length = activePlayer.duration
+    if (!isFinite(length)) return
+    activePlayer.currentTime = Math.max(0, Math.min(length, activePlayer.currentTime + delta))
+}
+
+function wireControls() {
+    if (!playPauseBtn) return
+
+    playPauseBtn.addEventListener("click", togglePlayPause)
+    document.getElementById("backBtn").addEventListener("click", () => seekBy(-10))
+    document.getElementById("fwdBtn").addEventListener("click", () => seekBy(10))
+
+    // While dragging, the bar follows the pointer rather than the playback.
+    seekBar.addEventListener("pointerdown", () => { scrubbing = true })
+    seekBar.addEventListener("input", () => {
+        if (!activePlayer) return
+        const duration = activePlayer.duration
+        if (!isFinite(duration)) return
+        activePlayer.currentTime = (Number(seekBar.value) / 100) * duration
+        currentTimeEl.textContent = formatTime(activePlayer.currentTime)
+    })
+    const stopScrubbing = () => { scrubbing = false; refreshSeekBar() }
+    seekBar.addEventListener("pointerup", stopScrubbing)
+    seekBar.addEventListener("change", stopScrubbing)
+    seekBar.addEventListener("pointercancel", stopScrubbing)
+
+    volumeBar.addEventListener("input", () => {
+        if (!activePlayer) return
+        activePlayer.volume = Number(volumeBar.value)
+        activePlayer.muted = activePlayer.volume === 0
+        refreshVolume()
+    })
+    muteBtn.addEventListener("click", () => {
+        if (!activePlayer) return
+        activePlayer.muted = !activePlayer.muted
+        refreshVolume()
+    })
+
+    rateSelect.addEventListener("change", () => {
+        if (!activePlayer) return
+        activePlayer.playbackRate = Number(rateSelect.value)
+    })
+
+    // Fullscreen. iPhone Safari ships none of the standard API: no
+    // Element.requestFullscreen, no webkitRequestFullscreen prefix, and no
+    // document.exitFullscreen. The previous code called requestFullscreen()
+    // unguarded, so on an iPhone it threw a TypeError synchronously - before
+    // .catch could even be attached - and the button did nothing at all. The
+    // only element iOS will expand is the <video> itself, through its own
+    // webkitEnterFullscreen(), which is what the fallback uses.
+    function fullscreenElement() {
+        return document.fullscreenElement
+            || document.webkitFullscreenElement
+            || document.msFullscreenElement
+            || null
+    }
+
+    function refreshFullscreenButton() {
+        if (!fullscreenBtn) return
+        const expanded = Boolean(
+            fullscreenElement()
+            || (videoPlayer && videoPlayer.webkitDisplayingFullscreen)
+        )
+        fullscreenBtn.textContent = expanded ? "â¤¡" : "â›¶"
+        fullscreenBtn.setAttribute(
+            "aria-label",
+            expanded ? "{% trans 'Exit fullscreen' %}" : "{% trans 'Fullscreen' %}"
+        )
+    }
+
+    function requestStageFullscreen() {
+        // The control bar (and its CC menu) is a sibling of the picture, so
+        // fullscreening only the picture hid the caption controls. Expand the
+        // whole player box instead; the fullscreen CSS makes the picture fill
+        // it and keeps the bar floating over the bottom.
+        const container = playerStage && playerStage.closest(".video-player-container")
+        const target = container || playerStage
+        if (!target) return false
+        const request = target.requestFullscreen
+            || target.webkitRequestFullscreen
+            || target.msRequestFullscreen
+        if (!request) return false
+        try {
+            const result = request.call(target)
+            if (result && typeof result.catch === "function") result.catch(() => {})
+            return true
+        } catch (error) {
+            return false
+        }
+    }
+
+    // The iOS-only path. webkitEnterFullScreen (capital S) is the spelling on
+    // very old WebKit builds, so both are accepted.
+    function requestVideoFullscreen() {
+        if (!videoPlayer) return false
+        const enter = videoPlayer.webkitEnterFullscreen
+            || videoPlayer.webkitEnterFullScreen
+        if (!enter) return false
+        try {
+            enter.call(videoPlayer)
+            return true
+        } catch (error) {
+            return false
+        }
+    }
+
+    function toggleFullscreen() {
+        if (fullscreenElement()) {
+            const exit = document.exitFullscreen
+                || document.webkitExitFullscreen
+                || document.msExitFullscreen
+            if (exit) {
+                try {
+                    const result = exit.call(document)
+                    if (result && typeof result.catch === "function") result.catch(() => {})
+                } catch (error) { /* refused; the controls are already hidden */ }
+            }
+            return
+        }
+        if (requestStageFullscreen()) return
+        requestVideoFullscreen()
+    }
+
+    fullscreenBtn.addEventListener("click", toggleFullscreen)
+
+    // iOS reports its native video fullscreen through private events and a
+    // flag rather than the standard ones, so the icon is kept in step with
+    // whichever route the browser took. Held in a variable because this file
+    // omits semicolons: a line starting with "[" would be read as a subscript
+    // of the statement above it.
+    const iosFullscreenEvents = ["webkitbeginfullscreen", "webkitendfullscreen"]
+    iosFullscreenEvents.forEach(name => {
+        if (videoPlayer) videoPlayer.addEventListener(name, refreshFullscreenButton)
+    })
+    document.addEventListener("webkitfullscreenchange", refreshFullscreenButton)
+    refreshFullscreenButton()
+
+    // Picture-in-picture is video only, and not available everywhere.
+    if (window.documentPictureInPictureEnabled && !audioPlayer) {
+        pipBtn.hidden = false
+        pipBtn.addEventListener("click", async () => {
+            if (document.pictureInPictureElement) {
+                await document.exitPictureInPicture().catch(() => {})
+                return
+            }
+            try { await videoPlayer.requestPictureInPicture() } catch (e) {}
+        })
+    }
+
+    // Keep the bar in step with whatever is playing, whichever element it is.
+    ;[videoPlayer, audioPlayer].forEach(el => {
+        if (!el) return
+        ;["play", "pause", "ended", "loadedmetadata", "durationchange",
+          "volumechange", "ratechange"].forEach(name =>
+            el.addEventListener(name, refreshAllControls))
+        el.addEventListener("timeupdate", () => {
+            refreshSeekBar()
+            if (activePlayer) {
+                currentTimeEl.textContent = formatTime(activePlayer.currentTime)
+            }
+        })
+    })
+
+    // Space and the usual transport keys, so the page still behaves like a
+    // player without reaching for the mouse.
+    document.addEventListener("keydown", event => {
+        const tag = (event.target.tagName || "").toLowerCase()
+        if (["input", "select", "textarea", "button"].includes(tag)) return
+        if (event.key === " " || event.key === "k") {
+            event.preventDefault()
+            togglePlayPause()
+        } else if (event.key === "ArrowRight") {
+            seekBy(10)
+        } else if (event.key === "ArrowLeft") {
+            seekBy(-10)
+        } else if (event.key === "f") {
+            fullscreenBtn.click()
+        }
+        showControls()
+    })
+
+    wireAutoHide()
+    refreshAllControls()
+}
+
+// --- Auto-hiding controls ---------------------------------------------------
+// The bar covers the bottom of the picture, so leaving it up while the video
+// plays hides the action. It appears on a tap or click and fades away again
+// once playback has run on for a few seconds without input.
+const CONTROLS_IDLE_MS = 3200
+let hideTimer = null
+
+function controlsAreShowing() {
+    return playerBar.classList.contains("is-visible")
+}
+
+// Only a device with a real pointer gets hover behaviour. A tablet reports
+// hover: none even with a mouse attached, and without this guard the bar would
+// latch open the moment a tap synthesised a mouseenter.
+const canHover = window.matchMedia
+    ? window.matchMedia("(hover: hover) and (pointer: fine)").matches
+    : false
+
+let pointerInsideStage = false
+// The bar floats over the bottom of the picture and is a sibling of the stage,
+// so moving down to a control crosses out of the stage a moment before the
+// pointer lands on the bar. Tracking the bar separately keeps the bar from
+// hiding itself out from under a pointer that is already on it.
+let pointerInsideBar = false
+
+function pointerInsidePlayer() {
+    return pointerInsideStage || pointerInsideBar
+}
+
+// The bar stays up while paused or while the pointer is over it, and fades away
+// only when the video is playing and nobody is aiming at anything.
+function shouldAutoHide() {
+    if (!activePlayer) return false
+    const playing = !activePlayer.paused && !activePlayer.ended
+    return playing && !pointerInsidePlayer()
+}
+
+function showControls() {
+    if (!playerBar || !playerStage) return
+    playerBar.classList.add("is-visible")
+    playerStage.classList.add("controls-visible")
+    clearTimeout(hideTimer)
+    if (shouldAutoHide()) {
+        hideTimer = setTimeout(hideControls, CONTROLS_IDLE_MS)
+    }
+}
+
+function hideControls() {
+    if (!playerBar || !playerStage) return
+    // Never yank the bar away from a pointer that is still resting on it.
+    if (pointerInsidePlayer() && canHover) return
+    playerBar.classList.remove("is-visible")
+    playerStage.classList.remove("controls-visible")
+}
+
+function toggleControls() {
+    if (controlsAreShowing()) hideControls()
+    else showControls()
+}
+
+function wireAutoHide() {
+    const tapZone = document.getElementById("tapZone")
+    const bigPlay = document.getElementById("bigPlay")
+
+    if (bigPlay) {
+        bigPlay.addEventListener("click", event => {
+            event.stopPropagation()
+            togglePlayPause()
+            showControls()
+        })
+    }
+
+    if (tapZone) {
+        // Tapping the picture plays or pauses it, the way every other player
+        // behaves. It used to only reveal the bar, which meant there was no
+        // tap anywhere on the video that could start playback at all.
+        tapZone.addEventListener("click", event => {
+            event.preventDefault()
+            togglePlayPause()
+            showControls()
+        })
+    }
+
+    // A paused video shows a large centred play button. Without the poster
+    // attribute the picture does not load until playback starts, so without
+    // this the player is a black rectangle with nothing to indicate that
+    // tapping it does anything.
+    function refreshBigPlay() {
+        if (!bigPlay) return
+        const paused = !activePlayer || activePlayer.paused || activePlayer.ended
+        bigPlay.hidden = !paused
+    }
+
+    if (playerStage) {
+        if (canHover) {
+            // Entering the video is enough; no wiggling required.
+            playerStage.addEventListener("mouseenter", () => {
+                pointerInsideStage = true
+                showControls()
+            })
+            playerStage.addEventListener("mouseleave", () => {
+                pointerInsideStage = false
+                if (shouldAutoHide()) hideControls()
+            })
+            playerStage.addEventListener("mousemove", () => showControls())
+        }
+        playerStage.addEventListener(
+            "touchstart", () => showControls(), { passive: true }
+        )
+    }
+
+    // Working a control counts as activity and restarts the idle countdown.
+    if (playerBar) {
+        ;["pointerdown", "input", "change", "focusin"].forEach(name =>
+            playerBar.addEventListener(name, () => showControls()))
+
+        if (canHover) {
+            // Reaching the bar keeps it up; leaving it lets the countdown run
+            // again. The button listeners above cover the case where the bar is
+            // reached without a mouseenter (a touch or a keyboard focus).
+            playerBar.addEventListener("mouseenter", () => {
+                pointerInsideBar = true
+                showControls()
+            })
+            playerBar.addEventListener("mouseleave", () => {
+                pointerInsideBar = false
+                if (shouldAutoHide()) hideControls()
+            })
+        }
+    }
+
+    ;[videoPlayer, audioPlayer].forEach(el => {
+        if (!el) return
+        el.addEventListener("play", () => {
+            // Out of the way while the picture is moving, unless the viewer is
+            // already hovering and probably wants the controls.
+            refreshBigPlay()
+            if (shouldAutoHide()) hideControls()
+            refreshPlayPauseIcon()
+        })
+        el.addEventListener("pause", () => {
+            refreshBigPlay()
+            showControls()
+            refreshPlayPauseIcon()
+        })
+        el.addEventListener("ended", () => {
+            refreshBigPlay()
+            showControls()
+        })
+    })
+
+    document.addEventListener("fullscreenchange", () => {
+        refreshFullscreenButton()
+        if (fullscreenElement()) showControls()
+    })
+}
+
+wireControls()
+// A paused video must never look inert: show the bar and the big play
+// button straight away, then let them fade only once playback starts.
+showControls()
+
+// --- Subtitles / lyrics ---------------------------------------------------
+
+let currentSubtitle = ""
+
+// --- Caption rendering ----------------------------------------------------
+//
+// Captions are drawn into `.caption-layer` instead of being left to the
+// browser. The browser's own rendering cannot be styled to match on every
+// platform, and it disappears behind the control bar; drawing them here keeps
+// one look everywhere and keeps them clear of the controls.
+//
+// The cues are read from the track's own WebVTT text, which this page can do
+// because the subtitle files are served from the same origin.
+
+const captionLayer = document.getElementById("captionLayer")
+const captionText = document.getElementById("captionText")
+
+// Parsed cue lists, keyed by "<player>:<language>", filled on first use.
+const cueCache = new Map()
+
+function activeMedia() {
+    // In audio mode the picture is hidden, so captions belong to the audio
+    // element; otherwise they belong to the video.
+    return (audioPlayer && audioPlayer.style.display !== "none") ? audioPlayer : videoPlayer
+}
+
+/** Parse WebVTT into [{start, end, text}], tolerating CRLF and SRT-ish input. */
+function parseVtt(raw) {
+    const cues = []
+    const blocks = String(raw).replace(/\r\n?/g, "\n").split(/\n{2,}/)
+    for (const block of blocks) {
+        const lines = block.split("\n").filter(line => line.trim() !== "")
+        if (!lines.length) continue
+        // Skip an optional numeric identifier line.
+        let index = 0
+        if (/^\d+$/.test(lines[0].trim())) index = 1
+        const timing = lines[index]
+        if (!timing || timing.indexOf("-->") === -1) continue
+        const [startRaw, endRaw] = timing.split("-->")
+        const start = vttTime(startRaw)
+        const end = vttTime((endRaw || "").trim().split(/\s+/)[0])
+        if (start === null || end === null) continue
+        const text = lines.slice(index + 1).join("\n")
+            .replace(/<[^>]+>/g, "")   // strip inline markup and karaoke tags
+            .trim()
+        if (text) cues.push({ start, end, text })
+    }
+    return cues
+}
+
+/** "00:00:01.000" (or "00:01.000") to seconds, or null when unreadable. */
+function vttTime(value) {
+    const parts = String(value).trim().split(":")
+    if (parts.length < 2) return null
+    const seconds = parseFloat(parts.pop().replace(",", "."))
+    const minutes = parseInt(parts.pop(), 10)
+    if (Number.isNaN(seconds) || Number.isNaN(minutes)) return null
+    let hours = 0
+    if (parts.length) hours = parseInt(parts.pop(), 10) || 0
+    return hours * 3600 + minutes * 60 + seconds
+}
+
+/** Fetch and cache the cues for one track. */
+async function cuesFor(player, lang) {
+    const key = (player === audioPlayer ? "a" : "v") + ":" + lang
+    if (cueCache.has(key)) return cueCache.get(key)
+    cueCache.set(key, [])   // set first, so a slow load is not fetched twice
+    try {
+        const el = player.querySelector(`track#${player === audioPlayer ? "a" : ""}track-${lang}`)
+        if (!el) return []
+        const response = await fetch(el.src)
+        if (!response.ok) return []
+        const cues = parseVtt(await response.text())
+        cueCache.set(key, cues)
+        return cues
+    } catch (e) {
+        return []
+    }
+}
+
+function hideCaption() {
+    if (captionLayer) captionLayer.classList.remove("is-visible")
+    if (captionText) captionText.textContent = ""
+}
+
+function showCaption(text) {
+    if (!captionText || !captionLayer) return
+    if (captionText.textContent === text) return
+    captionText.textContent = text
+    captionLayer.classList.add("is-visible")
+}
+
+// A single loop drives both players: it looks up the cue covering the current
+// playhead and paints it. Cheap enough to run every frame, and it keeps the
+// caption in step when the viewer scrubs or changes speed.
+function paintCaption() {
+    if (!currentSubtitle) return
+    // The native iOS player draws them itself while it owns the screen.
+    if (nativeVideoFullscreen()) return
+    const player = activeMedia()
+    if (!player) return
+    const cues = cueCache.get((player === audioPlayer ? "a" : "v") + ":" + currentSubtitle)
+    if (!cues || !cues.length) return
+    const now = player.currentTime
+    for (const cue of cues) {
+        if (now >= cue.start && now <= cue.end) {
+            showCaption(cue.text)
+            return
+        }
+    }
+    hideCaption()
+}
+
+// Repaint on the events that can change which cue is on screen, rather than
+// spinning a frame loop. A `requestAnimationFrame` loop that re-arms itself
+// recurses without bound wherever rAF runs synchronously (as it does under the
+// JS smoke harness), and playback events cover the same ground.
+function captionTick() {
+    paintCaption()
+}
+
+// On an iPhone the only fullscreen available expands the <video> element
+// itself, and the native player covers the whole page. The custom overlay
+// cannot be seen there, so for the duration of that fullscreen the chosen
+// track is handed to the browser ("showing") and our layer steps aside.
+function nativeVideoFullscreen() {
+    return Boolean(videoPlayer && videoPlayer.webkitDisplayingFullscreen)
+}
+
+function applySubtitle(lang) {
+    const mode = nativeVideoFullscreen() ? "showing" : "hidden"
+    ;[videoPlayer, audioPlayer].forEach(el => {
+        if (!el || !el.textTracks) return
+        for (const track of el.textTracks) {
+            // "hidden" stops the browser painting its own captions while
+            // still giving us the cues; "showing" is only used while the
+            // native iOS player is the thing on screen.
+            const code = (track.id || "").replace(/^a?track-/, "")
+            track.mode = (lang && code === lang) ? mode : "disabled"
+        }
+    })
+    // The native player paints the cues; keep our overlay out of the way.
+    if (mode === "showing") hideCaption()
+    // The language buttons live both below the player and in the CC menus;
+    // keep every copy in step with the choice.
+    document.querySelectorAll(".cc-item").forEach(btn => {
+        btn.classList.toggle("active", (btn.dataset.lang || "") === lang)
+    })
+    const label = lang ? ccLabel(lang) : "{% trans 'Off' %}"
+    // The button in the control bar reads as pressed and shows the language.
+    document.querySelectorAll(".cc-btn").forEach(btn => {
+        btn.classList.toggle("active", Boolean(lang))
+        btn.title = lang
+            ? "{% trans 'Subtitles' %}: " + label
+            : "{% trans 'Subtitles' %}"
+    })
+    // The always-visible button below the player spells the choice out.
+    const current = document.getElementById("subtitleCcCurrent")
+    if (current) current.textContent = label
+
+    if (!lang) {
+        hideCaption()
+        return
+    }
+    // Load the cues then repaint as soon as they arrive.
+    const player = activeMedia()
+    if (player) {
+        cuesFor(player, lang).then(() => paintCaption())
+    }
+}
+
+function ccLabel(lang) {
+    const item = document.querySelector(`.cc-item[data-lang="${lang}"]`)
+    return item ? item.textContent.trim() : lang
+}
+
+function setSubtitle(lang) {
+    currentSubtitle = lang
+    try { localStorage.setItem("fazakkir-subtitle", lang) } catch (e) {}
+    applySubtitle(lang)
+}
+
+// Restore the viewer's last choice, or a track marked as enabled by default.
+try {
+    currentSubtitle = localStorage.getItem("fazakkir-subtitle") || ""
+} catch (e) {}
+
+// Ignore a remembered track that does not exist on this video.
+if (currentSubtitle && !document.querySelector(`.cc-item[data-lang="${currentSubtitle}"]`)) {
+    currentSubtitle = ""
+}
+
+applySubtitle(currentSubtitle)
+
+// Repaint the caption whenever the playhead can have moved. `timeupdate` fires
+// about four times a second, which is enough for a caption strip, and seeking
+// and rate changes are covered explicitly so a scrub never leaves a stale cue.
+;[videoPlayer, audioPlayer].forEach(el => {
+    if (!el) return
+    el.addEventListener("timeupdate", captionTick)
+    el.addEventListener("seeked", captionTick)
+    el.addEventListener("ratechange", captionTick)
+    el.addEventListener("loadedmetadata", captionTick)
+    el.addEventListener("play", captionTick)
+})
+
+// Some browsers/platforms are unreliable about `timeupdate`, so a lightweight
+// animation-frame loop keeps captions in step as a backstop.
+function startCaptionLoop() {
+    // The JS smoke harness has no requestAnimationFrame. Captions still update
+    // from the playback events bound above, so skip the backstop loop there.
+    if (typeof requestAnimationFrame !== "function") return
+    if (startCaptionLoop._running) return
+    startCaptionLoop._running = true
+    function tick() {
+        try {
+            paintCaption()
+        } catch (e) {}
+        requestAnimationFrame(tick)
+    }
+    requestAnimationFrame(tick)
+}
+startCaptionLoop()
+
+// Going in or out of the iPhone's native video fullscreen changes which
+// surface draws the captions, so the track mode is recomputed each time.
+if (videoPlayer) {
+    ["webkitbeginfullscreen", "webkitendfullscreen"].forEach(name => {
+        videoPlayer.addEventListener(name, () => applySubtitle(currentSubtitle))
+    })
+}
+
+// Every CC menu (the one below the player, and the one in the bar) opens its
+// own language list; a click outside or on a language closes them all.
+function closeCcMenus() {
+    document.querySelectorAll(".cc-menu.open").forEach(menu => {
+        menu.classList.remove("open")
+        const btn = menu.querySelector(".cc-btn")
+        if (btn) btn.setAttribute("aria-expanded", "false")
+    })
+}
+
+document.querySelectorAll(".cc-menu").forEach(menu => {
+    const btn = menu.querySelector(".cc-btn")
+    if (!btn) return
+    btn.addEventListener("click", (event) => {
+        event.stopPropagation()
+        const wasOpen = menu.classList.contains("open")
+        closeCcMenus()
+        if (!wasOpen) {
+            menu.classList.add("open")
+            btn.setAttribute("aria-expanded", "true")
+        }
+    })
+    menu.querySelectorAll(".cc-item").forEach(item => {
+        item.addEventListener("click", () => closeCcMenus())
+    })
+    menu.addEventListener("click", (event) => event.stopPropagation())
+})
+
+document.addEventListener("click", closeCcMenus)
+document.addEventListener("fullscreenchange", closeCcMenus)
+
+const csrf = '{{ csrf_token }}'
+
+function deleteVideo(videoId) {
+    const title = document.querySelector(".video-details h1")
+    fazakkirConfirm({
+        title: "{% trans 'Delete this video?' %}",
+        message: "{% blocktrans %}This permanently removes the recording, its MP3 and its thumbnail from Cloudflare storage. Visitors who saved it offline keep their local copy until they remove it.{% endblocktrans %}"
+            + (title ? "\n\n" + title.textContent.trim() : ""),
+        confirmLabel: "{% trans 'Delete permanently' %}",
+    }).then(function (ok) {
+        // Cancelling changes nothing at all.
+        if (!ok) return
+        fetch(`/${videoId}/delete/`, {method: "POST", headers: { "X-CSRFToken": csrf }})
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) window.location.href = '{% url "videos:list" %}'
+                else alert(data.error || "{% trans 'Failed to delete.' %}")
+            })
+            .catch(() => alert("{% trans 'Failed to delete.' %}"))
+    })
+}
+
+function uploadSubtitle(event) {
+    event.preventDefault()
+    const fileInput = document.getElementById("subtitleFile")
+    const language = document.getElementById("subtitleLanguage").value
+    if (!fileInput.files.length) return false
+
+    const formData = new FormData()
+    formData.append("language_code", language)
+    formData.append("subtitle_file", fileInput.files[0])
+
+    fetch(`/${videoId}/subtitles/upload/`, {
+        method: "POST", headers: { "X-CSRFToken": csrf }, body: formData
+    })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) location.reload()
+            else alert(data.error || "{% trans 'Upload failed' %}")
+        })
+        .catch(() => alert("{% trans 'Upload failed' %}"))
+    return false
+}
+
+function deleteSubtitle(language) {
+    fazakkirConfirm({
+        title: "{% trans 'Remove this subtitle track?' %}",
+        message: "{% trans 'The subtitles and lyrics for this language will be deleted.' %}",
+        confirmLabel: "{% trans 'Remove' %}",
+    }).then(function (ok) {
+        if (!ok) return
+        fetch(`/${videoId}/subtitles/${language}/delete/`, {
+            method: "POST", headers: { "X-CSRFToken": csrf }
+        })
+            .then(r => r.json())
+            .then(data => { if (data.success) location.reload() })
+            .catch(() => alert("{% trans 'Failed to delete.' %}"))
+    })
+}
+
+// --- Automatic subtitles ---------------------------------------------------
+
+const autoSubPanel = document.getElementById("autoSubPanel");
+
+/**
+ * Start a caption run from inside the player's CC menu, which is the place a
+ * viewer notices the gap. There is no status element there, so the menu item
+ * itself carries the progress; the page reloads when the run finishes and the
+ * new languages appear in the list.
+ */
+function generateSubtitles(button) {
+    const panel = document.getElementById("autoSubPanel");
+    if (!panel) return;
+    button.disabled = true;
+    button.textContent = "{% trans 'Startingâ€¦' %}";
+    fetch(panel.dataset.generateUrl, {
+        method: "POST", headers: { "X-CSRFToken": csrf }
+    })
+        .then(r => r.json())
+        .then(data => {
+            if (!data.success) {
+                button.disabled = false;
+                button.textContent = "{% trans 'Generate captions' %}";
+                alert(data.error || "{% trans 'Failed.' %}");
+                return;
+            }
+            button.textContent = "{% trans 'Transcribing and translatingâ€¦' %}";
+            const poll = () => {
+                fetch(panel.dataset.statusUrl)
+                    .then(r => r.json())
+                    .then(status => {
+                        if (!status.pending) { location.reload(); return }
+                        setTimeout(poll, 4000);
+                    })
+                    .catch(() => setTimeout(poll, 8000));
+            };
+            poll();
+        })
+        .catch(() => {
+            button.disabled = false;
+            button.textContent = "{% trans 'Generate captions' %}";
+        });
+}
+
+if (autoSubPanel) {
+    const autoSubBtn = document.getElementById("autoSubBtn");
+    const autoSubMessage = document.getElementById("autoSubMessage");
+
+    const pollSubtitles = () => {
+        fetch(autoSubPanel.dataset.statusUrl)
+            .then(r => r.json())
+            .then(data => {
+                // Reload once the run finishes so the new tracks appear in the
+                // player and in the language buttons above it.
+                if (!data.pending) { location.reload(); return }
+                autoSubMessage.textContent = "{% trans 'Transcribing and translatingâ€¦' %}";
+                setTimeout(pollSubtitles, 4000);
+            })
+            .catch(() => setTimeout(pollSubtitles, 8000));
+    }
+
+    autoSubBtn.addEventListener("click", () => {
+        autoSubBtn.disabled = true;
+        autoSubMessage.textContent = "{% trans 'Startingâ€¦' %}";
+        fetch(autoSubPanel.dataset.generateUrl, {
+            method: "POST", headers: { "X-CSRFToken": csrf }
+        })
+            .then(r => r.json())
+            .then(data => {
+                if (!data.success) {
+                    autoSubBtn.disabled = false;
+                    alert(data.error || "{% trans 'Failed.' %}");
+                    return;
+                }
+                pollSubtitles();
+            })
+            .catch(() => {
+                autoSubBtn.disabled = false;
+                autoSubMessage.textContent = "";
+            });
+    });
+}
+
+function vote(videoId, voteType) {
+    fetch(`/${videoId}/vote/`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded", "X-CSRFToken": csrf
+        },
+        body: `vote=${voteType}`
+    })
+        .then(r => r.json())
+        .then(data => {
+            document.getElementById("like-count").textContent = data.likes
+            const dislikeCount = document.getElementById("dislike-count")
+            if (dislikeCount) dislikeCount.textContent = data.dislikes
+            document.querySelectorAll(".vote-btn").forEach(btn => btn.classList.remove("active"))
+            if (data.user_vote === 1) document.querySelector('[data-vote="like"]').classList.add("active")
+            else if (data.user_vote === -1) document.querySelector('[data-vote="dislike"]').classList.add("active")
+        })
+}
+
+// --- Save to playlist ------------------------------------------------------
+
+const PLAYLIST_TOGGLE_URL = "{% url 'videos:playlist_toggle' 0 %}"
+const COMMENT_DELETE_URL = "{% url 'videos:comment_delete' 0 %}"
+
+function withId(template, id) {
+    return template.replace("/0/", `/${id}/`)
+}
+
+function toggleSaveMenu() {
+    const panel = document.getElementById("savePanel")
+    const btn = document.getElementById("saveToggle")
+    if (!panel) return
+    const willOpen = panel.hasAttribute("hidden")
+    if (willOpen) {
+        panel.removeAttribute("hidden")
+        if (btn) btn.setAttribute("aria-expanded", "true")
+    } else {
+        panel.setAttribute("hidden", "")
+        if (btn) btn.setAttribute("aria-expanded", "false")
+    }
+}
+
+// --- Sharing ------------------------------------------------------------------
+// Two links can be shared: the video page, and the MP3 on its own. Both are
+// absolute URLs built server side. The MP3 uses the audio-stream route rather
+// than the presigned download URL, so the link a friend receives does not
+// expire twelve hours later.
+const SHARE_LINKS = {
+    video: "{{ share_video_url|escapejs }}",
+    audio: "{{ share_audio_url|escapejs }}",
+}
+const SHARE_TITLE = "{{ video.title|escapejs }}"
+
+function shareMessage(kind) {
+    return kind === "audio"
+        ? `${SHARE_TITLE} â€” MP3`
+        : SHARE_TITLE
+}
+
+function shareUrl(kind) {
+    return SHARE_LINKS[kind] || ""
+}
+
+function toggleShareMenu() {
+    const panel = document.getElementById("sharePanel")
+    const btn = document.getElementById("shareToggle")
+    if (!panel) return
+    const willOpen = panel.hasAttribute("hidden")
+    if (willOpen) {
+        panel.removeAttribute("hidden")
+        if (btn) btn.setAttribute("aria-expanded", "true")
+    } else {
+        panel.setAttribute("hidden", "")
+        if (btn) btn.setAttribute("aria-expanded", "false")
+    }
+}
+
+function flashShareHint(text) {
+    const hint = document.getElementById("shareHint")
+    if (!hint) return
+    hint.textContent = text
+    hint.removeAttribute("hidden")
+    clearTimeout(flashShareHint.timer)
+    flashShareHint.timer = setTimeout(() => hint.setAttribute("hidden", ""), 2500)
+}
+
+// Clipboard API first, then a hidden textarea for older mobile browsers, then
+// tell the visitor to copy by hand rather than failing silently.
+function copyToClipboard(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+        return navigator.clipboard.writeText(text)
+    }
+    const area = document.createElement("textarea")
+    area.value = text
+    area.setAttribute("readonly", "")
+    area.style.position = "fixed"
+    area.style.opacity = "0"
+    document.body.appendChild(area)
+    area.select()
+    area.setSelectionRange(0, text.length)
+    let copied = false
+    try {
+        copied = document.execCommand("copy")
+    } catch (e) {
+        copied = false
+    }
+    document.body.removeChild(area)
+    return copied ? Promise.resolve() : Promise.reject(new Error("copy failed"))
+}
+
+async function shareKind(kind) {
+    const url = shareUrl(kind)
+    if (!url) return
+
+    // The native sheet is the best experience on a phone: it lists WhatsApp,
+    // Messages, and whatever else the visitor already uses.
+    if (navigator.share) {
+        try {
+            await navigator.share({
+                title: SHARE_TITLE,
+                text: shareMessage(kind),
+                url: url,
+            })
+            return
+        } catch (err) {
+            // The visitor dismissing the sheet is not a failure worth reporting.
+            if (err && err.name === "AbortError") return
+        }
+    }
+
+    try {
+        await copyToClipboard(url)
+        flashShareHint(
+            kind === "audio"
+                ? "{% trans 'MP3 link copied' %}"
+                : "{% trans 'Link copied' %}"
+        )
+    } catch (e) {
+        flashShareHint("{% trans 'Copy this link:' %} " + url)
+    }
+}
+
+const SHARE_NETWORK_URLS = {
+    whatsapp: (url, text) => "https://wa.me/?text=" + encodeURIComponent(text + " " + url),
+    telegram: (url, text) =>
+        "https://t.me/share/url?url=" + encodeURIComponent(url) +
+        "&text=" + encodeURIComponent(text),
+    facebook: (url, text) =>
+        "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url),
+    x: (url, text) =>
+        "https://twitter.com/intent/tweet?url=" + encodeURIComponent(url) +
+        "&text=" + encodeURIComponent(text),
+}
+
+function wireSharing() {
+    const panel = document.getElementById("sharePanel")
+    if (!panel) return
+
+    panel.querySelectorAll("[data-share]").forEach(button => {
+        button.addEventListener("click", () => shareKind(button.dataset.share))
+    })
+
+    panel.querySelectorAll("[data-share-network]").forEach(link => {
+        const network = link.dataset.shareNetwork
+        const kind = link.dataset.shareKind || "video"
+        const url = shareUrl(kind)
+        const build = SHARE_NETWORK_URLS[network]
+        if (!url || !build) return
+        link.href = build(url, shareMessage(kind))
+    })
+
+    // Close the panel when the visitor clicks elsewhere.
+    document.addEventListener("click", event => {
+        if (panel.hasAttribute("hidden")) return
+        if (panel.contains(event.target)) return
+        if (event.target.closest("#shareToggle")) return
+        panel.setAttribute("hidden", "")
+        const btn = document.getElementById("shareToggle")
+        if (btn) btn.setAttribute("aria-expanded", "false")
+    })
+}
+
+wireSharing()
+
+function togglePlaylist(playlistId, checkbox) {
+    fetch(withId(PLAYLIST_TOGGLE_URL, playlistId), {
+        method: "POST",
+        headers: { "X-CSRFToken": csrf, "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({ video_id: videoId }).toString(),
+    })
+        .then(r => r.json())
+        .then(data => {
+            if (!data.success) {
+                alert(data.error || "{% trans 'Failed.' %}")
+                checkbox.checked = !checkbox.checked
+                return
+            }
+            const row = checkbox.closest(".save-item")
+            const count = row ? row.querySelector(".save-count") : null
+            if (count) count.textContent = data.count
+        })
+        .catch(() => { checkbox.checked = !checkbox.checked })
+}
+
+// Shrink a chosen picture before sending it, so a full-size phone photo does
+// not blow past the request size limit. Returns a JPEG data URL.
+function coverToDataUrl(file, maxSize) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onerror = reject
+        reader.onload = () => {
+            const img = new Image()
+            img.onerror = reject
+            img.onload = () => {
+                const scale = Math.min(1, maxSize / Math.max(img.width, img.height))
+                const canvas = document.createElement("canvas")
+                canvas.width = Math.max(1, Math.round(img.width * scale))
+                canvas.height = Math.max(1, Math.round(img.height * scale))
+                canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height)
+                resolve(canvas.toDataURL("image/jpeg", 0.85))
+            }
+            img.src = reader.result
+        }
+        reader.readAsDataURL(file)
+    })
+}
+
+async function createPlaylistFromSave(event) {
+    event.preventDefault()
+    const input = document.getElementById("saveNewTitle")
+    const title = input.value.trim()
+    if (!title) return false
+
+    const params = { title: title, video_id: videoId }
+
+    // An optional cover photo becomes the new playlist's cover.
+    const coverInput = document.getElementById("saveNewCover")
+    const file = coverInput && coverInput.files[0]
+    if (file) {
+        try { params.cover_data = await coverToDataUrl(file, 640) } catch (error) {}
+    }
+
+    fetch("{% url 'videos:playlist_create' %}", {
+        method: "POST",
+        headers: { "X-CSRFToken": csrf, "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams(params).toString(),
+    })
+        .then(r => r.json())
+        .then(data => {
+            if (!data.success) { alert(data.error || "{% trans 'Failed.' %}"); return }
+            if (data.cover_error) alert(data.cover_error)
+            window.location.reload()
+        })
+        .catch(() => alert("{% trans 'Failed.' %}"))
+    return false
+}
+
+// --- Comments --------------------------------------------------------------
+
+function postComment(event) {
+    event.preventDefault()
+    const box = document.getElementById("commentBody")
+    const body = box.value.trim()
+    if (!body) return false
+
+    fetch(`/${videoId}/comments/add/`, {
+        method: "POST",
+        headers: { "X-CSRFToken": csrf, "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({ body: body }).toString(),
+    })
+        .then(r => r.json())
+        .then(data => {
+            if (!data.success) { alert(data.error || "{% trans 'Failed.' %}"); return }
+            box.value = ""
+            addCommentToDom(data.comment)
+            document.getElementById("commentsCount").textContent = data.comment_count
+        })
+        .catch(() => alert("{% trans 'Failed.' %}"))
+    return false
+}
+
+function addCommentToDom(comment) {
+    const list = document.getElementById("commentList")
+    const empty = document.getElementById("commentEmpty")
+    if (empty) empty.remove()
+
+    const el = document.createElement("div")
+    el.className = "comment"
+    el.dataset.comment = comment.id
+
+    const avatar = document.createElement("span")
+    avatar.className = "comment-avatar"
+    avatar.textContent = comment.initial
+
+    const body = document.createElement("div")
+    body.className = "comment-body"
+    const head = document.createElement("div")
+    head.className = "comment-head"
+    const author = document.createElement("span")
+    author.className = "comment-author"
+    author.textContent = comment.user
+    const date = document.createElement("span")
+    date.className = "comment-date"
+    date.textContent = comment.created
+    head.append(author, date)
+    const text = document.createElement("p")
+    text.className = "comment-text"
+    text.textContent = comment.body
+    body.append(head, text)
+
+    const remove = document.createElement("button")
+    remove.type = "button"
+    remove.className = "icon-btn"
+    remove.textContent = "âœ•"
+    remove.addEventListener("click", () => deleteComment(comment.id))
+
+    el.append(avatar, body, remove)
+    list.prepend(el)
+}
+
+function deleteComment(commentId) {
+    fazakkirConfirm({
+        title: "{% trans 'Delete this comment?' %}",
+        message: "{% trans 'The comment will be removed and cannot be recovered.' %}",
+        confirmLabel: "{% trans 'Delete' %}",
+    }).then(function (ok) {
+        if (!ok) return
+        fetch(withId(COMMENT_DELETE_URL, commentId), {
+            method: "POST", headers: { "X-CSRFToken": csrf },
+        })
+            .then(r => r.json())
+            .then(data => {
+                if (!data.success) { alert(data.error || "{% trans 'Failed.' %}"); return }
+                const el = document.querySelector(`.comment[data-comment="${commentId}"]`)
+                if (el) el.remove()
+                document.getElementById("commentsCount").textContent = data.comment_count
+            })
+            .catch(() => alert("{% trans 'Failed.' %}"))
+    })
+}
+</script>
+{% endblock %}

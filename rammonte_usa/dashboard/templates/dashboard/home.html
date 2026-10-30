@@ -1,0 +1,280 @@
+﻿{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Dashboard" %} - Rammonte USA{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/social.css' %}">
+<link rel="stylesheet" href="{% static 'css/manage.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="section-header">
+    <h1>{% trans "Dashboard" %}</h1>
+    <p class="section-subtitle">{% trans "Control the videos, the users, the comments and the storage in one place." %}</p>
+</div>
+
+{% include 'dashboard/_tabs.html' %}
+
+<div class="stat-grid">
+    <div class="stat-card">
+        <span class="stat-value">{{ stats.videos }}</span>
+        <span class="stat-label">{% trans "Videos" %}</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-value">{{ stats.users }}</span>
+        <span class="stat-label">{% trans "Users" %}</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-value">{{ stats.comments }}</span>
+        <span class="stat-label">{% trans "Comments" %}</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-value">{{ stats.objects }}</span>
+        <span class="stat-label">{% trans "Stored files" %}</span>
+    </div>
+</div>
+
+<div class="storage-card state-{{ report.alert_state }}">
+    <div class="storage-head">
+        <h2>{% trans "Storage" %}</h2>
+        <span class="badge badge-{{ report.alert_state }}">
+            {% if report.alert_state == 'critical' %}{% trans "Full" %}
+            {% elif report.alert_state == 'warning' %}{% trans "Nearly full" %}
+            {% else %}{% trans "OK" %}{% endif %}
+        </span>
+        {% if report.measured_at %}
+            <span class="storage-measured">
+                {% trans "Measured" %} {{ report.measured_at|date:"SHORT_DATETIME_FORMAT" }}
+            </span>
+        {% endif %}
+        <button type="button" class="btn-small" onclick="location.reload()">{% trans "Refresh" %}</button>
+    </div>
+
+    {% if not report.configured %}
+        <p class="dash-warning">
+            {% trans "Cloudflare R2 is not configured, so the media usage cannot be measured. Add the R2 credentials to your .env file." %}
+        </p>
+    {% elif report.error %}
+        <p class="dash-warning">{{ report.error }}</p>
+    {% endif %}
+
+    <div class="meter">
+        <div class="meter-row">
+            <span class="meter-name">{% trans "Media storage (Cloudflare R2)" %}</span>
+            <span class="meter-figures">
+                {{ media_used_display }} / {{ media_quota_display }}
+                &middot; {{ report.media_percent }}%
+                &middot; {% blocktrans with free=media_free_display %}{{ free }} free{% endblocktrans %}
+            </span>
+        </div>
+        <div class="progress" role="progressbar" aria-valuenow="{{ report.media_bar }}" aria-valuemin="0" aria-valuemax="100">
+            <div class="progress-fill state-{{ report.alert_state }}" style="width: {{ report.media_bar }}%"></div>
+        </div>
+    </div>
+
+    <div class="meter">
+        <div class="meter-row">
+            <span class="meter-name">{% trans "Database (SQLite)" %}</span>
+            <span class="meter-figures">
+                {{ db_size_display }} / {{ db_quota_display }}
+                &middot; {{ report.db_percent }}%
+                &middot; {% blocktrans with free=db_free_display %}{{ free }} free{% endblocktrans %}
+            </span>
+        </div>
+        <div class="progress" role="progressbar" aria-valuenow="{{ report.db_bar }}" aria-valuemin="0" aria-valuemax="100">
+            <div class="progress-fill state-{{ report.alert_state }}" style="width: {{ report.db_bar }}%"></div>
+        </div>
+    </div>
+
+    {% if report.by_prefix %}
+    <div class="storage-breakdown">
+        {% for prefix, size in report.by_prefix.items %}
+            <span class="chip">{{ prefix }} {{ size|filesizeformat }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+
+{% if can_write %}
+<div class="dash-panel">
+    <h2>{% trans "Alerts" %}</h2>
+    <p class="section-subtitle">
+        {% blocktrans with email=report.notify_email %}An email is sent to {{ email }} once the storage passes the alert threshold.{% endblocktrans %}
+        {% blocktrans with threshold=report.threshold %}The alert triggers at {{ threshold }} percent or more, and again when the storage is completely full.{% endblocktrans %}
+    </p>
+
+    <form id="storageSettingsForm" class="dash-form">
+        {% csrf_token %}
+        <div class="dash-form-grid">
+            <label>
+                <span>{% trans "Media quota (GB)" %}</span>
+                <input type="number" step="0.1" min="0.1" name="quota_gb" value="{{ quota_gb }}" class="form-input">
+            </label>
+            <label>
+                <span>{% trans "Database quota (GB)" %}</span>
+                <input type="number" step="0.1" min="0.1" name="db_quota_gb" value="{{ db_quota_gb }}" class="form-input">
+            </label>
+            <label>
+                <span>{% trans "Alert threshold (%)" %}</span>
+                <input type="number" min="1" max="100" name="alert_threshold_percent" value="{{ report.threshold }}" class="form-input">
+            </label>
+            <label>
+                <span>{% trans "Notification email" %}</span>
+                <input type="email" name="notify_email" value="{{ report.notify_email }}" class="form-input">
+            </label>
+        </div>
+        <div class="dash-form-actions">
+            <button type="submit" class="btn-primary">{% trans "Save settings" %}</button>
+            <button type="button" class="btn-outline" id="testEmailBtn">{% trans "Send test email" %}</button>
+        </div>
+    </form>
+</div>
+{% endif %}
+
+<div class="dash-panel">
+    <div class="dash-panel-head">
+        <h2>{% trans "Largest videos" %}</h2>
+        <a href="{% url 'dashboard:videos' %}" class="link-more">{% trans "Manage all" %} â†’</a>
+    </div>
+    {% if top_videos %}
+    <div class="manage-table-wrap">
+        <table class="manage-table">
+            <thead>
+                <tr>
+                    <th>{% trans "Video" %}</th>
+                    <th>{% trans "Uploader" %}</th>
+                    <th>{% trans "Size" %}</th>
+                    <th class="col-actions">{% trans "Actions" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in top_videos %}
+                <tr data-video="{{ row.video.id }}">
+                    <td><a href="{% url 'videos:detail' row.video.id %}">{{ row.video.title }}</a></td>
+                    <td>{{ row.video.user.username }}</td>
+                    <td>{{ row.bytes|filesizeformat }}</td>
+                    <td class="col-actions">
+                        {% if can_write %}
+                        <button type="button" class="btn-small btn-danger"
+                                onclick="deleteVideo({{ row.video.id }}, '{{ row.video.title|escapejs }}')">
+                            {% trans "Delete" %}
+                        </button>
+                        {% else %}<span class="muted">â€”</span>{% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <p class="muted">{% trans "No videos yet." %}</p>
+    {% endif %}
+</div>
+
+{% if report.orphan_bytes or report.orphans %}
+<div class="dash-panel">
+    <div class="dash-panel-head">
+        <h2>{% trans "Reclaimable space" %}</h2>
+    </div>
+    <p class="section-subtitle">
+        {% trans "Files left behind by interrupted uploads:" %} {{ orphan_display }} ({{ report.orphans|length }}).
+        {% trans "Deleting them frees space without touching any video." %}
+    </p>
+    {% if can_write %}
+    <button type="button" class="btn-primary" id="cleanupBtn">{% trans "Free this space" %}</button>
+    {% endif %}
+</div>
+{% endif %}
+
+<div class="dash-hint">
+    <p class="manage-hint">
+        {% if can_write %}
+            {% trans "Deleting a video removes it from the database and from Cloudflare R2." %}
+        {% else %}
+            {% trans "Read-only staff can view the dashboard; read & write staff can also delete videos and free space." %}
+        {% endif %}
+    </p>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const dashCsrf = '{{ csrf_token }}';
+const SETTINGS_URL = "{% url 'dashboard:settings' %}";
+const TEST_EMAIL_URL = "{% url 'dashboard:test_email' %}";
+const CLEANUP_URL = "{% url 'dashboard:cleanup' %}";
+const VIDEO_DELETE_URL = "{% url 'videos:delete' 0 %}";
+
+function postJson(url, body, onSuccess, onError) {
+    fetch(url, {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": dashCsrf,
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: body ? body.toString() : "",
+    })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) onSuccess(data);
+            else (onError || (() => alert(data.error || "{% trans 'Failed.' %}")))(data);
+        })
+        .catch(() => alert("{% trans 'Failed.' %}"));
+}
+
+function deleteVideo(videoId, title) {
+    fazakkirConfirm({
+        title: "{% trans 'Delete this video?' %}",
+        message: "{% blocktrans %}This permanently removes the recording, its MP3 and its thumbnail from Cloudflare storage. This cannot be undone.{% endblocktrans %}\n\n" + title,
+        confirmLabel: "{% trans 'Delete permanently' %}",
+    }).then(function (ok) {
+        if (!ok) return;
+        postJson(VIDEO_DELETE_URL.replace("/0/", `/${videoId}/`), null, () => location.reload());
+    });
+}
+
+{% if can_write %}
+const settingsForm = document.getElementById("storageSettingsForm");
+if (settingsForm) {
+    settingsForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        const body = new URLSearchParams(new FormData(settingsForm));
+        postJson(SETTINGS_URL, body, (data) => {
+            alert(data.message || "{% trans 'Saved.' %}");
+            location.reload();
+        });
+    });
+}
+
+const testEmailBtn = document.getElementById("testEmailBtn");
+if (testEmailBtn) {
+    testEmailBtn.addEventListener("click", function () {
+        postJson(TEST_EMAIL_URL, null, (data) => alert(data.message || "{% trans 'Sent.' %}"));
+    });
+}
+
+const cleanupBtn = document.getElementById("cleanupBtn");
+if (cleanupBtn) {
+    cleanupBtn.addEventListener("click", function () {
+        // This permanently removes objects from Cloudflare storage with no way
+        // back, so spell out exactly what is at stake and leave the safe
+        // choice on the cancel path.
+        fazakkirConfirm({
+            title: "{% trans 'Delete the files that no video uses?' %}",
+            message: "{% blocktrans %}Every object in Cloudflare R2 that no video references is deleted permanently. Videos, their MP3s and their thumbnails are kept, and offline copies on visitors' devices are not affected.{% endblocktrans %}",
+            confirmLabel: "{% trans 'Delete unused files' %}",
+        }).then(function (ok) {
+            if (!ok) return;
+            cleanupBtn.disabled = true;
+            postJson(CLEANUP_URL, null, (data) => {
+                alert("{% trans 'Space freed:' %} " + data.freed_display);
+                location.reload();
+            });
+        });
+    });
+}
+{% endif %}
+</script>
+{% endblock %}

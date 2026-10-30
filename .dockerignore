@@ -1,0 +1,14 @@
+# Keep the image small and the local tree tidy.
+__pycache__/
+*.py[oc]
+.venv/
+db.sqlite3
+fazakkir_dmwm/staticfiles/
+fazakkir_dmwm/.env
+fazakkir_dmwm/.env.*
+!.env.example
+git/
+.github/
+*.md
+!README.md
+DEPLOYMENT.md

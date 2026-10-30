@@ -1,0 +1,582 @@
+/**
+ * Social features - playlists, the "save" panel and comments.
+ * Shared small utilities (checkbox-inline, icon-btn, btn-small) live here and
+ * are reused by the user-management page.
+ */
+
+.section-header {
+    margin-bottom: 24px;
+}
+
+.section-header h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin: 0 0 4px;
+}
+
+.section-subtitle {
+    color: var(--text-secondary);
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+/* --- Small shared utilities -------------------------------------------- */
+
+.checkbox-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    cursor: pointer;
+    user-select: none;
+}
+
+.checkbox-inline input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--accent-red);
+}
+
+.icon-btn {
+    flex: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--border-color);
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.icon-btn:hover {
+    background: var(--bg-tertiary);
+    color: var(--error-red);
+    border-color: var(--error-red);
+}
+
+.btn-small {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.btn-small:hover {
+    border-color: var(--accent-red);
+}
+
+.btn-small.btn-danger {
+    color: var(--error-red);
+    border-color: var(--error-red);
+}
+
+.btn-small.btn-danger:hover {
+    background: rgba(231, 76, 60, 0.15);
+}
+
+/* --- Playlists ---------------------------------------------------------- */
+
+.playlist-new-form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+    padding: 16px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+}
+
+.playlist-new-form .form-input {
+    flex: 1 1 220px;
+}
+
+.playlist-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
+    gap: 20px;
+}
+
+.playlist-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: all var(--transition-normal);
+}
+
+.playlist-card-link {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+}
+
+.playlist-cover {
+    aspect-ratio: 16 / 9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: var(--text-secondary);
+    background: linear-gradient(135deg, var(--bg-tertiary), var(--bg-secondary));
+    overflow: hidden;
+}
+
+.playlist-cover img,
+.playlist-header-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.playlist-cover-picker {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    cursor: pointer;
+    max-width: 220px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.playlist-cover-picker:hover {
+    color: var(--text-primary);
+    border-color: var(--accent-red);
+}
+
+.playlist-card-body {
+    padding: 14px 16px;
+}
+
+.playlist-card-body h3 {
+    margin: 0 0 6px;
+    font-size: 1rem;
+}
+
+.playlist-meta {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.playlist-header {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    margin-bottom: 24px;
+    padding: 20px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+}
+
+.playlist-header-cover {
+    flex: none;
+    width: 110px;
+    height: 110px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    color: var(--text-secondary);
+    background: linear-gradient(135deg, var(--bg-tertiary), var(--bg-secondary));
+    overflow: hidden;
+}
+
+.playlist-header-info h1 {
+    margin: 0 0 6px;
+    font-size: 1.4rem;
+}
+
+.owner-panel {
+    margin-bottom: 24px;
+    padding: 16px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+}
+
+.playlist-edit-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+}
+
+.playlist-edit-form .form-input {
+    flex: 1 1 200px;
+}
+
+.owner-panel-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.playlist-items {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.playlist-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 8px;
+}
+
+.playlist-item-link {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex: 1;
+    min-width: 0;
+    color: inherit;
+    text-decoration: none;
+}
+
+.playlist-item-thumb {
+    position: relative;
+    flex: none;
+    width: 120px;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    background: var(--bg-tertiary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.playlist-item-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.playlist-item-info {
+    min-width: 0;
+}
+
+.playlist-item-info h3 {
+    margin: 0 0 4px;
+    font-size: 0.95rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+/* --- Share panel -------------------------------------------------------- */
+
+.share-panel {
+    margin-top: 12px;
+    padding: 14px 16px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+}
+
+.share-panel-head {
+    font-weight: 600;
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+}
+
+.share-targets {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
+.share-target {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: background var(--transition-normal);
+}
+
+.share-target:hover {
+    background: var(--bg-hover, var(--bg-primary));
+}
+
+.share-target-icon {
+    font-size: 1.05rem;
+    line-height: 1;
+}
+
+.share-networks {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.share-network {
+    padding: 7px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #fff;
+    text-decoration: none;
+}
+
+/* Brand colours double as the visual cue for each target app. */
+.share-network-whatsapp { background: #25d366; }
+.share-network-telegram { background: #229ed9; }
+.share-network-facebook { background: #1877f2; }
+.share-network-x { background: #000; }
+
+.share-hint {
+    margin: 12px 0 0;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    word-break: break-all;
+}
+
+/* --- Save-to-playlist panel -------------------------------------------- */
+
+.save-panel {
+    margin-top: 12px;
+    padding: 14px 16px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+}
+
+.save-panel-head {
+    font-weight: 600;
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+}
+
+.save-panel-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 0 0 12px;
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+.save-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 4px;
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+}
+
+.save-item:hover {
+    background: var(--bg-tertiary);
+}
+
+.save-item input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--accent-red);
+}
+
+.save-item-title {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.save-count {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+}
+
+.save-empty {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.save-new {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.save-new-row {
+    display: flex;
+    gap: 8px;
+}
+
+.save-new .form-input {
+    flex: 1;
+}
+
+/* --- Comments ----------------------------------------------------------- */
+
+.comments-section {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+.comments-title {
+    font-size: 1.1rem;
+    margin: 0 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.comments-count {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 400;
+}
+
+.comment-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.comment-form .form-input {
+    resize: vertical;
+    font-family: inherit;
+}
+
+.btn-comment {
+    align-self: flex-end;
+    width: auto;
+    padding: 10px 20px;
+    margin-top: 0;
+}
+
+.comment-signin {
+    color: var(--text-secondary);
+    margin: 0 0 20px;
+    font-size: 0.9rem;
+}
+
+.comment-signin a {
+    color: var(--accent-red);
+}
+
+.comment-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.comment {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.comment-avatar {
+    flex: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-red) 0%, var(--accent-red-light) 100%);
+    color: white;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+}
+
+.comment-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.comment-head {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 2px;
+}
+
+.comment-author {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.comment-date {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+}
+
+.comment-text {
+    margin: 0;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    line-height: 1.5;
+}
+
+.comment-empty {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .playlist-header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .comment-form .form-input,
+    .btn-comment {
+        width: 100%;
+    }
+
+    .btn-comment {
+        align-self: stretch;
+    }
+}
+
+@media (max-width: 480px) {
+    .playlist-item-thumb {
+        width: 90px;
+    }
+
+    .playlist-item-info h3 {
+        font-size: 0.9rem;
+    }
+}

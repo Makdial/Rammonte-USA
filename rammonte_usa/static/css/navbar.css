@@ -1,0 +1,355 @@
+/**
+ * Navigation bar styles.
+ *
+ * Laid out the way YouTube does it: the brand sits on the left, the search box
+ * takes all the space in the middle, and the account actions are pushed to the
+ * right edge. The bar is flat (the same colour as the page) rather than a raised
+ * card, and every hover is a soft circular wash instead of a filled button.
+ */
+
+.navbar {
+    background: var(--bg-primary);
+    border-bottom: 1px solid var(--yt-border);
+    padding: 0 16px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: var(--text-primary);
+    font-weight: 700;
+    font-size: 1.25rem;
+    letter-spacing: -0.02em;
+    padding: 4px 6px 4px 2px;
+    border-radius: var(--radius-sm);
+    flex: none;
+}
+
+.navbar-brand:focus-visible {
+    outline: 2px solid var(--accent-red);
+    outline-offset: 2px;
+}
+
+/* The rounded red square behind the play glyph, as on the YouTube wordmark. */
+.brand-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    background: var(--accent-red);
+    color: #fff;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    padding-left: 2px;
+}
+
+.navbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    /* Take the remaining width so the search can stretch and the real actions
+       end up pinned to the right edge, exactly like YouTube's bar. */
+    flex: 1;
+    justify-content: flex-end;
+    min-width: 0;
+}
+
+.navbar-nav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    list-style: none;
+    flex: none;
+}
+
+/* --- Language switcher --------------------------------------------------- */
+
+.language-form {
+    display: flex;
+    flex: none;
+}
+
+.lang-toggle {
+    display: flex;
+    align-items: center;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-full);
+    padding: 2px;
+    gap: 2px;
+}
+
+.lang-option {
+    border: none;
+    background: none;
+    color: var(--text-secondary);
+    font-family: inherit;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    padding: 5px 9px;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.lang-option:hover {
+    color: var(--text-primary);
+}
+
+.lang-option.active {
+    background: var(--accent-red);
+    color: #fff;
+}
+
+/* --- Theme toggle -------------------------------------------------------- */
+
+.theme-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: var(--text-primary);
+    cursor: pointer;
+    font-size: 1rem;
+    line-height: 1;
+    transition: background var(--transition-fast);
+    flex: none;
+}
+
+.theme-toggle:hover {
+    background: var(--yt-hover);
+}
+
+.theme-icon-sun {
+    display: none;
+}
+
+[data-theme="light"] .theme-icon-sun {
+    display: inline;
+}
+
+[data-theme="light"] .theme-icon-moon {
+    display: none;
+}
+
+/* --- Links --------------------------------------------------------------- */
+
+.nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-primary);
+    text-decoration: none;
+    padding: 8px 14px;
+    border-radius: var(--radius-full);
+    font-weight: 500;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.nav-link:hover {
+    background: var(--yt-hover);
+}
+
+.nav-link.btn-primary {
+    background: var(--accent-red);
+    color: #fff;
+}
+
+.nav-link.btn-primary:hover {
+    background: var(--accent-red-hover);
+}
+
+.nav-link.btn-outline {
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+.nav-link.btn-outline:hover {
+    background: var(--yt-hover);
+    border-color: var(--text-secondary);
+}
+
+/* "Upload" behaves like YouTube's Create pill: a filled chip. */
+.btn-upload {
+    background: var(--yt-chip);
+    color: var(--text-primary);
+}
+
+.btn-upload:hover {
+    background: var(--yt-chip-hover);
+}
+
+.logout-form {
+    display: inline-flex;
+}
+
+.logout-btn {
+    background: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: inherit;
+}
+
+.nav-username {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    background: var(--accent-red);
+    font-weight: 600;
+    font-size: 0.95rem;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    text-transform: uppercase;
+    flex: none;
+}
+
+/* --- Hamburger (hidden on desktop) --------------------------------------- */
+
+.nav-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 40px;
+    height: 40px;
+    padding: 10px;
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    flex: none;
+}
+
+.nav-toggle:hover {
+    background: var(--yt-hover);
+}
+
+.nav-toggle-bar {
+    display: block;
+    width: 100%;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--text-primary);
+    transition: transform var(--transition-normal), opacity var(--transition-normal);
+}
+
+.nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(2) {
+    opacity: 0;
+}
+
+.nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ------------------------------------------------------------------ */
+/* Mobile / small tablet: the actions collapse into a dropdown panel.  */
+/* The search box is the first thing in that panel, as on the YouTube   */
+/* phone layout where the bar holds only the logo and a magnifier.      */
+/* ------------------------------------------------------------------ */
+
+@media (max-width: 768px) {
+    .navbar {
+        padding: 0 12px;
+    }
+
+    .nav-toggle {
+        display: flex;
+    }
+
+    .navbar-brand {
+        margin-right: auto;
+    }
+
+    .navbar-actions {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        display: none;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 14px;
+        padding: 16px;
+        background: var(--bg-secondary);
+        border-bottom: 1px solid var(--yt-border);
+        box-shadow: var(--shadow-lg);
+        max-height: calc(100vh - 56px);
+        overflow-y: auto;
+    }
+
+    .navbar-actions.open {
+        display: flex;
+    }
+
+    .navbar-nav {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 4px;
+        width: 100%;
+    }
+
+    .navbar-nav li {
+        width: 100%;
+    }
+
+    .nav-link,
+    .nav-username {
+        display: flex;
+        justify-content: center;
+        text-align: center;
+        padding: 12px 16px;
+    }
+
+    .nav-username {
+        width: 100%;
+        height: auto;
+        border-radius: var(--radius-md);
+        background: var(--bg-tertiary);
+        color: var(--text-primary);
+        text-transform: none;
+    }
+
+    .logout-form {
+        display: block;
+        width: 100%;
+    }
+
+    .logout-btn {
+        width: 100%;
+    }
+
+    .lang-toggle {
+        align-self: center;
+    }
+
+    .language-form {
+        justify-content: center;
+    }
+
+    .theme-toggle {
+        align-self: center;
+    }
+}

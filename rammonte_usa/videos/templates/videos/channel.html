@@ -1,0 +1,56 @@
+﻿{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block title %}{{ channel_name }} - Rammonte USA{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/videos.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="channel-header">
+    <div class="channel-header-avatar">{{ channel_name|slice:":1" }}</div>
+    <h1>{{ channel_name }}</h1>
+</div>
+{% if videos %}
+<div class="video-grid">
+    {% for video in videos %}
+        <div class="video-card-wrap">
+            <a href="{% url 'videos:detail' video.id %}" class="video-card">
+                <div class="video-thumbnail">
+                    {% if video.display_thumbnail_url %}
+                        <img src="{{ video.display_thumbnail_url }}" alt="{{ video.title }}" loading="lazy">
+                    {% else %}
+                        <span class="thumbnail-placeholder">â–¶</span>
+                    {% endif %}
+                    {% if video.duration_seconds %}
+                    <span class="video-duration">{{ video.duration_formatted }}</span>
+                    {% endif %}
+                    <span class="play-icon">â–¶</span>
+                </div>
+                <div class="video-info">
+                    <span class="video-card-avatar" aria-hidden="true">{{ video.user.username|slice:":1" }}</span>
+                    <div>
+                        <h3 class="video-title">{{ video.title }}</h3>
+                        <p class="video-meta">
+                            {% blocktrans count counter=video.views %}{{ counter }} view{% plural %}{{ counter }} views{% endblocktrans %}
+                            Â· {{ video.created_at|date:"Y" }}
+                        </p>
+                    </div>
+                </div>
+            </a>
+            {% if video.has_audio %}
+            <a class="card-download" href="{{ video.audio_download_url }}" download
+               title="{% trans 'Download MP3' %}" aria-label="{% trans 'Download MP3' %}">â¬‡ MP3</a>
+            {% endif %}
+        </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <span class="empty-icon">ðŸŽ¬</span>
+    <h2>{% trans "No Videos Yet" %}</h2>
+    <p>{% trans "This channel hasn't uploaded any videos yet." %}</p>
+</div>
+{% endif %}
+{% endblock %}

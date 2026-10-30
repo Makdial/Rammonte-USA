@@ -1,0 +1,354 @@
+﻿{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Upload Video" %} - Rammonte USA{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/videos.css' %}">
+<link rel="stylesheet" href="{% static 'css/upload.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="upload-overlay" id="uploadOverlay">
+    <div class="upload-progress-container">
+        <div class="upload-spinner"></div>
+        <h2 id="uploadStatus">{% trans "Uploading Video..." %}</h2>
+        <p class="upload-warning">{% trans "Please don't close this page" %}</p>
+    </div>
+</div>
+
+<div class="upload-container">
+    <div class="upload-card">
+        <h1 id="uploadHeading">{% trans "Upload Video" %}</h1>
+
+        {% if not storage_ready %}
+        <p class="storage-warning">
+            {% trans "Video storage is not configured yet. Add your Cloudflare R2 credentials to the .env file." %}
+        </p>
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data" class="upload-form" id="uploadForm">
+            {% csrf_token %}
+
+            <div id="errorContainer">
+                {% if form.errors %}
+                    <ul class="error-list">
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                        {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="id_media_type_0">{{ form.media_type.label }}</label>
+                <div class="upload-type-choice">
+                    {% for radio in form.media_type %}
+                        <label class="upload-type-option">{{ radio }} <span>{{ radio.choice_label }}</span></label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="id_title">{% trans "Title" %}</label>
+                <input type="text" name="title" id="id_title" class="form-input"
+                       placeholder="{% trans 'Enter video title' %}"
+                       value="{{ form.title.value|default:'' }}" required/>
+            </div>
+
+            <div class="form-group">
+                <label for="id_description">{% trans "Description" %}</label>
+                <textarea name="description" id="id_description" class="form-input"
+                          placeholder="{% trans 'Enter video description' %}" rows="3">{{ form.description.value|default:'' }}</textarea>
+            </div>
+
+            <div class="form-group" id="videoFieldGroup">
+                <label for="id_video_file">{% trans "Video File" %}</label>
+                <label class="file-input-wrapper" for="id_video_file">
+                    <span id="video-label">{% trans "Click to select a video file" %}</span>
+                </label>
+                <input type="file" name="video_file" id="id_video_file" accept="video/*" style="display:none;"/>
+                <span class="help-text">{% trans "MP4, WebM, MOV or AVI. Max 3 GB." %}</span>
+                <span class="help-text">{% trans "An MP3 audio file is generated automatically." %}</span>
+            </div>
+
+            <div class="form-group" id="audioFieldGroup" hidden>
+                <label for="id_audio_file">{% trans "Audio File (MP3)" %}</label>
+                <label class="file-input-wrapper" for="id_audio_file">
+                    <span id="audio-label">{% trans "Click to select an MP3 file" %}</span>
+                </label>
+                <input type="file" name="audio_file" id="id_audio_file" accept="audio/*" style="display:none;"/>
+                <span class="help-text">{% trans "MP3, WAV, M4A, OGG or AAC. Anything else is converted to MP3." %}</span>
+            </div>
+
+            <div class="form-group" id="customThumbnailGroup">
+                <label for="customThumbnail">{% trans "Thumbnail (optional)" %}</label>
+                <label class="file-input-wrapper thumb-wrapper" for="customThumbnail">
+                    <img id="thumbPreview" alt="">
+                    <span id="thumb-label">{% trans "Click to select a thumbnail" %}</span>
+                </label>
+                <input type="file" id="customThumbnail" accept="image/*" style="display:none;"/>
+                <input type="hidden" name="thumbnail_data" id="thumbnailData"/>
+                <span class="help-text" id="thumbnailHelp">{% trans "Leave empty to auto-generate a thumbnail from your video" %}</span>
+            </div>
+
+            <button type="submit" class="btn-submit" id="submitBtn">{% trans "Upload Video" %}</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const $ = id => document.getElementById(id);
+let customThumbnailChosen = false;
+// The chosen picture, kept as a real file so it travels as a file part: a form
+// field carrying base64 is limited in size and inflates the picture by a third.
+let thumbnailBlob = null;
+
+function setThumbnail(dataUrl) {
+    if (!dataUrl) return;
+    $("thumbPreview").src = dataUrl;
+    $("thumbPreview").classList.add("visible");
+    $("thumb-label").style.display = "none";
+    $("thumbnailData").value = dataUrl;
+    thumbnailBlob = dataUrlToBlob(dataUrl);
+}
+
+function dataUrlToBlob(dataUrl) {
+    const [header, body] = dataUrl.split(",");
+    const match = /data:([^;]+)/.exec(header);
+    const mime = match ? match[1] : "image/jpeg";
+    const binary = atob(body);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    return new Blob([bytes], { type: mime });
+}
+
+// Capture a frame from the selected video so every upload gets a thumbnail.
+function generateThumbnail(file) {
+    return new Promise(resolve => {
+        const url = URL.createObjectURL(file);
+        const video = document.createElement("video");
+        video.preload = "metadata";
+        video.muted = true;
+        video.src = url;
+
+        video.addEventListener("loadedmetadata", () => {
+            const target = Math.min(1, (video.duration || 2) / 2);
+            video.currentTime = target;
+        });
+
+        video.addEventListener("seeked", () => {
+            try {
+                const canvas = document.createElement("canvas");
+                canvas.width = video.videoWidth || 1280;
+                canvas.height = video.videoHeight || 720;
+                canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
+                resolve(canvas.toDataURL("image/jpeg", 0.8));
+            } catch (e) {
+                resolve("");
+            } finally {
+                URL.revokeObjectURL(url);
+            }
+        });
+
+        video.addEventListener("error", () => {
+            URL.revokeObjectURL(url);
+            resolve("");
+        });
+    });
+}
+
+$("id_video_file").onchange = async e => {
+    const file = e.target.files[0];
+    $("video-label").textContent = file ? file.name : "{% trans 'Click to select a video file' %}";
+
+    if (file && !customThumbnailChosen) {
+        const dataUrl = await generateThumbnail(file);
+        setThumbnail(dataUrl);
+    }
+};
+
+$("id_audio_file").onchange = e => {
+    const file = e.target.files[0];
+    $("audio-label").textContent = file ? file.name : "{% trans 'Click to select an MP3 file' %}";
+};
+
+// A video and an MP3 are alternatives, never both: each carries its own media,
+// so only the picker for the chosen type is shown.
+const UPLOAD_LABELS = {
+    video: {
+        heading: "{% trans 'Upload Video' %}",
+        overlay: "{% trans 'Uploading Video...' %}",
+    },
+    audio: {
+        heading: "{% trans 'Upload Audio' %}",
+        overlay: "{% trans 'Uploading Audio...' %}",
+    },
+};
+
+// Read the value of the checked radio. The widget's ids are positional
+// (id_media_type_0 is the first choice), so hard-coding an index is what got
+// this wrong before.
+function selectedMediaType() {
+    const checked = document.querySelector('input[name="media_type"]:checked');
+    return checked ? checked.value : "video";
+}
+
+function showUploadType() {
+    const audioOnly = selectedMediaType() === "audio";
+    const videoInput = $("id_video_file");
+    const audioInput = $("id_audio_file");
+
+    $("videoFieldGroup").hidden = audioOnly;
+    $("audioFieldGroup").hidden = !audioOnly;
+
+    // A disabled input is not submitted at all, so exactly one file can ever
+    // reach the server. The choice is kept in case the type is switched back.
+    videoInput.disabled = audioOnly;
+    audioInput.disabled = !audioOnly;
+
+    // An audio upload has no frame to sample, so the picture is never
+    // generated for it, but the owner can still choose one to show on the
+    // card and on the page.
+    $("customThumbnailGroup").hidden = false;
+    $("thumbnailHelp").textContent = audioOnly
+        ? "{% trans 'An audio upload has no picture of its own, so choose one to show on the card' %}"
+        : "{% trans 'Leave empty to auto-generate a thumbnail from your video' %}";
+
+    const labels = audioOnly ? UPLOAD_LABELS.audio : UPLOAD_LABELS.video;
+    $("uploadHeading").textContent = labels.heading;
+    $("submitBtn").textContent = labels.heading;
+}
+
+document.querySelectorAll('input[name="media_type"]').forEach(input => {
+    input.addEventListener("change", showUploadType);
+});
+showUploadType();
+
+// Shrink a chosen picture before sending it. A full-size phone photo is many
+// megabytes, and the whole upload used to be refused because of it.
+function shrinkImage(file, maxSize) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = reject;
+        reader.onload = () => {
+            const img = new Image();
+            img.onerror = reject;
+            img.onload = () => {
+                const scale = Math.min(1, maxSize / Math.max(img.width, img.height));
+                const canvas = document.createElement("canvas");
+                canvas.width = Math.max(1, Math.round(img.width * scale));
+                canvas.height = Math.max(1, Math.round(img.height * scale));
+                canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+                resolve(canvas.toDataURL("image/jpeg", 0.85));
+            };
+            img.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+const PICTURE_TOO_LARGE = "{% trans 'That picture could not be prepared. Please choose a smaller image.' %}";
+
+$("customThumbnail").onchange = async e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    customThumbnailChosen = true;
+    try {
+        setThumbnail(await shrinkImage(file, 1280));
+    } catch (error) {
+        // Fall back to the untouched picture only while it is small enough to
+        // travel inside a form field.
+        if (file.size <= 1024 * 1024) {
+            const reader = new FileReader();
+            reader.onload = ev => setThumbnail(ev.target.result);
+            reader.readAsDataURL(file);
+        } else {
+            customThumbnailChosen = false;
+            $("customThumbnail").value = "";
+            $("thumbnailData").value = "";
+            thumbnailBlob = null;
+            $("thumbPreview").classList.remove("visible");
+            $("thumb-label").style.display = "";
+            $("errorContainer").innerHTML =
+                `<ul class="error-list"><li>${PICTURE_TOO_LARGE}</li></ul>`;
+        }
+    }
+};
+
+$("uploadForm").onsubmit = async e => {
+    e.preventDefault();
+
+    const mediaType = selectedMediaType();
+    const fileInput = mediaType === "audio" ? $("id_audio_file") : $("id_video_file");
+    if (!fileInput.files.length || !$("id_title").value.trim()) return;
+
+    $("uploadStatus").textContent = UPLOAD_LABELS[mediaType].overlay;
+    $("uploadOverlay").classList.add("active");
+    $("submitBtn").disabled = true;
+    $("errorContainer").innerHTML = "";
+    window.onbeforeunload = () => "{% trans 'Upload in progress' %}";
+
+    try {
+        const body = new FormData(e.target);
+        // A file part is streamed and has no field-size limit, so the picture
+        // goes that way; the hidden field is only left for a browser whose
+        // canvas could not produce one.
+        if (thumbnailBlob) {
+            body.set("thumbnail_file", thumbnailBlob, "cover.jpg");
+            body.delete("thumbnail_data");
+        }
+
+        const res = await fetch("{% url 'videos:upload_submit' %}", {
+            method: "POST",
+            body: body
+        });
+
+        // A refused request answers with a page, not JSON; reading it as text
+        // first keeps the browser from reporting a parse error instead of the
+        // real problem.
+        const text = await res.text();
+        let data = null;
+        try { data = JSON.parse(text); } catch (error) { data = null; }
+        window.onbeforeunload = null;
+
+        if (data && data.success) {
+            if (data.warning) {
+                // The file is saved; only its picture failed. Show the message
+                // instead of a spinner, then go to the library.
+                $("uploadOverlay").classList.remove("active");
+                $("submitBtn").disabled = false;
+                $("errorContainer").innerHTML =
+                    `<ul class="error-list"><li>${data.warning}</li></ul>`;
+                setTimeout(() => location.href = '{% url "videos:list" %}', 3500);
+                return;
+            }
+            $("uploadStatus").textContent = "{% trans 'Upload complete!' %}";
+            setTimeout(() => location.href = '{% url "videos:list" %}', 500);
+            return;
+        }
+
+        if (data) {
+            throw new Error(data.error || data.errors || "{% trans 'Upload failed' %}");
+        }
+        throw new Error(
+            res.status === 413
+                ? "{% trans 'This file is too large for the server. Please choose a smaller file.' %}"
+                : "{% trans 'The upload was refused by the server. Please try again.' %}"
+        );
+    } catch (err) {
+        window.onbeforeunload = null;
+        $("uploadOverlay").classList.remove("active");
+        $("submitBtn").disabled = false;
+        $("errorContainer").innerHTML = `<ul class="error-list"><li>${err.message || "{% trans 'Upload failed' %}"}</li></ul>`;
+    }
+};
+</script>
+{% endblock %}

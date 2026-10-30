@@ -1,0 +1,86 @@
+/**
+ * Offline library page (/offline/).
+ */
+
+.offline-page {
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.offline-page h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 0 8px;
+}
+
+.offline-intro {
+    color: var(--text-secondary);
+    margin: 0 0 24px;
+}
+
+.offline-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.offline-item {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+}
+
+.offline-item-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.offline-item-title {
+    font-weight: 600;
+}
+
+.offline-remove {
+    flex: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--border-color);
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.9rem;
+    line-height: 1;
+    transition: all var(--transition-normal);
+}
+
+.offline-remove:hover {
+    background: var(--error-red, #e74c3c);
+    border-color: var(--error-red, #e74c3c);
+    color: #fff;
+}
+
+.offline-item audio {
+    width: 100%;
+}
+
+.offline-empty {
+    color: var(--text-secondary);
+}
+
+.offline-hint {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-top: 24px;
+}
+
+@media (max-width: 768px) {
+    .offline-remove {
+        width: 44px;
+        height: 44px;
+    }
+}

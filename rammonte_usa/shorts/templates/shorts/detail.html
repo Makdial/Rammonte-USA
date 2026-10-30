@@ -1,0 +1,17 @@
+﻿{% extends 'base.html' %}
+{% load static i18n %}
+{% block title %}{{ short.title }} - Rammonte USA{% endblock %}
+{% block content %}
+<div class="short-detail">
+    <video controls autoplay playsinline style="max-height:80vh;max-width:420px;width:100%;"
+           src="{{ short.playback_url }}"></video>
+    <h1>{{ short.title }}</h1>
+    <p>{{ short.description }}</p>
+    {% if can_write %}
+    <form method="post" action="{% url 'shorts:delete' short.id %}" onsubmit="return confirm('Delete?')">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">{% trans "Delete" %}</button>
+    </form>
+    {% endif %}
+</div>
+{% endblock %}

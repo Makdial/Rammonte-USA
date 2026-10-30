@@ -1,0 +1,132 @@
+﻿{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "My Playlists" %} - Rammonte USA{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/videos.css' %}">
+<link rel="stylesheet" href="{% static 'css/social.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="section-header">
+    <h1>{% trans "My Playlists" %}</h1>
+</div>
+
+<form id="newPlaylistForm" class="playlist-new-form">
+    {% csrf_token %}
+    <input type="text" id="newPlaylistTitle" class="form-input"
+           placeholder="{% trans 'New playlist name' %}" maxlength="120" required>
+    <label class="playlist-cover-picker" title="{% trans 'Cover photo' %}">
+        <input type="file" id="newPlaylistCover" accept="image/*" hidden>
+        <span id="newPlaylistCoverName">{% trans "Cover photo" %}</span>
+    </label>
+    <label class="checkbox-inline">
+        <input type="checkbox" id="newPlaylistPublic">
+        {% trans "Public" %}
+    </label>
+    <button type="submit" class="btn btn-primary">{% trans "Create" %}</button>
+</form>
+
+{% if playlists %}
+<div class="playlist-grid">
+    {% for playlist in playlists %}
+    <div class="playlist-card">
+        <a class="playlist-card-link" href="{% url 'videos:playlist_detail' playlist.id %}">
+            <div class="playlist-cover{% if playlist.display_cover_url %} has-cover{% endif %}">
+                {% if playlist.display_cover_url %}
+                <img src="{{ playlist.display_cover_url }}" alt="{{ playlist.title }}" loading="lazy">
+                {% else %}
+                â–¶
+                {% endif %}
+            </div>
+            <div class="playlist-card-body">
+                <h3>{{ playlist.title }}</h3>
+                <p class="playlist-meta">
+                    {% blocktrans count counter=playlist.item_count %}{{ counter }} video{% plural %}{{ counter }} videos{% endblocktrans %}
+                    {% if playlist.is_public %}Â· {% trans "Public" %}{% else %}Â· {% trans "Private" %}{% endif %}
+                </p>
+            </div>
+        </a>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <span class="empty-icon">ðŸ“‚</span>
+    <h2>{% trans "No playlists yet" %}</h2>
+    <p>{% trans "Create your first playlist to organise videos." %}</p>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const csrf = '{{ csrf_token }}';
+
+// Shrink a chosen picture before sending it, so a full-size phone photo does
+// not blow past the request size limit. Returns a JPEG data URL.
+function coverToDataUrl(file, maxSize) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = reject;
+        reader.onload = () => {
+            const img = new Image();
+            img.onerror = reject;
+            img.onload = () => {
+                const scale = Math.min(1, maxSize / Math.max(img.width, img.height));
+                const canvas = document.createElement("canvas");
+                canvas.width = Math.max(1, Math.round(img.width * scale));
+                canvas.height = Math.max(1, Math.round(img.height * scale));
+                canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+                resolve(canvas.toDataURL("image/jpeg", 0.85));
+            };
+            img.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+const newCoverInput = document.getElementById("newPlaylistCover");
+newCoverInput.addEventListener("change", function () {
+    const file = newCoverInput.files[0];
+    if (file) document.getElementById("newPlaylistCoverName").textContent = file.name;
+});
+
+document.getElementById("newPlaylistForm").addEventListener("submit", async function (event) {
+    event.preventDefault();
+    const title = document.getElementById("newPlaylistTitle").value.trim();
+    if (!title) return;
+
+    const params = {
+        title: title,
+        is_public: document.getElementById("newPlaylistPublic").checked ? "1" : "0",
+    };
+
+    const file = newCoverInput.files[0];
+    if (file) {
+        try {
+            params.cover_data = await coverToDataUrl(file, 640);
+        } catch (error) {
+            params.cover_data = "";
+        }
+    }
+
+    fetch("{% url 'videos:playlist_create' %}", {
+        method: "POST",
+        headers: { "X-CSRFToken": csrf, "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams(params).toString(),
+    })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                if (data.cover_error) alert(data.cover_error);
+                window.location.href = data.playlist.url;
+            } else {
+                alert(data.error || "{% trans 'Could not create the playlist.' %}");
+            }
+        })
+        .catch(() => alert("{% trans 'Could not create the playlist.' %}"));
+});
+</script>
+{% endblock %}

@@ -1,0 +1,104 @@
+/* --- Confirmation dialog ------------------------------------------------- */
+
+.confirm-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.6);
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+
+.confirm-backdrop.is-open {
+    opacity: 1;
+}
+
+.confirm-dialog {
+    width: 100%;
+    max-width: 420px;
+    padding: 24px;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+    transform: translateY(8px);
+    transition: transform 0.15s ease;
+}
+
+.confirm-backdrop.is-open .confirm-dialog {
+    transform: translateY(0);
+}
+
+.confirm-title {
+    margin: 0 0 10px;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.confirm-message {
+    margin: 0 0 20px;
+    font-size: 0.94rem;
+    line-height: 1.5;
+    color: var(--text-secondary);
+}
+
+.confirm-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.confirm-cancel,
+.confirm-accept {
+    padding: 10px 18px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+}
+
+/* Cancel is the safe default and is focused first on mobile, where a stray
+   tap should never destroy anything. */
+.confirm-cancel {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.confirm-cancel:hover {
+    background: var(--bg-tertiary);
+}
+
+.confirm-accept {
+    background: var(--accent-red);
+    border-color: var(--accent-red);
+    color: #fff;
+}
+
+.confirm-accept:hover {
+    filter: brightness(1.08);
+}
+
+/* A non-destructive confirmation reads better in the neutral colour. */
+.confirm-accept:not(.is-danger) {
+    background: var(--accent-color, #3b82f6);
+    border-color: var(--accent-color, #3b82f6);
+}
+
+@media (max-width: 480px) {
+    .confirm-actions {
+        flex-direction: column-reverse;
+    }
+
+    .confirm-cancel,
+    .confirm-accept {
+        width: 100%;
+        /* Comfortable tap target on a phone. */
+        min-height: 46px;
+    }
+}

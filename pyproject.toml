@@ -1,0 +1,28 @@
+[project]
+name = "fazakkir"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Makdial", email = "makhfous.diallo@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "boto3>=1.43.114",
+    "django>=6.1.2",
+    "dj-database-url>=2.2.0",
+    "gunicorn>=23.0.0",
+    "httpx>=0.28.1",
+    "imageio-ffmpeg>=0.6.0",
+    "openai>=1.40.0",
+    "psycopg[binary]>=3.2.0",
+    "python-dotenv>=1.2.4",
+    "whitenoise>=6.6.0",
+]
+
+[project.scripts]
+fazakkir = "fazakkir:main"
+
+[build-system]
+requires = ["uv_build>=0.13.0,<0.14.0"]
+build-backend = "uv_build"

@@ -1,0 +1,165 @@
+﻿{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Home order" %} - Rammonte USA{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/social.css' %}">
+<link rel="stylesheet" href="{% static 'css/manage.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="section-header">
+    <h1>{% trans "Home page order" %}</h1>
+    <p class="section-subtitle">
+        {% trans "Drag the rows to choose what visitors see first on the home page." %}
+    </p>
+</div>
+
+{% include 'dashboard/_tabs.html' %}
+
+{% if videos %}
+{% if can_write %}
+<div class="order-toolbar">
+    <span class="dash-hint">{% trans "Drag a row, or use the arrows, then save." %}</span>
+    <button type="button" class="btn-small" id="saveOrderBtn" disabled>
+        {% trans "Save order" %}
+    </button>
+    <span class="order-status" id="orderStatus" role="status" aria-live="polite"></span>
+</div>
+{% endif %}
+
+<ol class="order-list" id="orderList">
+    {% for video in videos %}
+    <li class="order-item" data-id="{{ video.id }}"{% if can_write %} draggable="true"{% endif %}>
+        <span class="order-handle" aria-hidden="true">â ¿</span>
+        <span class="order-index">{{ forloop.counter }}</span>
+        <span class="order-thumb">
+            {% if video.display_thumbnail_url %}
+            <img src="{{ video.display_thumbnail_url }}" alt="">
+            {% elif video.is_audio_only %}
+            <span class="order-thumb-icon">â™ª</span>
+            {% else %}
+            <span class="order-thumb-icon">â–¶</span>
+            {% endif %}
+        </span>
+        <span class="order-title">
+            <a href="{% url 'videos:detail' video.id %}">{{ video.title }}</a>
+            <span class="order-meta">
+                {{ video.user.username }} Â·
+                {% if video.is_audio_only %}{% trans "Audio" %}{% else %}{% trans "Video" %}{% endif %}
+            </span>
+        </span>
+        {% if can_write %}
+        <span class="order-actions">
+            <button type="button" class="btn-small btn-outline order-move" data-move="up"
+                    title="{% trans 'Move up' %}" aria-label="{% trans 'Move up' %}">â†‘</button>
+            <button type="button" class="btn-small btn-outline order-move" data-move="down"
+                    title="{% trans 'Move down' %}" aria-label="{% trans 'Move down' %}">â†“</button>
+        </span>
+        {% endif %}
+    </li>
+    {% endfor %}
+</ol>
+{% else %}
+<div class="empty-state">
+    <span class="empty-icon">ðŸŽ¬</span>
+    <h2>{% trans "Nothing to arrange yet" %}</h2>
+    <p>{% trans "Upload a video or an audio file and it will appear here." %}</p>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+{% if can_write and videos %}
+<script>
+const ORDER_SAVE_URL = "{% url 'dashboard:video_order_save' %}";
+const orderCsrf = '{{ csrf_token }}';
+const orderList = document.getElementById("orderList");
+const saveOrderBtn = document.getElementById("saveOrderBtn");
+const orderStatus = document.getElementById("orderStatus");
+
+// Renumber the visible rows so the numbers always match the arrangement.
+function refreshNumbers() {
+    orderList.querySelectorAll(".order-item").forEach((item, index) => {
+        const badge = item.querySelector(".order-index");
+        if (badge) badge.textContent = index + 1;
+    });
+}
+
+function markDirty() {
+    refreshNumbers();
+    if (saveOrderBtn) saveOrderBtn.disabled = false;
+    if (orderStatus) orderStatus.textContent = "";
+}
+
+// --- Arrows: work everywhere, including a touch screen ---------------------
+orderList.addEventListener("click", (event) => {
+    const button = event.target.closest(".order-move");
+    if (!button) return;
+    const item = button.closest(".order-item");
+    if (button.dataset.move === "up" && item.previousElementSibling) {
+        orderList.insertBefore(item, item.previousElementSibling);
+    } else if (button.dataset.move === "down" && item.nextElementSibling) {
+        orderList.insertBefore(item.nextElementSibling, item);
+    }
+    markDirty();
+});
+
+// --- Drag and drop ---------------------------------------------------------
+let dragged = null;
+
+orderList.addEventListener("dragstart", (event) => {
+    const item = event.target.closest(".order-item");
+    if (!item) return;
+    dragged = item;
+    item.classList.add("dragging");
+    event.dataTransfer.effectAllowed = "move";
+});
+
+orderList.addEventListener("dragend", () => {
+    if (dragged) dragged.classList.remove("dragging");
+    dragged = null;
+});
+
+orderList.addEventListener("dragover", (event) => {
+    if (!dragged) return;
+    event.preventDefault();
+    const after = [...orderList.querySelectorAll(".order-item:not(.dragging)")]
+        .find((item) => event.clientY < item.getBoundingClientRect().top + item.offsetHeight / 2);
+    if (after) {
+        orderList.insertBefore(dragged, after);
+    } else {
+        orderList.appendChild(dragged);
+    }
+});
+
+saveOrderBtn.addEventListener("click", () => {
+    const ids = [...orderList.querySelectorAll(".order-item")].map((item) => item.dataset.id);
+    saveOrderBtn.disabled = true;
+    fetch(ORDER_SAVE_URL, {
+        method: "POST",
+        headers: { "X-CSRFToken": orderCsrf, "Content-Type": "application/json" },
+        body: JSON.stringify(ids),
+    })
+        .then((r) => r.json())
+        .then((data) => {
+            if (data.success) {
+                orderStatus.textContent = data.message || "{% trans 'Order saved.' %}";
+                orderStatus.classList.add("ok");
+            } else {
+                orderStatus.textContent = data.error || "{% trans 'Failed.' %}";
+                orderStatus.classList.remove("ok");
+                saveOrderBtn.disabled = false;
+            }
+        })
+        .catch(() => {
+            orderStatus.textContent = "{% trans 'Failed.' %}";
+            orderStatus.classList.remove("ok");
+            saveOrderBtn.disabled = false;
+        });
+});
+</script>
+{% endif %}
+{% endblock %}

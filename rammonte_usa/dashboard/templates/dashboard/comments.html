@@ -1,0 +1,93 @@
+﻿{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Manage comments" %} - Rammonte USA{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/social.css' %}">
+<link rel="stylesheet" href="{% static 'css/manage.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="section-header">
+    <h1>{% trans "Manage comments" %}</h1>
+    <p class="section-subtitle">
+        {% blocktrans count counter=total_comments %}{{ counter }} comment{% plural %}{{ counter }} comments{% endblocktrans %}
+    </p>
+</div>
+
+{% include 'dashboard/_tabs.html' %}
+
+<form method="get" class="dash-search">
+    <input type="search" name="q" value="{{ query }}" class="form-input"
+           placeholder="{% trans 'Search by author or text' %}">
+    <button type="submit" class="btn-small">{% trans "Search" %}</button>
+    {% if query %}<a href="{% url 'dashboard:comments' %}" class="btn-small btn-outline">{% trans "Clear" %}</a>{% endif %}
+</form>
+
+{% if comments %}
+<div class="manage-table-wrap">
+    <table class="manage-table">
+        <thead>
+            <tr>
+                <th>{% trans "Author" %}</th>
+                <th>{% trans "Comment" %}</th>
+                <th>{% trans "Video" %}</th>
+                <th>{% trans "Posted" %}</th>
+                <th class="col-actions">{% trans "Actions" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for comment in comments %}
+            <tr data-comment="{{ comment.id }}">
+                <td>{{ comment.user.first_name|default:comment.user.username }}</td>
+                <td class="comment-body">{{ comment.body|truncatechars:160 }}</td>
+                <td><a href="{% url 'videos:detail' comment.video.id %}">{{ comment.video.title }}</a></td>
+                <td>{{ comment.created_at|date:"SHORT_DATETIME_FORMAT" }}</td>
+                <td class="col-actions">
+                    {% if can_write %}
+                    <button type="button" class="btn-small btn-danger" onclick="deleteComment({{ comment.id }})">
+                        {% trans "Delete" %}
+                    </button>
+                    {% else %}<span class="muted">â€”</span>{% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="empty-state">
+    <span class="empty-icon">ðŸ’¬</span>
+    <h2>{% trans "No comments found" %}</h2>
+    <p>{% trans "Nothing matches your search." %}</p>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+{% if can_write %}
+<script>
+const dashCsrf = '{{ csrf_token }}';
+const COMMENT_DELETE_URL = "{% url 'videos:comment_delete' 0 %}";
+
+function deleteComment(commentId) {
+    fazakkirConfirm({
+        title: "{% trans 'Delete this comment?' %}",
+        message: "{% trans 'The comment will be removed and cannot be recovered.' %}",
+        confirmLabel: "{% trans 'Delete' %}",
+    }).then(function (ok) {
+        if (!ok) return;
+        fetch(COMMENT_DELETE_URL.replace("/0/", `/${commentId}/`), {
+            method: "POST",
+            headers: { "X-CSRFToken": dashCsrf },
+        })
+            .then(r => r.json())
+            .then(data => { if (data.success) location.reload(); else alert(data.error || "{% trans 'Failed.' %}"); })
+            .catch(() => alert("{% trans 'Failed.' %}"));
+    });
+}
+</script>
+{% endif %}
+{% endblock %}

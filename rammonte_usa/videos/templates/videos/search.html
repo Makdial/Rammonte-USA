@@ -1,0 +1,96 @@
+﻿{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block title %}{% if query %}{% blocktrans %}Search results for {{ query }}{% endblocktrans %}{% else %}{% trans "Search" %}{% endif %} - Rammonte USA{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/videos.css' %}">
+<link rel="stylesheet" href="{% static 'css/search.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="search-page">
+    <form action="{% url 'videos:search' %}" method="get" class="search-page-form" role="search">
+        <input type="search" name="q" value="{{ query }}" class="search-page-input"
+               placeholder="{% trans 'Search by title, name or year' %}"
+               aria-label="{% trans 'Search videos' %}" autofocus>
+        <button type="submit" class="search-page-button">{% trans "Search" %}</button>
+    </form>
+
+    {% if not query %}
+        <p class="search-hint">
+            {% trans "Type a few words from a title, the uploader's name, or a year such as 2000." %}
+        </p>
+    {% else %}
+        <h1 class="search-summary">
+            {% blocktrans count counter=videos.count with query=query %}{{ counter }} result{% plural %}{{ counter }} results{% endblocktrans %}
+            {% if words %}Â· {% trans "for" %} {{ query }}{% endif %}
+        </h1>
+
+        {% if videos %}
+        <div class="video-grid">
+            {% for video in videos %}
+                <div class="video-card-wrap">
+                    <a href="{% url 'videos:detail' video.id %}" class="video-card">
+                        <div class="video-thumbnail">
+                            {% if video.display_thumbnail_url %}
+                                <img src="{{ video.display_thumbnail_url }}" alt="{{ video.title }}" loading="lazy">
+                            {% else %}
+                                <span class="thumbnail-placeholder">â–¶</span>
+                            {% endif %}
+                            {% if video.duration_seconds %}
+                            <span class="video-duration">{{ video.duration_formatted }}</span>
+                            {% endif %}
+                            <span class="play-icon">â–¶</span>
+                        </div>
+                        <div class="video-info">
+                            <span class="video-card-avatar" aria-hidden="true">{{ video.user.username|slice:":1" }}</span>
+                            <div>
+                                <h3 class="video-title">{{ video.title }}</h3>
+                                <p class="video-meta">
+                                    <span class="video-meta-uploader">{{ video.user.username }}</span>
+                                    {% blocktrans count counter=video.views %}{{ counter }} view{% plural %}{{ counter }} views{% endblocktrans %}
+                                    Â· {{ video.created_at|date:"Y" }}
+                                </p>
+                            </div>
+                        </div>
+                    </a>
+                    {% if video.has_audio %}
+                    <a class="card-download" href="{{ video.audio_download_url }}" download
+                       title="{% trans 'Download MP3' %}" aria-label="{% trans 'Download MP3' %}">â¬‡ MP3</a>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <span class="empty-icon">ðŸ”</span>
+            <h2>{% trans "No results" %}</h2>
+            <p>{% trans "Nothing matched. Try a different word, or a year such as 2000." %}</p>
+        </div>
+        {% endif %}
+
+        {% if youtube_url %}
+        <div class="youtube-fallback">
+            <p class="youtube-fallback-text">
+                {% if videos %}
+                    {% trans "Not the one you wanted? The rest may be on YouTube." %}
+                {% else %}
+                    {% trans "Still looking? This video may be on YouTube." %}
+                {% endif %}
+            </p>
+            <a class="youtube-fallback-link" href="{{ youtube_url }}"
+               target="_blank" rel="noopener noreferrer">
+                <span class="youtube-fallback-icon" aria-hidden="true">â–¶</span>
+                <span class="youtube-fallback-label">
+                    {% blocktrans %}Search YouTube for {{ query }}{% endblocktrans %}
+                </span>
+            </a>
+            <p class="youtube-fallback-note">
+                {% trans "Opens YouTube in a new tab." %}
+            </p>
+        </div>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

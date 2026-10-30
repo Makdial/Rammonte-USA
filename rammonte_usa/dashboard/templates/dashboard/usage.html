@@ -1,0 +1,100 @@
+﻿{% extends 'base.html' %}
+{% load static i18n %}
+{% block title %}{% trans "Usage" %} - Rammonte USA{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/social.css' %}">
+<link rel="stylesheet" href="{% static 'css/manage.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+{% block content %}
+<div class="section-header">
+    <h1>{% trans "Daily usage" %}</h1>
+    <p class="section-subtitle">{% trans "How many users (guests and registered) use the app each day, and which recordings they play." %}</p>
+</div>
+
+{% include 'dashboard/_tabs.html' %}
+
+<form method="get" class="dash-search">
+    <input type="date" name="date" value="{{ selected|date:'Y-m-d' }}" class="form-input">
+    <button type="submit" class="btn-small">{% trans "Show" %}</button>
+    {% if selected != today %}<a href="{% url 'dashboard:usage' %}" class="btn-small btn-outline">{% trans "Today" %}</a>{% endif %}
+</form>
+
+<div class="stat-grid">
+    <div class="stat-card">
+        <span class="stat-value">{{ active_users }}</span>
+        <span class="stat-label">{% trans "Active users" %}</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-value">{{ active_guests }}</span>
+        <span class="stat-label">{% trans "Guests" %}</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-value">{{ active_registered }}</span>
+        <span class="stat-label">{% trans "Registered" %}</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-value">{{ total_views }}</span>
+        <span class="stat-label">{% trans "Video views" %}</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-value">{{ total_audio }}</span>
+        <span class="stat-label">{% trans "Audio plays" %}</span>
+    </div>
+</div>
+
+<h2 class="dash-section-title">{% trans "Top viewed videos" %}</h2>
+{% if top_views %}
+<div class="manage-table-wrap">
+    <table class="manage-table">
+        <thead><tr><th>{% trans "Video" %}</th><th>{% trans "Views" %}</th></tr></thead>
+        <tbody>
+            {% for row in top_views %}
+            <tr>
+                <td><a href="{% url 'videos:detail' row.video__id %}">{{ row.video__title }}</a></td>
+                <td>{{ row.count }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="empty-state"><p>{% trans "No views recorded for this day." %}</p></div>
+{% endif %}
+
+<h2 class="dash-section-title">{% trans "Top played audio" %}</h2>
+{% if top_audio %}
+<div class="manage-table-wrap">
+    <table class="manage-table">
+        <thead><tr><th>{% trans "Video" %}</th><th>{% trans "Plays" %}</th></tr></thead>
+        <tbody>
+            {% for row in top_audio %}
+            <tr>
+                <td><a href="{% url 'videos:detail' row.video__id %}">{{ row.video__title }}</a></td>
+                <td>{{ row.count }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="empty-state"><p>{% trans "No audio plays recorded for this day." %}</p></div>
+{% endif %}
+
+<h2 class="dash-section-title">{% trans "Last 14 days" %}</h2>
+<div class="manage-table-wrap">
+    <table class="manage-table">
+        <thead><tr><th>{% trans "Date" %}</th><th>{% trans "Users" %}</th><th>{% trans "Views" %}</th><th>{% trans "Audio plays" %}</th></tr></thead>
+        <tbody>
+            {% for row in series %}
+            <tr>
+                <td>{{ row.date|date:"M d, Y" }}</td>
+                <td>{{ row.users }}</td>
+                <td>{{ row.views }}</td>
+                <td>{{ row.audio }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

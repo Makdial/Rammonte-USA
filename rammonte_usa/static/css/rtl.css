@@ -1,0 +1,159 @@
+/**
+ * Right-to-left support (Arabic).
+ *
+ * Loaded from base.html for every language but the rules only apply under
+ * [dir="rtl"], so it costs nothing on the left-to-right languages. Rather than
+ * duplicating the whole design, this mirrors the handful of places where the
+ * layout genuinely depends on direction: the navbar, text alignment, the
+ * sidebar/border accents and the few directional icons.
+ */
+
+[dir="rtl"] {
+    text-align: right;
+}
+
+/* Text blocks should follow the reading direction, not stay hard-left. */
+[dir="rtl"] p,
+[dir="rtl"] li,
+[dir="rtl"] td,
+[dir="rtl"] th,
+[dir="rtl"] h1,
+[dir="rtl"] h2,
+[dir="rtl"] h3,
+[dir="rtl"] label,
+[dir="rtl"] .section-subtitle,
+[dir="rtl"] .video-description,
+[dir="rtl"] .comment-text,
+[dir="rtl"] .channel-name,
+[dir="rtl"] .dash-hint {
+    text-align: right;
+}
+
+/* Numerals, timestamps and code stay readable left-to-right. */
+[dir="rtl"] .video-stats,
+[dir="rtl"] .comment-date,
+[dir="rtl"] .chip,
+[dir="rtl"] .meter-figures,
+[dir="rtl"] code,
+[dir="rtl"] pre {
+    direction: ltr;
+    text-align: right;
+}
+
+/* --- Navbar --------------------------------------------------------------- */
+
+[dir="rtl"] .navbar-brand {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .nav-link,
+[dir="rtl"] .navbar-nav a {
+    text-align: right;
+}
+
+[dir="rtl"] .lang-toggle,
+[dir="rtl"] .theme-toggle {
+    flex-direction: row-reverse;
+}
+
+/* --- Accent bars that sit on one side ------------------------------------- */
+
+[dir="rtl"] .storage-card {
+    border-left: 1px solid var(--border-color);
+    border-right: 4px solid var(--success-green);
+}
+
+[dir="rtl"] .storage-card.state-warning {
+    border-right-color: #f0a500;
+}
+
+[dir="rtl"] .storage-card.state-critical {
+    border-right-color: var(--error-red);
+}
+
+[dir="rtl"] .progress {
+    direction: rtl;
+}
+
+/* --- Forms and buttons ---------------------------------------------------- */
+
+[dir="rtl"] input,
+[dir="rtl"] textarea,
+[dir="rtl"] select {
+    text-align: right;
+}
+
+[dir="rtl"] .form-input::placeholder {
+    text-align: right;
+}
+
+/* --- Video cards and player controls -------------------------------------- */
+
+[dir="rtl"] .video-details,
+[dir="rtl"] .subtitle-controls,
+[dir="rtl"] .player-controls,
+[dir="rtl"] .comments-section {
+    text-align: right;
+}
+
+[dir="rtl"] .video-card-title,
+[dir="rtl"] .video-channel,
+[dir="rtl"] .video-actions {
+    text-align: right;
+}
+
+[dir="rtl"] .mode-toggle,
+[dir="rtl"] .subtitle-toggle {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .player-downloads {
+    flex-direction: row-reverse;
+}
+
+/* --- Comments ------------------------------------------------------------- */
+
+[dir="rtl"] .comment {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .comment-avatar {
+    order: 2;
+}
+
+/* --- Playlists ------------------------------------------------------------ */
+
+[dir="rtl"] .save-panel,
+[dir="rtl"] .share-panel,
+[dir="rtl"] .playlist-item {
+    text-align: right;
+}
+
+/* The play affordance hugs the leading edge, which in Arabic is the right. */
+[dir="rtl"] .play-icon {
+    left: auto;
+    right: 12px;
+}
+
+@media (max-width: 480px) {
+    [dir="rtl"] .play-icon {
+        right: 8px;
+    }
+}
+
+/* --- Dashboard tables ----------------------------------------------------- */
+
+[dir="rtl"] .manage-table th,
+[dir="rtl"] .manage-table td {
+    text-align: right;
+}
+
+[dir="rtl"] .col-actions {
+    text-align: left;
+}
+
+/* Keep the emoji/marker glyphs in a sensible order. */
+[dir="rtl"] .subtitle-btn,
+[dir="rtl"] .mode-btn {
+    flex-direction: row-reverse;
+}

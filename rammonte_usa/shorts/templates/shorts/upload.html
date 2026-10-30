@@ -1,0 +1,25 @@
+﻿{% extends 'base.html' %}
+{% load static i18n %}
+{% block title %}{% trans "Upload short" %} - Rammonte USA{% endblock %}
+{% block content %}
+<div class="section-header"><h1>{% trans "Upload short" %}</h1></div>
+{% if not storage_ready %}
+<p>{% trans "Storage is not configured." %}</p>
+{% else %}
+<form id="shortForm" enctype="multipart/form-data">
+    {% csrf_token %}
+    <p><input type="text" name="title" placeholder="{% trans 'Title' %}" class="form-input"></p>
+    <p><textarea name="description" placeholder="{% trans 'Description' %}" class="form-input"></textarea></p>
+    <p><input type="file" name="video_file" accept="video/*" required></p>
+    <button type="submit" class="btn btn-primary">{% trans "Upload" %}</button>
+</form>
+<script>
+document.getElementById('shortForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  const fd = new FormData(this);
+  fetch('{% url "shorts:upload_submit" %}', {method:'POST', body:fd, headers:{'X-CSRFToken': fd.get('csrfmiddlewaretoken')}})
+    .then(r=>r.json()).then(d=>{ if(d.success) window.location.href='/shorts/'+d.short_id+'/'; else alert(d.error); });
+});
+</script>
+{% endif %}
+{% endblock %}

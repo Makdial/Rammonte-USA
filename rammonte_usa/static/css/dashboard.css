@@ -1,0 +1,449 @@
+/**
+ * Administrator dashboard - tabs, stat cards, storage meters and tables.
+ * Built on the design tokens in variables.css so it follows the theme.
+ */
+
+/* --- Section tabs --------------------------------------------------------- */
+
+.dash-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 8px 0 24px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.dash-tab {
+    padding: 10px 16px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 600;
+    border-bottom: 2px solid transparent;
+    transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.dash-tab:hover {
+    color: var(--text-primary);
+}
+
+.dash-tab.active {
+    color: var(--text-primary);
+    border-bottom-color: var(--accent-red);
+}
+
+/* --- Stat cards ----------------------------------------------------------- */
+
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.stat-card {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 18px 20px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+}
+
+.stat-value {
+    font-size: 1.9rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.stat-label {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+/* --- Storage card --------------------------------------------------------- */
+
+.storage-card {
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-left: 4px solid var(--success-green);
+    border-radius: var(--radius-lg);
+}
+
+.storage-card.state-warning {
+    border-left-color: #f0a500;
+}
+
+.storage-card.state-critical {
+    border-left-color: var(--error-red);
+}
+
+.storage-head {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.storage-head h2 {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.storage-measured {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+}
+
+.storage-head .btn-small {
+    margin-left: auto;
+}
+
+.badge-warning {
+    color: #f0a500;
+    border-color: #f0a500;
+}
+
+.badge-critical {
+    color: var(--error-red);
+    border-color: var(--error-red);
+}
+
+.badge-ok {
+    color: var(--success-green);
+    border-color: var(--success-green);
+}
+
+.meter {
+    margin-bottom: 16px;
+}
+
+.meter-row {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+}
+
+.meter-name {
+    font-weight: 600;
+}
+
+.meter-figures {
+    color: var(--text-secondary);
+}
+
+.progress {
+    height: 12px;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--success-green);
+    border-radius: var(--radius-full);
+    transition: width var(--transition-slow);
+}
+
+.progress-fill.state-warning {
+    background: #f0a500;
+}
+
+.progress-fill.state-critical {
+    background: var(--error-red);
+}
+
+.storage-breakdown {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.chip {
+    padding: 3px 10px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-full);
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+}
+
+.dash-warning {
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    background: rgba(231, 76, 60, 0.1);
+    border: 1px solid var(--error-red);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+}
+
+/* --- Panels --------------------------------------------------------------- */
+
+.dash-panel {
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+}
+
+.dash-panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
+.dash-panel h2 {
+    margin: 0 0 8px;
+    font-size: 1.2rem;
+}
+
+.dash-panel-head h2 {
+    margin-bottom: 0;
+}
+
+.link-more {
+    color: var(--accent-red-light);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.link-more:hover {
+    text-decoration: underline;
+}
+
+/* --- Forms ---------------------------------------------------------------- */
+
+.dash-form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin: 16px 0;
+}
+
+.dash-form-grid label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.dash-form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.dash-search {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.dash-search .form-input {
+    flex: 1 1 240px;
+}
+
+.comment-body {
+    max-width: 420px;
+}
+
+.dash-hint {
+    margin-top: 8px;
+}
+
+/* --- Audio generation ----------------------------------------------------- */
+
+.audio-admin {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.audio-admin-info {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.audio-admin-info .dash-hint {
+    margin-top: 0;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.audio-progress {
+    margin-bottom: 16px;
+}
+
+.audio-progress-text {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .stat-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+    }
+
+    .storage-card,
+    .dash-panel {
+        padding: 16px;
+    }
+
+    .storage-head .btn-small {
+        margin-left: 0;
+    }
+
+    .comment-body {
+        max-width: none;
+    }
+}
+
+
+/* --- Home page order ---------------------------------------------------- */
+/* The administrator drags these rows to set what visitors see first. */
+.order-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 0 0 16px;
+}
+
+.order-status {
+    color: var(--success-green);
+    font-size: 0.9rem;
+}
+
+.order-status:not(.ok) {
+    color: var(--error-red);
+}
+
+.order-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.order-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+}
+
+.order-item[draggable="true"] {
+    cursor: grab;
+}
+
+.order-item.dragging {
+    opacity: 0.5;
+    border-color: var(--accent-red);
+}
+
+.order-handle {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    line-height: 1;
+    user-select: none;
+}
+
+.order-index {
+    min-width: 1.6rem;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.order-thumb {
+    width: 64px;
+    height: 36px;
+    border-radius: 6px;
+    overflow: hidden;
+    background: var(--bg-tertiary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+}
+
+.order-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.order-thumb-icon {
+    color: var(--text-secondary);
+}
+
+.order-title {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+.order-title a {
+    color: var(--text-primary);
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.order-meta {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+}
+
+.order-actions {
+    display: inline-flex;
+    gap: 6px;
+    flex: 0 0 auto;
+}
+
+.order-move {
+    min-width: 34px;
+    text-align: center;
+}
+
+@media (max-width: 640px) {
+    .order-thumb {
+        display: none;
+    }
+}

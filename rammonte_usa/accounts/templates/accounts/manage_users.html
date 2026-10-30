@@ -1,0 +1,130 @@
+﻿{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Manage users" %} - Rammonte USA{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/social.css' %}">
+<link rel="stylesheet" href="{% static 'css/manage.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="section-header">
+    <h1>{% trans "Manage users" %}</h1>
+    <p class="section-subtitle">
+        {% blocktrans count counter=total_users %}{{ counter }} account{% plural %}{{ counter }} accounts{% endblocktrans %}
+    </p>
+</div>
+
+<div class="manage-table-wrap">
+    <table class="manage-table">
+        <thead>
+            <tr>
+                <th>{% trans "User" %}</th>
+                <th>{% trans "Videos" %}</th>
+                <th>{% trans "Access" %}</th>
+                <th>{% trans "Status" %}</th>
+                <th class="col-actions">{% trans "Actions" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in rows %}
+            <tr data-user="{{ row.id }}" class="{% if not row.is_active %}row-blocked{% endif %}">
+                <td>
+                    <div class="user-cell">
+                        <span class="user-avatar">{{ row.username|slice:":1"|upper }}</span>
+                        <div>
+                            <span class="user-name">{{ row.username }}</span>
+                            {% if row.is_superuser %}<span class="badge badge-super">{% trans "Superuser" %}</span>{% endif %}
+                            {% if row.is_self %}<span class="badge">{% trans "You" %}</span>{% endif %}
+                            {% if row.email %}<span class="user-email">{{ row.email }}</span>{% endif %}
+                        </div>
+                    </div>
+                </td>
+                <td>{{ row.video_total }}</td>
+                <td>
+                    <select class="form-input access-select" data-user="{{ row.id }}"
+                            {% if not can_write or row.protected or row.is_self %}disabled{% endif %}>
+                        {% for value, label in access_choices %}
+                        <option value="{{ value }}" {% if row.access_level == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td>
+                    <span class="badge {% if row.is_active %}badge-active{% else %}badge-blocked{% endif %}" data-status>
+                        {% if row.is_active %}{% trans "Active" %}{% else %}{% trans "Blocked" %}{% endif %}
+                    </span>
+                </td>
+                <td class="col-actions">
+                    {% if can_write and not row.protected and not row.is_self %}
+                    <button type="button" class="btn-small" data-block-toggle
+                            onclick="toggleBlock({{ row.id }}, {{ row.is_active|yesno:'true,false' }})">
+                        {% if row.is_active %}{% trans "Block" %}{% else %}{% trans "Unblock" %}{% endif %}
+                    </button>
+                    <button type="button" class="btn-small btn-danger" onclick="deleteUser({{ row.id }}, '{{ row.username|escapejs }}')">
+                        {% trans "Delete" %}
+                    </button>
+                    {% else %}
+                    <span class="muted">â€”</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<p class="manage-hint">
+    {% trans "Read-only staff can view this page; read & write staff can also upload, moderate and manage users." %}
+</p>
+{% endblock %}
+
+{% block extra_js %}
+{% if can_write %}
+<script>
+const csrf = '{{ csrf_token }}';
+const ACCESS_URL = "{% url 'accounts:user_access' 0 %}";
+const BLOCK_URL = "{% url 'accounts:user_block' 0 %}";
+const DELETE_URL = "{% url 'accounts:user_delete' 0 %}";
+
+function withUser(template, id) {
+    return template.replace("/0/", `/${id}/`);
+}
+
+document.querySelectorAll(".access-select").forEach(select => {
+    select.addEventListener("change", function () {
+        const userId = this.dataset.user;
+        const body = new URLSearchParams({ access_level: this.value });
+        fetch(withUser(ACCESS_URL, userId), {
+            method: "POST",
+            headers: { "X-CSRFToken": csrf, "Content-Type": "application/x-www-form-urlencoded" },
+            body: body.toString(),
+        })
+            .then(r => r.json())
+            .then(data => { if (!data.success) alert(data.error || "{% trans 'Failed.' %}"); })
+            .catch(() => alert("{% trans 'Failed.' %}"));
+    });
+});
+
+function toggleBlock(userId, isActive) {
+    const body = new URLSearchParams({ blocked: isActive ? "1" : "0" });
+    fetch(withUser(BLOCK_URL, userId), {
+        method: "POST",
+        headers: { "X-CSRFToken": csrf, "Content-Type": "application/x-www-form-urlencoded" },
+        body: body.toString(),
+    })
+        .then(r => r.json())
+        .then(data => { if (data.success) location.reload(); else alert(data.error || "{% trans 'Failed.' %}"); })
+        .catch(() => alert("{% trans 'Failed.' %}"));
+}
+
+function deleteUser(userId, username) {
+    if (!confirm(`{% trans "Delete" %} "${username}"? {% trans 'This also deletes their videos and comments.' %}`)) return;
+    fetch(withUser(DELETE_URL, userId), { method: "POST", headers: { "X-CSRFToken": csrf } })
+        .then(r => r.json())
+        .then(data => { if (data.success) location.reload(); else alert(data.error || "{% trans 'Failed.' %}"); })
+        .catch(() => alert("{% trans 'Failed.' %}"));
+}
+</script>
+{% endif %}
+{% endblock %}
