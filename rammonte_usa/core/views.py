@@ -54,15 +54,15 @@ def manifest(request):
         "theme_color": "#0f0f0f",
         "icons": [
             {
-                "src": static("icons/icon.svg"),
+                "src": static("img/logo.jpeg"),
                 "sizes": "any",
-                "type": "image/svg+xml",
+                "type": "image/jpeg",
                 "purpose": "any",
             },
             {
-                "src": static("icons/icon.svg"),
+                "src": static("img/logo.jpeg"),
                 "sizes": "any",
-                "type": "image/svg+xml",
+                "type": "image/jpeg",
                 "purpose": "maskable",
             },
         ],
