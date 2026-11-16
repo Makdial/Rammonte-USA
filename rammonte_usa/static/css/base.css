@@ -1,84 +1,99 @@
 /**
- * Base styles - Reset and foundational styles
+ * Base styles - Reset, foundational styles and glassmorphism background.
  */
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-html {
-    /* Stop iOS Safari from inflating text in landscape. */
-    -webkit-text-size-adjust: 100%;
-    text-size-adjust: 100%;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 
 body {
-    /* Plus Jakarta Sans has no Arabic glyphs, so a broad system stack follows it
-       and each platform picks a good Arabic face automatically. */
-    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif,
-        'Segoe UI', 'Noto Sans Arabic', 'Geeza Pro', 'Arabic Typesetting', 'Tahoma';
-    background:
-        radial-gradient(1200px 600px at 50% -10%, rgba(255, 0, 0, 0.08), transparent 60%),
-        var(--bg-primary);
+    font-family: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif,
+        'Segoe UI', 'Segoe UI Symbol', 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Sans Arabic', 'Geeza Pro', 'Arabic Typesetting', 'Tahoma';
+    background: var(--bg-deep);
     color: var(--text-primary);
     min-height: 100vh;
     line-height: 1.6;
     overflow-x: hidden;
     transition: background-color var(--transition-normal), color var(--transition-normal);
+    /* Layered mesh gradient for depth */
+    background-image:
+        radial-gradient(1200px 700px at 10% -10%, rgba(139, 92, 246, 0.35), transparent 60%),
+        radial-gradient(900px 600px at 95% 0%, rgba(34, 211, 238, 0.22), transparent 55%),
+        radial-gradient(800px 500px at 50% 110%, rgba(244, 114, 182, 0.18), transparent 60%);
+    background-attachment: fixed;
 }
-
-/* Arabic script needs a little more leading to stay comfortable to read. */
-[lang="ar"] body {
-    line-height: 1.9;
-}
-
-/* Media never overflows its container. */
-img, video {
-    max-width: 100%;
-}
-
-/* Brand logo: circular and gently rotating like a planet. */
-.brand-logo {
-    width: 40px;
-    height: 40px;
+body::before, body::after {
+    content: "";
+    position: fixed;
     border-radius: 50%;
-    object-fit: cover;
-    display: inline-block;
-    vertical-align: middle;
-    margin-right: 8px;
-    animation: brand-spin 4s linear infinite;
-    transform-origin: center center;
-    overflow: hidden;
-    box-shadow: 0 0 0 2px var(--yt-border, #303030);
-    flex: 0 0 40px;
+    filter: blur(80px);
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.5;
 }
-
-@keyframes brand-spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+body::before {
+    width: 420px; height: 420px;
+    background: radial-gradient(circle, rgba(139,92,246,0.5), transparent 70%);
+    top: -120px; left: -120px;
+    animation: floatblob 18s ease-in-out infinite;
 }
-
+body::after {
+    width: 360px; height: 360px;
+    background: radial-gradient(circle, rgba(34,211,238,0.4), transparent 70%);
+    bottom: -100px; right: -100px;
+    animation: floatblob 22s ease-in-out infinite reverse;
+}
+@keyframes floatblob {
+    0%,100% { transform: translate(0,0) scale(1); }
+    50% { transform: translate(40px, -30px) scale(1.1); }
+}
 @media (prefers-reduced-motion: reduce) {
-    .brand-logo { animation: none; }
-}
-.main-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 40px 24px;
+    body::before, body::after { animation: none; }
 }
 
-/* Tablet and phones */
-@media (max-width: 768px) {
-    .main-content {
-        padding: 24px 16px;
-    }
+[lang="ar"] body { line-height: 1.9; }
+
+img, video { max-width: 100%; }
+
+/* Brand logo */
+.brand-logo {
+    width: 40px; height: 40px; border-radius: 50%; object-fit: cover;
+    display: inline-block; vertical-align: middle; margin-right: 8px;
+    animation: brand-sway 3s ease-in-out infinite; transform-origin: center center;
+    overflow: hidden; box-shadow: 0 0 0 2px var(--glass-border); flex: 0 0 40px;
+}
+@keyframes brand-sway {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(14px); }
+}
+@media (prefers-reduced-motion: reduce) { .brand-logo { animation: none; } }
+
+.main-content { max-width: 1280px; margin: 0 auto; padding: 32px 24px; }
+
+@media (max-width: 768px) { .main-content { padding: 20px 16px; } }
+@media (max-width: 480px) { .main-content { padding: 16px 12px; } }
+
+/* Glass utility */
+.glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--glass-shadow);
+}
+.glass-strong {
+    background: var(--glass-bg-strong);
+    backdrop-filter: blur(calc(var(--glass-blur) + 6px)) saturate(160%);
+    -webkit-backdrop-filter: blur(calc(var(--glass-blur) + 6px)) saturate(160%);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--glass-shadow);
 }
 
-@media (max-width: 480px) {
-    .main-content {
-        padding: 20px 12px;
-    }
-}
+/* Scrollbar */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.22); }
+[data-theme="light"] ::-webkit-scrollbar-thumb { background: rgba(15,16,32,0.18); }
 
+::selection { background: var(--accent-red); color: #fff; }

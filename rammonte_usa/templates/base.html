@@ -1,9 +1,9 @@
-﻿{% load static i18n %}<!DOCTYPE html>
+{% load static i18n %}<!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE|default:'en' }}" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" id="themeColor" content="#0f0f0f">
+    <meta name="theme-color" id="themeColor" content="#0b0d1a">
     <title>{% block title %}Rammonte USA{% endblock %}</title>
 
     {# Apply the saved theme before the stylesheets load to avoid a flash. #}
@@ -19,6 +19,9 @@
         })();
     </script>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/variables.css' %}">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     {# Mirrors the layout for Arabic (right-to-left); inert for other languages. #}
@@ -29,6 +32,8 @@
     <link rel="stylesheet" href="{% static 'css/messages.css' %}">
     <link rel="stylesheet" href="{% static 'css/buttons.css' %}">
     <link rel="stylesheet" href="{% static 'css/forms.css' %}">
+    {# Glassmorphism layer (loaded last to win the cascade) #}
+    <link rel="stylesheet" href="{% static 'css/glass.css' %}">
 
     {# Installable web app (PWA) + offline audio support. #}
     <link rel="manifest" href="{% url 'manifest' %}">
@@ -61,7 +66,10 @@
                        aria-label="{% trans 'Search videos' %}">
                 <button type="submit" class="nav-search-btn"
                         aria-label="{% trans 'Search videos' %}">
-                    <span aria-hidden="true">ðŸ”</span>
+                    <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="11" cy="11" r="7"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
                 </button>
             </form>
 
@@ -82,8 +90,17 @@
             <button type="button" class="theme-toggle" id="theme-toggle"
                     aria-label="{% trans 'Toggle light and dark mode' %}"
                     title="{% trans 'Toggle light and dark mode' %}">
-                <span class="theme-icon theme-icon-sun" aria-hidden="true">â˜€</span>
-                <span class="theme-icon theme-icon-moon" aria-hidden="true">ðŸŒ™</span>
+                <span class="theme-icon theme-icon-sun" aria-hidden="true">
+                    <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="4"></circle>
+                        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+                    </svg>
+                </span>
+                <span class="theme-icon theme-icon-moon" aria-hidden="true">
+                    <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </span>
             </button>
 
             <ul class="navbar-nav">
@@ -92,6 +109,7 @@
                 {% endif %}
                 {% comment %}Every visitor gets a guest account automatically, so these are available without signing in.{% endcomment %}
                 <li><a href="{% url 'videos:playlists' %}" class="nav-link">{% trans "Playlists" %}</a></li>
+                <li><a href="{% url 'library:list' %}" class="nav-link">{% trans "Library" %}</a></li>
                 <li><a href="{% url 'shorts:list' %}" class="nav-link">{% trans "Shorts" %}</a></li>
                 <li><a href="{% url 'videos:offline' %}" class="nav-link">{% trans "Offline" %}</a></li>
                 {% if can_read %}

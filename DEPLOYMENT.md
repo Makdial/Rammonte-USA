@@ -36,6 +36,44 @@ The repository already contains everything needed: a `Dockerfile`, a
 > You do **not** need an external database such as Neon here. Northflank's free
 > tier includes one database per project.
 
+### Step 2 — alternative: use a Cloudflare D1 database
+
+Northflank's free tier already bundles a PostgreSQL addon, but you can instead run
+the metadata database on **Cloudflare D1**, the serverless SQLite database:
+
+1. In the Cloudflare dashboard open **Workers & R2 → D1** and create a new database
+   (the free tier is enough).
+2. Copy the **database ID** from the D1 dashboard.
+3. Point the Django app at it — either in `rammonte_usa/settings.py`:
+
+   ```python
+   DATABASES = {
+       "default": {
+           "ENGINE": "django_cf.db.backends.d1",
+           "CLOUDFLARE_BINDING": "DB",
+       }
+   }
+   ```
+
+   or through the environment (`.env`, `.env.example`):
+
+   ```dotenv
+   CLOUDFLARE_DATABASE_ID=<your-d1-database-id>
+   CLOUDFLARE_BINDING=DB
+   ```
+
+   With `CLOUDFLARE_DATABASE_ID` set, the app automatically resolves the
+   `django_cf.db.backends.d1` backend and ignores `DATABASE_URL`.
+
+The `django-cf` package (added to `requirements.txt` and `pyproject.toml`) is the
+Django ↔ Cloudflare glue: it drives a D1 database through Django's ORM from the
+Cloudflare Workers runtime.
+
+> **Limitations:** the D1 backend does **not** support transactions
+> (`transaction.atomic` is a no-op), has reduced Django Admin support, and needs
+> the Cloudflare **Workers Paid** plan in production. Media files still live in
+> Cloudflare R2.
+
 ### Step 3 â€” Create the service from your GitHub repo
 
 1. **Services** tab â†’ **Create service** â†’ **Combined service**.
@@ -190,6 +228,29 @@ northflank create service combined --project fazakkir   # combined = build + run
 Prefer the dashboard (or the API) for anything involving **secrets**: the
 Cloudflare R2 keys and `SECRET_KEY` belong in the Northflank environment, not on
 a command line where they would end up in shell history.
+
+### GitOps: manage the deployment from the repository
+
+The repository ships a Northflank **GitOps template** at [`Northflank.json`](Northflank.json):
+
+* it creates the `fazakkir` project (europe-west) and its free **PostgreSQL** addon
+  (`fazakkir-db`);
+* it builds the `fazakkir-web` service from the repo's `Dockerfile` and exposes it
+  on port `8000`;
+* it links the addon connection string into a secret group as `DATABASE_URL`.
+
+To use it:
+
+1. In the Northflank dashboard open **Templates**, create a new template and pick
+   **Git** as the source.
+2. Enable **GitOps**, link this repository (`Makdial/fazakkir-dmwm`) and the branch
+   you want to deploy (`master`), and set the template path to `Northflank.json`.
+3. Push to that branch and the template runs (or run it manually from the template
+   page).
+
+> Secrets such as `SECRET_KEY`, the R2 keys and `ALLOWED_HOSTS` are **not** part of
+> the template file; keep them in the template's secret overrides / Northflank
+> environment, exactly as before.
 
 ---
 

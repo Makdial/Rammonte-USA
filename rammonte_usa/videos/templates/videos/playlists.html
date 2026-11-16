@@ -1,4 +1,4 @@
-﻿{% extends 'base.html' %}
+{% extends 'base.html' %}
 {% load static i18n %}
 
 {% block title %}{% trans "My Playlists" %} - Rammonte USA{% endblock %}
@@ -37,14 +37,14 @@
                 {% if playlist.display_cover_url %}
                 <img src="{{ playlist.display_cover_url }}" alt="{{ playlist.title }}" loading="lazy">
                 {% else %}
-                â–¶
+                ▶
                 {% endif %}
             </div>
             <div class="playlist-card-body">
                 <h3>{{ playlist.title }}</h3>
                 <p class="playlist-meta">
                     {% blocktrans count counter=playlist.item_count %}{{ counter }} video{% plural %}{{ counter }} videos{% endblocktrans %}
-                    {% if playlist.is_public %}Â· {% trans "Public" %}{% else %}Â· {% trans "Private" %}{% endif %}
+                    {% if playlist.is_public %}· {% trans "Public" %}{% else %}· {% trans "Private" %}{% endif %}
                 </p>
             </div>
         </a>
@@ -53,7 +53,7 @@
 </div>
 {% else %}
 <div class="empty-state">
-    <span class="empty-icon">ðŸ“‚</span>
+    <span class="empty-icon">📂</span>
     <h2>{% trans "No playlists yet" %}</h2>
     <p>{% trans "Create your first playlist to organise videos." %}</p>
 </div>

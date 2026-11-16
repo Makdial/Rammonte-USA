@@ -1,4 +1,4 @@
-﻿{% extends 'base.html' %}
+{% extends 'base.html' %}
 {% load static i18n %}
 
 {% block title %}{{ playlist.title }} - Rammonte USA{% endblock %}
@@ -14,7 +14,7 @@
         {% if playlist.display_cover_url %}
         <img src="{{ playlist.display_cover_url }}" alt="{% trans 'Playlist cover' %}">
         {% else %}
-        â–¶
+        ▶
         {% endif %}
     </label>
     {% if is_owner %}
@@ -23,9 +23,9 @@
     <div class="playlist-header-info">
         <h1>{{ playlist.title }}</h1>
         <p class="video-meta">
-            {{ playlist.user.first_name|default:playlist.user.username }} Â·
+            {{ playlist.user.first_name|default:playlist.user.username }} ·
             {% blocktrans count counter=items|length %}{{ counter }} video{% plural %}{{ counter }} videos{% endblocktrans %}
-            Â· {% if playlist.is_public %}{% trans "Public" %}{% else %}{% trans "Private" %}{% endif %}
+            · {% if playlist.is_public %}{% trans "Public" %}{% else %}{% trans "Private" %}{% endif %}
         </p>
         {% if playlist.description %}<p class="video-description">{{ playlist.description }}</p>{% endif %}
     </div>
@@ -59,7 +59,7 @@
                 {% if item.video.display_thumbnail_url %}
                     <img src="{{ item.video.display_thumbnail_url }}" alt="{{ item.video.title }}" loading="lazy">
                 {% else %}
-                    <span class="thumbnail-placeholder">â–¶</span>
+                    <span class="thumbnail-placeholder">▶</span>
                 {% endif %}
                 {% if item.video.duration_seconds %}
                 <span class="video-duration">{{ item.video.duration_formatted }}</span>
@@ -67,23 +67,23 @@
             </div>
             <div class="playlist-item-info">
                 <h3>{{ item.video.title }}</h3>
-                <p class="video-meta">{{ item.video.user.username }} Â·
+                <p class="video-meta">{{ item.video.user.username }} ·
                     {% blocktrans count counter=item.video.views %}{{ counter }} view{% plural %}{{ counter }} views{% endblocktrans %}
                 </p>
             </div>
         </a>
         {% if is_owner %}
         <button type="button" class="icon-btn" title="{% trans 'Remove' %}"
-                onclick="removeFromPlaylist({{ item.video.id }}, '{{ item.video.title|escapejs }}')">âœ•</button>
+                onclick="removeFromPlaylist({{ item.video.id }}, '{{ item.video.title|escapejs }}')">✕</button>
         {% endif %}
     </div>
     {% endfor %}
 </div>
 {% else %}
 <div class="empty-state">
-    <span class="empty-icon">ðŸ“‚</span>
+    <span class="empty-icon">📂</span>
     <h2>{% trans "This playlist is empty" %}</h2>
-    <p>{% trans "Use the â€œSaveâ€ button on any video to add it here." %}</p>
+    <p>{% trans "Use the “Saveâ€ button on any video to add it here." %}</p>
 </div>
 {% endif %}
 {% endblock %}
@@ -132,7 +132,7 @@ function deletePlaylist() {
 function removeFromPlaylist(videoId, title) {
     fazakkirConfirm({
         title: "{% trans 'Remove this video?' %}",
-        message: "{% blocktrans %}Remove â€œ{{ title }}â€ from this playlist?{% endblocktrans %}".replace("{{ title }}", title || "{% trans 'this video' %}"),
+        message: "{% blocktrans %}Remove “{{ title }}â€ from this playlist?{% endblocktrans %}".replace("{{ title }}", title || "{% trans 'this video' %}"),
         confirmLabel: "{% trans 'Remove' %}",
     }).then(function (ok) {
         if (!ok) return;

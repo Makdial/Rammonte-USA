@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Library" %} - Rammonte USA{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/library.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="library-hero glass">
+    <h1>{% trans "Library" %}</h1>
+    <p>{% trans "Books and documents to read and download." %}</p>
+
+    <form method="get" class="library-toolbar" role="search">
+        <div class="library-search">
+            <input type="search" name="q" value="{{ query }}" class="form-input"
+                   placeholder="{% trans 'Search title, author or description…' %}"
+                   aria-label="{% trans 'Search library' %}">
+            <button type="submit" class="btn btn-primary">{% trans "Search" %}</button>
+        </div>
+        <div class="library-sort">
+            <select name="sort" class="form-input" onchange="this.form.submit()" aria-label="{% trans 'Sort' %}">
+                <option value="newest" {% if sort == "newest" %}selected{% endif %}>{% trans "Newest" %}</option>
+                <option value="oldest" {% if sort == "oldest" %}selected{% endif %}>{% trans "Oldest" %}</option>
+                <option value="title" {% if sort == "title" %}selected{% endif %}>{% trans "Title A–Z" %}</option>
+                <option value="author" {% if sort == "author" %}selected{% endif %}>{% trans "Author A–Z" %}</option>
+            </select>
+        </div>
+        {% if can_write %}
+        <div class="library-actions">
+            <a href="{% url 'library:upload' %}" class="btn btn-primary">{% trans "Add book" %}</a>
+        </div>
+        {% endif %}
+    </form>
+</div>
+
+{% if books %}
+<div class="library-grid">
+    {% for book in books %}
+    <article class="book-card">
+        <a href="{% url 'library:detail' book.id %}" style="text-decoration:none; color:inherit;">
+            <div class="book-cover">
+                {% if book.cover_url %}
+                <img src="{{ book.cover_url }}" alt="{{ book.title }}" loading="lazy">
+                {% else %}
+                <span class="placeholder">
+                    <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                </span>
+                {% endif %}
+                {% if not book.is_public %}
+                <span class="book-badge">{% trans "Private" %}</span>
+                {% endif %}
+            </div>
+            <div class="book-body">
+                <h3 class="book-title">{{ book.title }}</h3>
+                <p class="book-author">{{ book.author|default:_("Unknown author") }}</p>
+                {% if book.description %}
+                <p class="book-desc">{{ book.description }}</p>
+                {% endif %}
+                <p class="book-meta">
+                    {% if book.file_size %}<span>{{ book.file_size|filesizeformat }}</span>{% endif %}
+                    {% if book.file_name %}<span class="dot">·</span><span>{{ book.file_name }}</span>{% endif %}
+                </p>
+            </div>
+        </a>
+        <div class="book-actions">
+            <a href="{% url 'library:read' book.id %}" class="btn-small">{% trans "Read" %}</a>
+            {% if book.download_link %}
+            <a href="{{ book.download_link }}" class="btn-small">{% trans "Download" %}</a>
+            {% endif %}
+            {% if can_write %}
+            <form method="post" action="{% url 'library:delete' book.id %}" style="display:inline; flex:1 1 auto;" onsubmit="return confirmLibraryDelete(event)">
+                {% csrf_token %}
+                <button type="submit" class="btn-small btn-danger" style="width:100%;">{% trans "Delete" %}</button>
+            </form>
+            {% endif %}
+        </div>
+    </article>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <span class="empty-icon">
+        <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+    </span>
+    {% if query %}
+    <h2>{% trans "No books match your search" %}</h2>
+    <p>{% trans "Try a different keyword or clear the search." %}</p>
+    <a href="{% url 'library:list' %}" class="btn btn-secondary">{% trans "Clear search" %}</a>
+    {% else %}
+    <h2>{% trans "No books yet" %}</h2>
+    <p>{% trans "Books will appear here once an administrator adds them." %}</p>
+    {% if can_write %}
+    <a href="{% url 'library:upload' %}" class="btn btn-primary">{% trans "Add the first book" %}</a>
+    {% endif %}
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function confirmLibraryDelete(event) {
+    event.preventDefault();
+    const form = event.target;
+    if (typeof fazakkirConfirm !== "function") { form.submit(); return false; }
+    fazakkirConfirm({
+        title: "{% trans 'Remove this book?' %}",
+        message: "{% trans 'This removes the book and its file from the library.' %}",
+        confirmLabel: "{% trans 'Delete' %}",
+        danger: true
+    }).then(function (ok) {
+        if (ok) form.submit();
+    });
+    return false;
+}
+</script>
+{% endblock %}

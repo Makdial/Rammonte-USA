@@ -1,4 +1,4 @@
-﻿{% extends 'base.html' %}
+{% extends 'base.html' %}
 {% load static i18n %}
 
 {% block title %}{% trans "Dashboard" %} - Rammonte USA{% endblock %}
@@ -136,7 +136,7 @@
 <div class="dash-panel">
     <div class="dash-panel-head">
         <h2>{% trans "Largest videos" %}</h2>
-        <a href="{% url 'dashboard:videos' %}" class="link-more">{% trans "Manage all" %} â†’</a>
+        <a href="{% url 'dashboard:videos' %}" class="link-more">{% trans "Manage all" %} →</a>
     </div>
     {% if top_videos %}
     <div class="manage-table-wrap">
@@ -161,7 +161,7 @@
                                 onclick="deleteVideo({{ row.video.id }}, '{{ row.video.title|escapejs }}')">
                             {% trans "Delete" %}
                         </button>
-                        {% else %}<span class="muted">â€”</span>{% endif %}
+                        {% else %}<span class="muted">—</span>{% endif %}
                     </td>
                 </tr>
                 {% endfor %}

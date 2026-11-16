@@ -12,8 +12,9 @@ from __future__ import annotations
 
 from functools import wraps
 
+from django.contrib import messages
 from django.contrib.auth.views import redirect_to_login
-from django.core.exceptions import PermissionDenied
+from django.shortcuts import redirect
 from django.utils.translation import gettext as _
 
 
@@ -42,7 +43,8 @@ def _gate(check, message):
             if not request.user.is_authenticated:
                 return redirect_to_login(request.get_full_path())
             if not check(request.user):
-                raise PermissionDenied(message)
+                messages.error(request, message)
+                return redirect("/")
             return view_func(request, *args, **kwargs)
 
         return _wrapped

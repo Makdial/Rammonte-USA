@@ -1,4 +1,4 @@
-﻿{% extends 'base.html' %}
+{% extends 'base.html' %}
 {% load static i18n %}
 
 {% block title %}{% trans "Manage comments" %} - Rammonte USA{% endblock %}
@@ -50,7 +50,7 @@
                     <button type="button" class="btn-small btn-danger" onclick="deleteComment({{ comment.id }})">
                         {% trans "Delete" %}
                     </button>
-                    {% else %}<span class="muted">â€”</span>{% endif %}
+                    {% else %}<span class="muted">—</span>{% endif %}
                 </td>
             </tr>
             {% endfor %}
@@ -59,7 +59,7 @@
 </div>
 {% else %}
 <div class="empty-state">
-    <span class="empty-icon">ðŸ’¬</span>
+    <span class="empty-icon">💬</span>
     <h2>{% trans "No comments found" %}</h2>
     <p>{% trans "Nothing matches your search." %}</p>
 </div>

@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Add book" %} - Rammonte USA{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/library.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="library-form-card glass">
+    <h1>{% trans "Add book" %}</h1>
+    <p class="subtitle">{% trans "Upload a book or document to the library." %}</p>
+
+    <form method="post" enctype="multipart/form-data" class="auth-form">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="id_title">{% trans "Title" %}</label>
+            {{ form.title }}
+            {{ form.title.errors }}
+        </div>
+        <div class="form-group">
+            <label for="id_author">{% trans "Author" %}</label>
+            {{ form.author }}
+        </div>
+        <div class="form-group">
+            <label for="id_description">{% trans "Description" %}</label>
+            {{ form.description }}
+        </div>
+        <div class="form-group">
+            <label for="id_is_public">{% trans "Public" %}</label>
+            {{ form.is_public }}
+            <span class="help-text">{% trans "Public books are visible to everyone." %}</span>
+        </div>
+        <div class="form-group">
+            <label>{% trans "Book file" %}</label>
+            <div class="drop-zone">
+                <span class="drop-icon">📄</span>
+                <span>{% trans "Choose a PDF, EPUB or text file" %}</span>
+                <input type="file" name="file" id="file" class="form-input" required accept=".pdf,.epub,.txt">
+            </div>
+        </div>
+        <div class="form-group">
+            <label>{% trans "Cover image (optional)" %}</label>
+            <div class="drop-zone">
+                <span class="drop-icon">🖼️</span>
+                <span>{% trans "Choose a cover image" %}</span>
+                <input type="file" name="cover" id="cover" class="form-input" accept="image/*">
+            </div>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">{% trans "Upload" %}</button>
+            <a href="{% url 'library:list' %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

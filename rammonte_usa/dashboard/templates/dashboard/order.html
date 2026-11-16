@@ -1,4 +1,4 @@
-﻿{% extends 'base.html' %}
+{% extends 'base.html' %}
 {% load static i18n %}
 
 {% block title %}{% trans "Home order" %} - Rammonte USA{% endblock %}
@@ -33,30 +33,40 @@
 <ol class="order-list" id="orderList">
     {% for video in videos %}
     <li class="order-item" data-id="{{ video.id }}"{% if can_write %} draggable="true"{% endif %}>
-        <span class="order-handle" aria-hidden="true">â ¿</span>
+        <span class="order-handle" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="1.5"></circle><circle cx="12" cy="12" r="1.5"></circle><circle cx="12" cy="19" r="1.5"></circle></svg>
+        </span>
         <span class="order-index">{{ forloop.counter }}</span>
         <span class="order-thumb">
             {% if video.display_thumbnail_url %}
             <img src="{{ video.display_thumbnail_url }}" alt="">
             {% elif video.is_audio_only %}
-            <span class="order-thumb-icon">â™ª</span>
+            <span class="order-thumb-icon">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+            </span>
             {% else %}
-            <span class="order-thumb-icon">â–¶</span>
+            <span class="order-thumb-icon">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><polygon points="6,4 20,12 6,20"></polygon></svg>
+            </span>
             {% endif %}
         </span>
         <span class="order-title">
             <a href="{% url 'videos:detail' video.id %}">{{ video.title }}</a>
             <span class="order-meta">
-                {{ video.user.username }} Â·
+                {{ video.user.username }} ·
                 {% if video.is_audio_only %}{% trans "Audio" %}{% else %}{% trans "Video" %}{% endif %}
             </span>
         </span>
         {% if can_write %}
         <span class="order-actions">
             <button type="button" class="btn-small btn-outline order-move" data-move="up"
-                    title="{% trans 'Move up' %}" aria-label="{% trans 'Move up' %}">â†‘</button>
+                    title="{% trans 'Move up' %}" aria-label="{% trans 'Move up' %}">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="18 15 12 9 6 15"></polyline></svg>
+            </button>
             <button type="button" class="btn-small btn-outline order-move" data-move="down"
-                    title="{% trans 'Move down' %}" aria-label="{% trans 'Move down' %}">â†“</button>
+                    title="{% trans 'Move down' %}" aria-label="{% trans 'Move down' %}">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
         </span>
         {% endif %}
     </li>
@@ -64,7 +74,9 @@
 </ol>
 {% else %}
 <div class="empty-state">
-    <span class="empty-icon">ðŸŽ¬</span>
+    <span class="empty-icon">
+        <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line></svg>
+    </span>
     <h2>{% trans "Nothing to arrange yet" %}</h2>
     <p>{% trans "Upload a video or an audio file and it will appear here." %}</p>
 </div>
@@ -80,7 +92,6 @@ const orderList = document.getElementById("orderList");
 const saveOrderBtn = document.getElementById("saveOrderBtn");
 const orderStatus = document.getElementById("orderStatus");
 
-// Renumber the visible rows so the numbers always match the arrangement.
 function refreshNumbers() {
     orderList.querySelectorAll(".order-item").forEach((item, index) => {
         const badge = item.querySelector(".order-index");
@@ -94,7 +105,6 @@ function markDirty() {
     if (orderStatus) orderStatus.textContent = "";
 }
 
-// --- Arrows: work everywhere, including a touch screen ---------------------
 orderList.addEventListener("click", (event) => {
     const button = event.target.closest(".order-move");
     if (!button) return;
@@ -107,7 +117,6 @@ orderList.addEventListener("click", (event) => {
     markDirty();
 });
 
-// --- Drag and drop ---------------------------------------------------------
 let dragged = null;
 
 orderList.addEventListener("dragstart", (event) => {
@@ -121,6 +130,7 @@ orderList.addEventListener("dragstart", (event) => {
 orderList.addEventListener("dragend", () => {
     if (dragged) dragged.classList.remove("dragging");
     dragged = null;
+    markDirty();
 });
 
 orderList.addEventListener("dragover", (event) => {

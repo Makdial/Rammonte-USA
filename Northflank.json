@@ -1,0 +1,168 @@
+{
+  "apiVersion": "v1.2",
+  "name": "rammonte-usa",
+  "description": "Deploy the Rammonte USA Django application on Northflank with a free PostgreSQL database.",
+  "options": {
+    "autorun": false,
+    "concurrencyPolicy": "queue"
+  },
+  "spec": {
+    "kind": "Workflow",
+    "spec": {
+      "type": "sequential",
+      "steps": [
+        {
+          "kind": "Project",
+          "ref": "project",
+          "spec": {
+            "name": "fazakkir",
+            "region": "europe-west",
+            "networking": {
+              "allowedIngressProjects": []
+            }
+          }
+        },
+        {
+          "kind": "Workflow",
+          "ref": "project-workflow",
+          "spec": {
+            "type": "sequential",
+            "context": {
+              "projectId": "${refs.project.id}"
+            },
+            "steps": [
+              {
+                "kind": "Addon",
+                "ref": "database",
+                "spec": {
+                  "externalAccessEnabled": false,
+                  "type": "postgresql",
+                  "billing": {
+                    "replicas": 1,
+                    "storage": 6144,
+                    "storageClass": "nvme",
+                    "deploymentPlan": "nf-compute-50"
+                  },
+                  "tlsEnabled": true,
+                  "name": "fazakkir-db",
+                  "version": "latest"
+                }
+              },
+              {
+                "kind": "CombinedService",
+                "ref": "web",
+                "spec": {
+                  "deployment": {
+                    "instances": 1,
+                    "storage": {
+                      "ephemeralStorage": {
+                        "storageSize": 1024
+                      },
+                      "shmSize": 64
+                    },
+                    "docker": {
+                      "configType": "default"
+                    }
+                  },
+                  "runtimeEnvironment": {},
+                  "runtimeFiles": {},
+                  "buildArguments": {},
+                  "buildFiles": {},
+                  "billing": {
+                    "deploymentPlan": "nf-compute-10",
+                    "buildPlan": "nf-compute-400-16"
+                  },
+                  "name": "fazakkir-web",
+                  "vcsData": {
+                    "projectType": "github",
+                    "projectUrl": "https://github.com/Makdial/fazakkir-dmwm",
+                    "projectBranch": "master"
+                  },
+                  "ports": [
+                    {
+                      "internalPort": 8000,
+                      "protocol": "HTTP",
+                      "name": "p01",
+                      "public": true,
+                      "domains": [],
+                      "security": {
+                        "policies": [],
+                        "credentials": []
+                      },
+                      "disableNfDomain": false
+                    }
+                  ],
+                  "buildSettings": {
+                    "dockerfile": {
+                      "buildEngine": "buildkit",
+                      "dockerWorkDir": "/",
+                      "dockerFilePath": "/Dockerfile",
+                      "buildkit": {
+                        "useCache": false,
+                        "cacheStorageSize": 16384
+                      }
+                    }
+                  },
+                  "disabledCI": false,
+                  "buildConfiguration": {
+                    "pathIgnoreRules": [],
+                    "isAllowList": false,
+                    "ciIgnoreFlagsEnabled": false
+                  }
+                }
+              },
+              {
+                "kind": "SecretGroup",
+                "ref": "secrets",
+                "spec": {
+                  "type": "secret",
+                  "secretType": "environment-arguments",
+                  "priority": 10,
+                  "secrets": {
+                    "variables": {
+                      "DEBUG": "0",
+                      "JOB_STALE_MINUTES": "30",
+                      "STORAGE_QUOTA_BYTES": "10737418240",
+                      "DATABASE_QUOTA_BYTES": "1073741824",
+                      "STORAGE_ALERT_THRESHOLD_PERCENT": "90",
+                      "STORAGE_ALERT_EMAIL": "makhoutech@gmail.com",
+                      "SUBTITLE_PROVIDER": "openai",
+                      "SUBTITLE_SOURCE_LANGUAGE": "ar",
+                      "SUBTITLE_TARGET_LANGUAGES": "fr,en",
+                      "EMAIL_HOST": "smtp.gmail.com",
+                      "EMAIL_PORT": "587",
+                      "EMAIL_HOST_USER": "makhoutech@gmail.com",
+                      "EMAIL_USE_TLS": "1",
+                      "R2_BUCKET": "rammonte",
+                      "R2_PUBLIC_BASE_URL": "https://pub-95b92a4792fc4ee3b8c55f60f7ca4cc9.r2.dev",
+                      "USE_X_FORWARDED_PROTO": "1",
+                      "FORCE_HTTPS_COOKIES": "1",
+                      "SECURE_SSL_REDIRECT": "0",
+                      "ALLOWED_HOSTS": "dmwmusa.com,www.dmwmusa.com,127.0.0.1,localhost",
+                      "CSRF_TRUSTED_ORIGINS": "https://dmwmusa.com,https://www.dmwmusa.com"
+                    },
+                    "files": {}
+                  },
+                  "addonDependencies": [
+                    {
+                      "addonId": "${refs.database.id}",
+                      "keys": [
+                        {
+                          "keyName": "DATABASE_URL",
+                          "aliases": [
+                            "DATABASE_URL"
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "name": "Secrets"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

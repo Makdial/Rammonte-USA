@@ -12,7 +12,7 @@
         root.setAttribute("data-theme", theme);
         var meta = document.getElementById("themeColor");
         if (meta) {
-            meta.setAttribute("content", theme === "light" ? "#ffffff" : "#0f0f0f");
+            meta.setAttribute("content", theme === "light" ? "#f5f6ff" : "#0b0d1a");
         }
         try {
             localStorage.setItem(STORAGE_KEY, theme);

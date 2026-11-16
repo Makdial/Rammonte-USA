@@ -109,6 +109,7 @@ INSTALLED_APPS = [
     'shorts',
     'dashboard',
     'core',
+    'library',
 ]
 
 MIDDLEWARE = [
@@ -161,7 +162,24 @@ WSGI_APPLICATION = 'rammonte_usa.wsgi.application'
 # Neon and Supabase both have a permanent free tier; see DEPLOYMENT.md.
 DATABASE_URL = os.environ.get("DATABASE_URL", "").strip()
 
-if DATABASE_URL:
+# Cloudflare D1 (https://developers.cloudflare.com/d1/) is Cloudflare's serverless
+# SQL database, and the `django-cf` package (https://pypi.org/project/django-cf/)
+# provides the Django database backend that drives it. Set CLOUDFLARE_DATABASE_ID
+# in the environment to move the metadata database onto D1 instead of the local
+# SQLite file or the hosted Postgres pointed at by DATABASE_URL. The D1 instance is
+# reached through the Cloudflare Worker binding named by CLOUDFLARE_BINDING (default
+# "DB"); that name must match the `binding` of the d1_databases entry in the
+# deployment's wrangler configuration.
+CLOUDFLARE_DATABASE_ID = os.environ.get("CLOUDFLARE_DATABASE_ID", "").strip()
+
+if CLOUDFLARE_DATABASE_ID:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django_cf.db.backends.d1",
+            "CLOUDFLARE_BINDING": os.environ.get("CLOUDFLARE_BINDING", "DB").strip() or "DB",
+        }
+    }
+elif DATABASE_URL:
     if DATABASE_URL.startswith("postgres://"):
         # Heroku-style scheme; the driver itself expects "postgresql".
         DATABASE_URL = "postgresql://" + DATABASE_URL[len("postgres://"):]

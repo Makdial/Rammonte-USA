@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Read" %} - {{ book.title }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/library.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="reader-hero">
+    <h1>{{ book.title }}</h1>
+    <p>{{ book.author|default:_("Unknown author") }}</p>
+</div>
+
+<div class="reader-toolbar">
+    <a href="{% url 'library:detail' book.id %}" class="reader-tool-btn">{% trans "Details" %}</a>
+    {% if download_url %}<a href="{{ download_url }}" class="reader-tool-btn">{% trans "Download" %}</a>{% endif %}
+    <span class="spacer"></span>
+    <button type="button" class="reader-tool-btn" id="expandBook" aria-label="{% trans 'Open the book full screen' %}" title="{% trans 'Open widely' %}">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"></path><path d="M9 21H3v-6"></path><path d="M21 3l-7 7"></path><path d="M3 21l7-7"></path></svg>
+    </button>
+    <button type="button" class="reader-tool-btn" id="shrinkBook" aria-label="{% trans 'Reduce to normal size' %}" title="{% trans 'Reduce' %}">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14h6v6"></path><path d="M20 10h-6V4"></path><path d="M14 10l7-7"></path><path d="M10 14l-7 7"></path></svg>
+    </button>
+    <button type="button" class="reader-tool-btn" id="fontDown" aria-label="{% trans 'Decrease font size' %}">A−</button>
+    <button type="button" class="reader-tool-btn" id="fontUp" aria-label="{% trans 'Increase font size' %}">A+</button>
+    <button type="button" class="reader-tool-btn" id="toggleText" aria-label="{% trans 'Toggle extracted text' %}">{% trans "Text" %}</button>
+    <button type="button" class="reader-tool-btn" id="togglePanel" aria-label="{% trans 'Toggle translation panel' %}">{% trans "Translate" %}</button>
+</div>
+
+<div class="reader-layout" id="readerLayout">
+    <div class="reader-viewer" id="readerViewer">
+        {% if file_url %}
+        <iframe src="{{ file_url }}" id="readerFrame" title="{{ book.title }}" loading="lazy" allowfullscreen></iframe>
+        {% else %}
+        <p>{% trans "No file available." %}</p>
+        {% endif %}
+        {% if book.content %}
+        <div class="book-text" id="bookText" style="display:none;">{{ book.content }}</div>
+        {% endif %}
+        <div class="reader-actions">
+            <a href="{{ download_url }}" class="btn btn-secondary">{% trans "Download" %}</a>
+            <a href="{% url 'library:detail' book.id %}" class="btn btn-secondary">{% trans "Back to details" %}</a>
+        </div>
+    </div>
+
+    <div class="reader-panel" id="readerPanel">
+        <h2>{% trans "Translate" %}</h2>
+        <p class="section-subtitle">{% trans "Highlight or paste a sentence/paragraph to translate." %}</p>
+        <div class="lang-row">
+            <div class="form-group">
+                <label for="srcLang">{% trans "From" %}</label>
+                <select id="srcLang" class="form-input">
+                    <option value="en">English</option>
+                    <option value="fr">Français</option>
+                    <option value="ar">العربية</option>
+                    <option value="wo">Wolof</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="tgtLang">{% trans "To" %}</label>
+                <select id="tgtLang" class="form-input">
+                    <option value="fr">Français</option>
+                    <option value="ar">العربية</option>
+                    <option value="en">English</option>
+                    <option value="wo">Wolof</option>
+                    <option value="es">Español</option>
+                    <option value="pt">Português</option>
+                    <option value="de">Deutsch</option>
+                    <option value="it">Italiano</option>
+                    <option value="tr">Türkçe</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="srcText">{% trans "Text" %}</label>
+            <textarea id="srcText" class="form-input" rows="4" placeholder="{% trans 'Paste or highlight text...' %}"></textarea>
+        </div>
+        <div class="translate-btn-row">
+            <button type="button" class="btn btn-primary" id="translateBtn">{% trans "Translate" %}</button>
+            <button type="button" class="btn btn-secondary" id="clipBtn">{% trans "Clipboard" %}</button>
+        </div>
+        <div class="form-group">
+            <label for="outText">{% trans "Translation" %}</label>
+            <textarea id="outText" class="form-input" rows="4" readonly></textarea>
+        </div>
+    </div>
+</div>
+
+<script>
+(function () {
+    const bookText = document.getElementById('bookText');
+    const panel = document.getElementById('readerPanel');
+    const layout = document.getElementById('readerLayout');
+    let fontSize = 1;
+
+    function setFontSize(delta) {
+        if (!bookText) return;
+        fontSize = Math.min(1.6, Math.max(0.8, fontSize + delta));
+        bookText.style.fontSize = fontSize + 'rem';
+    }
+    const fontUp = document.getElementById('fontUp');
+    const fontDown = document.getElementById('fontDown');
+    if (fontUp) fontUp.addEventListener('click', function () { setFontSize(0.1); });
+    if (fontDown) fontDown.addEventListener('click', function () { setFontSize(-0.1); });
+
+    const toggleText = document.getElementById('toggleText');
+    if (toggleText && bookText) {
+        toggleText.addEventListener('click', function () {
+            bookText.style.display = (bookText.style.display === 'none') ? '' : 'none';
+        });
+    }
+
+    const viewer = document.getElementById('readerViewer');
+    const frame = document.getElementById('readerFrame');
+    const expandBtn = document.getElementById('expandBook');
+    const shrinkBtn = document.getElementById('shrinkBook');
+    function requestFull() {
+        const target = viewer || frame;
+        if (!target) return;
+        if (target.requestFullscreen) target.requestFullscreen();
+        else if (target.webkitRequestFullscreen) target.webkitRequestFullscreen();
+        else if (frame && frame.webkitEnterFullscreen) frame.webkitEnterFullscreen();
+    }
+    function exitFull() {
+        if (document.exitFullscreen) document.exitFullscreen();
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+    }
+    if (expandBtn) expandBtn.addEventListener('click', requestFull);
+    if (shrinkBtn) shrinkBtn.addEventListener('click', exitFull);
+
+    const togglePanel = document.getElementById('togglePanel');
+    if (togglePanel) {
+        togglePanel.addEventListener('click', function () {
+            if (panel) {
+                const hidden = panel.style.display === 'none';
+                panel.style.display = hidden ? '' : 'none';
+            }
+        });
+    }
+
+    // On small screens start with the translation panel collapsed.
+    if (window.matchMedia('(max-width: 900px)').matches && panel) {
+        panel.style.display = 'none';
+    }
+})();
+
+function doTranslate(text) {
+    const btn = document.getElementById('translateBtn');
+    const source = document.getElementById('srcLang').value;
+    const target = document.getElementById('tgtLang').value;
+    if (!text) return;
+    document.getElementById('srcText').value = text;
+    btn.disabled = true;
+    btn.textContent = '{% trans "Translating…" %}';
+    fetch('{% url "library:translate" %}', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
+        body: JSON.stringify({ text: text, source: source, target: target })
+    }).then(r => r.json()).then(data => {
+        document.getElementById('outText').value = data.translated || data.error || '';
+    }).catch(() => {
+        document.getElementById('outText').value = '{% trans "Failed." %}';
+    }).finally(() => {
+        btn.disabled = false;
+        btn.textContent = '{% trans "Translate" %}';
+    });
+}
+
+document.getElementById('translateBtn').addEventListener('click', function() {
+    doTranslate(document.getElementById('srcText').value.trim());
+});
+
+document.getElementById('clipBtn').addEventListener('click', function() {
+    if (navigator.clipboard && navigator.clipboard.readText) {
+        navigator.clipboard.readText().then(function(text) {
+            if (text && text.trim()) {
+                doTranslate(text.trim());
+            }
+        }).catch(function() {
+            alert('{% trans "Clipboard access denied. Paste the text manually." %}');
+        });
+    } else {
+        alert('{% trans "Clipboard not supported. Paste the text manually." %}');
+    }
+});
+
+let selTimer = null;
+document.addEventListener('selectionchange', function() {
+    clearTimeout(selTimer);
+    selTimer = setTimeout(function() {
+        const sel = (window.getSelection() || '').toString().trim();
+        if (sel && sel.length > 2) {
+            doTranslate(sel);
+        }
+    }, 600);
+});
+
+const srcTextEl = document.getElementById('srcText');
+srcTextEl.addEventListener('select', function() {
+    const el = this;
+    const sel = el.value.substring(el.selectionStart, el.selectionEnd).trim();
+    if (sel && sel.length > 2) {
+        clearTimeout(selTimer);
+        selTimer = setTimeout(function() { doTranslate(sel); }, 400);
+    }
+});
+srcTextEl.addEventListener('paste', function() {
+    setTimeout(function() {
+        doTranslate(document.getElementById('srcText').value.trim());
+    }, 100);
+});
+</script>
+{% endblock %}

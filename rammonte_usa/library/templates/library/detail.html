@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block title %}{{ book.title }} - Rammonte USA{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/library.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="book-detail-layout">
+    <div>
+        <div class="book-detail-cover">
+            {% if cover_url %}
+            <img src="{{ cover_url }}" alt="{{ book.title }}" loading="lazy">
+            {% else %}
+            <span class="placeholder">
+                <svg viewBox="0 0 24 24" width="80" height="80" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+            </span>
+            {% endif %}
+        </div>
+    </div>
+    <div class="book-detail-info">
+        <h1>{{ book.title }}</h1>
+        <p class="book-detail-author">{{ book.author|default:_("Unknown author") }}</p>
+
+        {% if book.description %}
+        <div class="book-detail-desc">{{ book.description }}</div>
+        {% endif %}
+
+        <div class="book-detail-meta">
+            {% if book.file_size %}
+            <div class="meta-card">
+                <div class="label">{% trans "Size" %}</div>
+                <div class="value">{{ book.file_size|filesizeformat }}</div>
+            </div>
+            {% endif %}
+            {% if book.file_name %}
+            <div class="meta-card">
+                <div class="label">{% trans "File" %}</div>
+                <div class="value">{{ book.file_name }}</div>
+            </div>
+            {% endif %}
+            <div class="meta-card">
+                <div class="label">{% trans "Visibility" %}</div>
+                <div class="value">{% if book.is_public %}{% trans "Public" %}{% else %}{% trans "Private" %}{% endif %}</div>
+            </div>
+            <div class="meta-card">
+                <div class="label">{% trans "Added" %}</div>
+                <div class="value">{{ book.created_at|date:"M d, Y" }}</div>
+            </div>
+        </div>
+
+        <div class="book-detail-actions">
+            <a class="btn btn-primary" href="{% url 'library:read' book.id %}">{% trans "Read" %}</a>
+            {% if download_url %}
+            <a class="btn btn-secondary" href="{{ download_url }}">{% trans "Download" %}</a>
+            {% endif %}
+            <a class="btn btn-secondary" href="{% url 'library:list' %}">{% trans "Back to library" %}</a>
+            {% if can_write %}
+            <a class="btn btn-secondary" href="{% url 'library:edit' book.id %}">{% trans "Edit" %}</a>
+            <form method="post" action="{% url 'library:delete' book.id %}" style="display:inline;" onsubmit="return confirmLibraryDelete(event)">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">{% trans "Delete" %}</button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function confirmLibraryDelete(event) {
+    event.preventDefault();
+    const form = event.target;
+    if (typeof fazakkirConfirm !== "function") { form.submit(); return false; }
+    fazakkirConfirm({
+        title: "{% trans 'Remove this book?' %}",
+        message: "{% trans 'This removes the book and its file from the library.' %}",
+        confirmLabel: "{% trans 'Delete' %}",
+        danger: true
+    }).then(function (ok) {
+        if (ok) form.submit();
+    });
+    return false;
+}
+</script>
+{% endblock %}

@@ -1,4 +1,4 @@
-﻿{% extends 'base.html' %}
+{% extends 'base.html' %}
 {% load static i18n %}
 
 {% block title %}{% trans "Manage videos" %} - Rammonte USA{% endblock %}
@@ -127,7 +127,7 @@
                             onclick="deleteVideo({{ row.video.id }}, '{{ row.video.title|escapejs }}')">
                         {% trans "Delete" %}
                     </button>
-                    {% else %}<span class="muted">â€”</span>{% endif %}
+                    {% else %}<span class="muted">—</span>{% endif %}
                 </td>
             </tr>
             {% endfor %}
@@ -136,7 +136,7 @@
 </div>
 {% else %}
 <div class="empty-state">
-    <span class="empty-icon">ðŸŽ¬</span>
+    <span class="empty-icon">🎬</span>
     <h2>{% trans "No videos found" %}</h2>
     <p>{% trans "Nothing matches your search." %}</p>
 </div>
@@ -175,7 +175,7 @@ if (generateAudioBtn) {
                 const pct = data.total ? Math.round((data.done / data.total) * 100) : 0;
                 progressBar.style.width = pct + "%";
                 progressText.textContent =
-                    `{% trans "Generating MP3sâ€¦" %} ${data.done}/${data.total}`;
+                    `{% trans "Generating MP3s…" %} ${data.done}/${data.total}`;
                 setTimeout(pollAudio, 1500);
             })
             .catch(() => setTimeout(pollAudio, 3000));
@@ -184,7 +184,7 @@ if (generateAudioBtn) {
     generateAudioBtn.addEventListener("click", () => {
         generateAudioBtn.disabled = true;
         progress.hidden = false;
-        progressText.textContent = "{% trans 'Startingâ€¦' %}";
+        progressText.textContent = "{% trans 'Starting…' %}";
         fetch(generateAudioBtn.dataset.generateUrl, {
             method: "POST",
             headers: { "X-CSRFToken": dashCsrf },
@@ -210,7 +210,7 @@ if (generateSubtitlesBtn) {
                 const pct = data.total ? Math.round((data.done / data.total) * 100) : 0;
                 progressBar.style.width = pct + "%";
                 progressText.textContent =
-                    `{% trans "Generating subtitlesâ€¦" %} ${data.done}/${data.total}`;
+                    `{% trans "Generating subtitles…" %} ${data.done}/${data.total}`;
                 setTimeout(pollSubtitles, 3000);
             })
             .catch(() => setTimeout(pollSubtitles, 5000));
@@ -219,7 +219,7 @@ if (generateSubtitlesBtn) {
     generateSubtitlesBtn.addEventListener("click", () => {
         generateSubtitlesBtn.disabled = true;
         progress.hidden = false;
-        progressText.textContent = "{% trans 'Startingâ€¦' %}";
+        progressText.textContent = "{% trans 'Starting…' %}";
         fetch(generateSubtitlesBtn.dataset.generateUrl, {
             method: "POST",
             headers: { "X-CSRFToken": dashCsrf },

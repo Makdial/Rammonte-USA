@@ -1,4 +1,4 @@
-﻿{% extends 'base.html' %}
+{% extends 'base.html' %}
 {% load static i18n %}
 
 {% block title %}{% trans "Manage users" %} - Rammonte USA{% endblock %}
@@ -15,6 +15,36 @@
         {% blocktrans count counter=total_users %}{{ counter }} account{% plural %}{{ counter }} accounts{% endblocktrans %}
     </p>
 </div>
+
+{% if can_write %}
+<div class="glass" style="padding: 20px; margin-bottom: 24px;">
+    <h2 style="margin-top: 0;">{% trans "Add administrator" %}</h2>
+    <form method="post" action="{% url 'accounts:create_admin' %}" class="auth-form">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="new-email">{% trans "Email" %}</label>
+            <input type="email" id="new-email" name="email" class="form-input" required>
+        </div>
+        <div class="form-group">
+            <label for="new-password">{% trans "Password" %}</label>
+            <input type="password" id="new-password" name="password" class="form-input" required minlength="8">
+        </div>
+        <div class="form-group">
+            <label for="new-password2">{% trans "Confirm password" %}</label>
+            <input type="password" id="new-password2" name="password2" class="form-input" required minlength="8">
+        </div>
+        <div class="form-group">
+            <label for="new-access">{% trans "Access level" %}</label>
+            <select id="new-access" name="access_level" class="form-input">
+                {% for value, label in access_choices %}
+                <option value="{{ value }}" {% if value == 'write' %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">{% trans "Create account" %}</button>
+    </form>
+</div>
+{% endif %}
 
 <div class="manage-table-wrap">
     <table class="manage-table">
@@ -65,7 +95,7 @@
                         {% trans "Delete" %}
                     </button>
                     {% else %}
-                    <span class="muted">â€”</span>
+                    <span class="muted">—</span>
                     {% endif %}
                 </td>
             </tr>

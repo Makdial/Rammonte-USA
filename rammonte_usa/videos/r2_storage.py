@@ -9,7 +9,7 @@ Configure the following values in ``rammonte_usa/.env``:
     R2_ACCOUNT_ID=<your Cloudflare account id>
     R2_ACCESS_KEY_ID=<R2 access key id>
     R2_SECRET_ACCESS_KEY=<R2 secret access key>
-    R2_BUCKET=fazakkir
+    R2_BUCKET=rammonte
     R2_PUBLIC_BASE_URL=https://pub-xxxxxxxx.r2.dev   # optional
 
 ``R2_PUBLIC_BASE_URL`` is optional. When it is set (and the bucket has public
@@ -40,7 +40,7 @@ ALLOWED_AUDIO_EXTENSIONS = {".mp3"}
 
 # Object keys created by this app. Used to tell R2 objects apart from legacy
 # records (e.g. old ImageKit paths) that should keep their stored URL.
-OBJECT_PREFIXES = ("videos/", "thumbnails/", "audio/")
+OBJECT_PREFIXES = ("videos/", "thumbnails/", "audio/", "books/", "book-covers/")
 
 # Anything larger than this is uploaded as a multipart upload, which is what R2
 # recommends for files over a few megabytes. 16 MB parts keep memory use low

@@ -1,4 +1,4 @@
-﻿{% extends 'base.html' %}
+{% extends 'base.html' %}
 {% load static i18n %}
 
 {% block title %}{% if query %}{% blocktrans %}Search results for {{ query }}{% endblocktrans %}{% else %}{% trans "Search" %}{% endif %} - Rammonte USA{% endblock %}
@@ -24,7 +24,7 @@
     {% else %}
         <h1 class="search-summary">
             {% blocktrans count counter=videos.count with query=query %}{{ counter }} result{% plural %}{{ counter }} results{% endblocktrans %}
-            {% if words %}Â· {% trans "for" %} {{ query }}{% endif %}
+            {% if words %}· {% trans "for" %} {{ query }}{% endif %}
         </h1>
 
         {% if videos %}
@@ -36,12 +36,12 @@
                             {% if video.display_thumbnail_url %}
                                 <img src="{{ video.display_thumbnail_url }}" alt="{{ video.title }}" loading="lazy">
                             {% else %}
-                                <span class="thumbnail-placeholder">â–¶</span>
+                                <span class="thumbnail-placeholder"><svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor" aria-hidden="true"><polygon points="6,4 20,12 6,20"></polygon></svg></span>
                             {% endif %}
                             {% if video.duration_seconds %}
                             <span class="video-duration">{{ video.duration_formatted }}</span>
                             {% endif %}
-                            <span class="play-icon">â–¶</span>
+                            <span class="play-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><polygon points="6,4 20,12 6,20"></polygon></svg></span>
                         </div>
                         <div class="video-info">
                             <span class="video-card-avatar" aria-hidden="true">{{ video.user.username|slice:":1" }}</span>
@@ -50,14 +50,17 @@
                                 <p class="video-meta">
                                     <span class="video-meta-uploader">{{ video.user.username }}</span>
                                     {% blocktrans count counter=video.views %}{{ counter }} view{% plural %}{{ counter }} views{% endblocktrans %}
-                                    Â· {{ video.created_at|date:"Y" }}
+                                    · {{ video.created_at|date:"Y" }}
                                 </p>
                             </div>
                         </div>
                     </a>
                     {% if video.has_audio %}
                     <a class="card-download" href="{{ video.audio_download_url }}" download
-                       title="{% trans 'Download MP3' %}" aria-label="{% trans 'Download MP3' %}">â¬‡ MP3</a>
+               title="{% trans 'Download MP3' %}" aria-label="{% trans 'Download MP3' %}">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                MP3
+            </a>
                     {% endif %}
                 </div>
             {% endfor %}
@@ -81,7 +84,7 @@
             </p>
             <a class="youtube-fallback-link" href="{{ youtube_url }}"
                target="_blank" rel="noopener noreferrer">
-                <span class="youtube-fallback-icon" aria-hidden="true">â–¶</span>
+                <span class="youtube-fallback-icon" aria-hidden="true">▶</span>
                 <span class="youtube-fallback-label">
                     {% blocktrans %}Search YouTube for {{ query }}{% endblocktrans %}
                 </span>

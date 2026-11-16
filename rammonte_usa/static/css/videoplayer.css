@@ -1015,3 +1015,5 @@ video::cue {
     opacity: 0.55;
     cursor: not-allowed;
 }
+
+.player-speed-icon { display: inline-flex; align-items: center; color: var(--bar-fg); margin-right: 2px; }

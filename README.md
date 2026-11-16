@@ -3,8 +3,9 @@
 A small YouTube-style video portal built with Django.
 
 Videos are stored in **Cloudflare R2** (free tier, S3-compatible) and the
-metadata lives in a local **SQLite** database. Only administrators can upload
-videos; every visitor can browse and play them.
+metadata lives in a local **SQLite** database (or in a hosted database such as
+**Cloudflare D1** or Postgres when `DATABASE_URL` / `CLOUDFLARE_DATABASE_ID` is
+set). Only administrators can upload videos; every visitor can browse and play them.
 
 ## Features
 
@@ -17,7 +18,7 @@ videos; every visitor can browse and play them.
   New uploads are measured at upload time; older videos fill themselves in the
   first time a page shows them (or all at once with `python manage.py
   generatedurations`).
-- **SQLite** database for titles, views, likes and users â€” zero configuration.
+- **SQLite** database for titles, views, likes and users — zero configuration, or a hosted **Cloudflare D1** / Postgres database when configured.
 - **Light / dark theme toggle**, remembered per browser.
 - **Four languages**: English, French, Arabic and Wolof, switchable from the navbar
   (Django i18n). Arabic is right-to-left and the whole layout mirrors for it.
@@ -65,6 +66,7 @@ videos; every visitor can browse and play them.
 - Python 3.13+
 - [uv](https://docs.astral.sh/uv/) (recommended) or plain `pip`
 - A free [Cloudflare](https://dash.cloudflare.com/sign-up) account with R2 enabled
+  (and optionally a **D1** database for the metadata)
 
 ## Setup
 

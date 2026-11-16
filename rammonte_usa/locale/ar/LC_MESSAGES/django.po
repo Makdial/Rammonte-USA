@@ -1231,3 +1231,219 @@ msgstr ""
 
 msgid "Upload short"
 msgstr ""
+
+msgid "Access level"
+msgstr ""
+
+msgid "Add administrator"
+msgstr ""
+
+msgid "Add book"
+msgstr ""
+
+msgid "Add the first book"
+msgstr ""
+
+msgid "Author A–Z"
+msgstr ""
+
+msgid "Back to details"
+msgstr ""
+
+msgid "Back to library"
+msgstr ""
+
+msgid "Book file"
+msgstr ""
+
+msgid "Books and documents to read and download."
+msgstr ""
+
+msgid "Books will appear here once an administrator adds them."
+msgstr ""
+
+msgid "Choose a PDF, EPUB or text file"
+msgstr ""
+
+msgid "Choose a cover image"
+msgstr ""
+
+msgid "Choose a new cover image"
+msgstr ""
+
+msgid "Choose a new file to replace the current one"
+msgstr ""
+
+msgid "Clear search"
+msgstr ""
+
+msgid "Clipboard"
+msgstr ""
+
+msgid "Clipboard access denied. Paste the text manually."
+msgstr ""
+
+msgid "Clipboard not supported. Paste the text manually."
+msgstr ""
+
+msgid "Confirm password"
+msgstr ""
+
+msgid "Cover image (optional)"
+msgstr ""
+
+msgid "Create account"
+msgstr ""
+
+msgid "Current file"
+msgstr ""
+
+msgid "Decrease font size"
+msgstr ""
+
+msgid "Details"
+msgstr ""
+
+msgid "Discover"
+msgstr ""
+
+msgid "Download"
+msgstr ""
+
+msgid "Edit book"
+msgstr ""
+
+msgid "File"
+msgstr ""
+
+msgid "From"
+msgstr ""
+
+msgid "Highlight or paste a sentence/paragraph to translate."
+msgstr ""
+
+msgid "Highlight text above (or in the document) to translate it."
+msgstr ""
+
+msgid "Increase font size"
+msgstr ""
+
+msgid "Join Rammonte USA and start sharing"
+msgstr ""
+
+msgid "Library"
+msgstr ""
+
+msgid "Newest"
+msgstr ""
+
+msgid "No books match your search"
+msgstr ""
+
+msgid "No books yet"
+msgstr ""
+
+msgid "No file available."
+msgstr ""
+
+msgid "Oldest"
+msgstr ""
+
+msgid "Paste or highlight text..."
+msgstr ""
+
+msgid "Public books are visible to everyone."
+msgstr ""
+
+msgid "Rammonte USA"
+msgstr ""
+
+msgid "Read"
+msgstr ""
+
+msgid "Remove this book?"
+msgstr ""
+
+msgid "Remove “%(title)sâ€ from this playlist?"
+msgstr ""
+
+msgid "Replace book file (optional)"
+msgstr ""
+
+msgid "Replace cover image (optional)"
+msgstr ""
+
+msgid "Reset your Rammonte USA password"
+msgstr ""
+
+msgid "Search library"
+msgstr ""
+
+msgid "Search title, author or description…"
+msgstr ""
+
+msgid "Sign in to continue with Rammonte USA"
+msgstr ""
+
+msgid "Someone asked to reset the password for your Rammonte USA account."
+msgstr ""
+
+msgid "Sort"
+msgstr ""
+
+msgid "Text"
+msgstr ""
+
+msgid "This removes the book and its file from the library."
+msgstr ""
+
+msgid "Tip: open a video and press “Save offlineâ€ to keep its MP3 on this device."
+msgstr ""
+
+msgid "Title A–Z"
+msgstr ""
+
+msgid "To"
+msgstr ""
+
+msgid "Toggle extracted text"
+msgstr ""
+
+msgid "Toggle translation panel"
+msgstr ""
+
+msgid "Translate"
+msgstr ""
+
+msgid "Translating…"
+msgstr ""
+
+msgid "Translation"
+msgstr ""
+
+msgid "Try a different keyword or clear the search."
+msgstr ""
+
+msgid "Upload a book or document to the library."
+msgstr ""
+
+msgid "Use the “Saveâ€ button on any video to add it here."
+msgstr ""
+
+msgid "Visibility"
+msgstr ""
+
+msgid "Watch, listen and save your favourite videos."
+msgstr ""
+
+msgid "Open the book full screen"
+msgstr ""
+
+msgid "Open widely"
+msgstr ""
+
+msgid "Reduce"
+msgstr ""
+
+msgid "Reduce to normal size"
+msgstr ""

@@ -1,4 +1,4 @@
-﻿{% extends 'base.html' %}
+{% extends 'base.html' %}
 {% load static i18n %}
 
 {% block title %}{% trans "Edit Video" %} - Rammonte USA{% endblock %}
@@ -26,7 +26,7 @@
             {% if video.display_thumbnail_url %}
                 <img src="{{ video.display_thumbnail_url }}" alt="{{ video.title }}">
             {% else %}
-                <span class="thumbnail-placeholder">â–¶</span>
+                <span class="thumbnail-placeholder">▶</span>
             {% endif %}
         </div>
 

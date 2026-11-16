@@ -53,6 +53,7 @@ urlpatterns = [
         name="password_reset_complete",
     ),
     path("manage/users/", views.manage_users, name="manage_users"),
+    path("manage/users/create/", views.create_admin, name="create_admin"),
     path("manage/users/<int:user_id>/block/", views.user_set_blocked, name="user_block"),
     path("manage/users/<int:user_id>/access/", views.user_set_access, name="user_access"),
     path("manage/users/<int:user_id>/delete/", views.user_delete, name="user_delete"),

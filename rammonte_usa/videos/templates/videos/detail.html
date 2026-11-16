@@ -1,4 +1,4 @@
-﻿{% extends 'base.html' %}
+{% extends 'base.html' %}
 {% load static i18n %}
 
 {% block title %}{{ video.title }} - Rammonte USA{% endblock %}
@@ -64,14 +64,14 @@
                     <span class="caption-text" id="captionText"></span>
                 </div>
                 <div id="video-error" class="video-error" style="display: none;">
-                    <span class="error-icon">âš </span>
+                    <span class="error-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></span>
                     <p>{% trans "Video Unavailable" %}</p>
                     <small>{% trans "The video file could not be loaded." %}</small>
                 </div>
                 <button type="button" class="player-tapzone" id="tapZone"
                         aria-label="{% trans 'Show or hide the player controls' %}"></button>
                 <button type="button" class="player-bigplay" id="bigPlay"
-                        aria-label="{% trans 'Play' %}">â–¶</button>
+                        aria-label="{% trans 'Play' %}">▶</button>
             </div>
 
             <div class="player-bar" id="playerBar">
@@ -79,26 +79,27 @@
                        aria-label="{% trans 'Seek' %}">
                 <div class="player-bar-row">
                     <button type="button" class="player-btn" id="playPauseBtn"
-                            aria-label="{% trans 'Play' %}">â–¶</button>
+                            aria-label="{% trans 'Play' %}">▶</button>
                     <button type="button" class="player-btn" id="backBtn"
-                            aria-label="{% trans 'Back 10 seconds' %}">â†º<span>10</span></button>
+                            aria-label="{% trans 'Back 10 seconds' %}">↺<span>10</span></button>
                     <button type="button" class="player-btn" id="fwdBtn"
-                            aria-label="{% trans 'Forward 10 seconds' %}"><span>10</span>â†»</button>
+                            aria-label="{% trans 'Forward 10 seconds' %}"><span>10</span>↻</button>
                     <span class="player-time"><span id="currentTime">0:00</span> / <span id="duration">0:00</span></span>
                     <button type="button" class="player-btn" id="muteBtn"
-                            aria-label="{% trans 'Mute' %}">ðŸ”Š</button>
+                            aria-label="{% trans 'Mute' %}">🔊</button>
                     <input type="range" class="player-volume" id="volumeBar" value="1" min="0" max="1" step="0.05"
                            aria-label="{% trans 'Volume' %}">
+                    <span class="player-speed-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></span>
                     <select class="player-rate" id="rateSelect" aria-label="{% trans 'Playback speed' %}">
-                        <option value="0.5">0.5Ã—</option>
-                        <option value="0.75">0.75Ã—</option>
-                        <option value="1" selected>1Ã—</option>
-                        <option value="1.25">1.25Ã—</option>
-                        <option value="1.5">1.5Ã—</option>
-                        <option value="2">2Ã—</option>
+                        <option value="0.5">0.5×</option>
+                        <option value="0.75">0.75×</option>
+                        <option value="1" selected>1×</option>
+                        <option value="1.25">1.25×</option>
+                        <option value="1.5">1.5×</option>
+                        <option value="2">2×</option>
                     </select>
                     <button type="button" class="player-btn" id="pipBtn" hidden
-                            aria-label="{% trans 'Picture in picture' %}">â§‰</button>
+                            aria-label="{% trans 'Picture in picture' %}">⧉</button>
                     <div class="cc-menu" id="ccMenu">
                         <button type="button" class="player-btn cc-btn" id="ccBtn"
                                 aria-haspopup="true" aria-expanded="false"
@@ -114,7 +115,7 @@
                             <button type="button" class="cc-item" role="menuitem"
                                     data-lang="{{ track.language_code }}"
                                     onclick="setSubtitle('{{ track.language_code }}')">
-                                {% if track.is_lyrics %}â™ª {% endif %}{{ track.display_label }}
+                                {% if track.is_lyrics %}♪ {% endif %}{{ track.display_label }}
                             </button>
                             {% empty %}
                             <p class="cc-empty">{% trans "No captions for this video yet." %}</p>
@@ -128,7 +129,7 @@
                         </div>
                     </div>
                     <button type="button" class="player-btn" id="fullscreenBtn"
-                            aria-label="{% trans 'Fullscreen' %}">â›¶</button>
+                            aria-label="{% trans 'Fullscreen' %}">⛶</button>
                 </div>
             </div>
             {# Closes .video-player-container, so the bar anchors to the video, not the page. #}
@@ -147,7 +148,7 @@
                         aria-label="{% trans 'Subtitles' %}">
                     <span class="cc-badge" aria-hidden="true">CC</span>
                     <span class="cc-current" id="subtitleCcCurrent">{% trans "Off" %}</span>
-                    <span class="cc-caret" aria-hidden="true">â–¾</span>
+                    <span class="cc-caret" aria-hidden="true">▾</span>
                 </button>
                 <div class="cc-list" id="subtitleCcList" role="menu"
                      aria-label="{% trans 'Caption language' %}">
@@ -159,7 +160,7 @@
                     <button type="button" class="cc-item" role="menuitem"
                             data-lang="{{ track.language_code }}"
                             onclick="setSubtitle('{{ track.language_code }}')">
-                        {% if track.is_lyrics %}â™ª {% endif %}{{ track.display_label }}
+                        {% if track.is_lyrics %}♪ {% endif %}{{ track.display_label }}
                     </button>
                     {% empty %}
                     {% comment %}
@@ -184,7 +185,7 @@
              data-status-url="{% url 'videos:audio_status' video.id %}"
              data-generate-url="{% url 'videos:audio_generate' video.id %}">
             <span class="audio-spinner" aria-hidden="true"></span>
-            <span>{% trans "Preparing the audio (MP3) for this videoâ€¦" %}</span>
+            <span>{% trans "Preparing the audio (MP3) for this video…" %}</span>
         </div>
         {% elif audio_failed %}
         <div class="audio-status audio-status-error" id="audioStatus"
@@ -211,17 +212,17 @@
             {% endif %}
             <div class="player-downloads">
                 {% if video.video_download_url %}
-                <a class="download-btn" href="{{ video.video_download_url }}" download>â¬‡ {% trans "Download video" %}</a>
+                <a class="download-btn" href="{{ video.video_download_url }}" download>⬇ {% trans "Download video" %}</a>
                 {% endif %}
                 {% if video.has_audio %}
-                <a class="download-btn" href="{{ video.audio_download_url }}" download>â¬‡ {% trans "Download MP3" %}</a>
+                <a class="download-btn" href="{{ video.audio_download_url }}" download>⬇ {% trans "Download MP3" %}</a>
                 <button type="button" class="download-btn offline-btn" id="offlineToggle"
                         data-offline-url="{% url 'videos:audio_stream' video.id %}"
                         data-offline-title="{{ video.title }}"
                         data-label-save="{% trans 'Save offline' %}"
                         data-label-saved="{% trans 'Saved offline' %}"
                         data-label-remove="{% trans 'Remove download' %}"
-                        data-label-error="{% trans 'Could not update the offline copy. Check your connection.' %}">â¤“ {% trans "Save offline" %}</button>
+                        data-label-error="{% trans 'Could not update the offline copy. Check your connection.' %}">⤓ {% trans "Save offline" %}</button>
                 {% endif %}
             </div>
         </div>
@@ -237,19 +238,19 @@
                 </span>
                 <div class="video-actions">
                     <button class="vote-btn {% if user_vote == 1 %}active{% endif %}" data-vote="like" onclick="vote({{ video.id }}, 'like')">
-                        ðŸ‘ <span id="like-count">{{ video.likes }}</span>
+                        👍 <span id="like-count">{{ video.likes }}</span>
                     </button>
                     {% if user.is_authenticated %}
                     <button type="button" class="vote-btn" id="saveToggle" aria-expanded="false" onclick="toggleSaveMenu()">
-                        ï¼‹ {% trans "Save" %}
+                        ＋ {% trans "Save" %}
                     </button>
                     {% endif %}
                     <button type="button" class="vote-btn" id="shareToggle" aria-expanded="false"
                             aria-controls="sharePanel" onclick="toggleShareMenu()">
-                        â†— {% trans "Share" %}
+                        ↗ {% trans "Share" %}
                     </button>
                     {% if can_write %}
-                    <a class="vote-btn" href="{% url 'videos:edit' video.id %}">âœŽ {% trans "Edit" %}</a>
+                    <a class="vote-btn" href="{% url 'videos:edit' video.id %}">✎ {% trans "Edit" %}</a>
                     {% endif %}
                 </div>
             </div>
@@ -290,12 +291,12 @@
                 <div class="share-panel-head">{% trans "Share this video" %}</div>
                 <div class="share-targets">
                     <button type="button" class="share-target" data-share="video">
-                        <span class="share-target-icon">ðŸŽ¬</span>
+                        <span class="share-target-icon">🎬</span>
                         <span class="share-target-label">{% trans "Video link" %}</span>
                     </button>
                     {% if share_audio_url %}
                     <button type="button" class="share-target" data-share="audio">
-                        <span class="share-target-icon">ðŸŽµ</span>
+                        <span class="share-target-icon">🎵</span>
                         <span class="share-target-label">{% trans "MP3 link" %}</span>
                     </button>
                     {% endif %}
@@ -358,7 +359,7 @@
 
                 <form class="comment-form" onsubmit="return postComment(event)">
                     <textarea id="commentBody" class="form-input" rows="2" maxlength="2000"
-                              placeholder="{% trans 'Add a commentâ€¦' %}" required></textarea>
+                              placeholder="{% trans 'Add a comment…' %}" required></textarea>
                     <button type="submit" class="btn btn-primary btn-comment">{% trans "Comment" %}</button>
                 </form>
 
@@ -375,7 +376,7 @@
                         </div>
                         {% if comment.user_id == user.id or can_write %}
                         <button type="button" class="icon-btn" title="{% trans 'Delete' %}"
-                                onclick="deleteComment({{ comment.id }})">âœ•</button>
+                                onclick="deleteComment({{ comment.id }})">✕</button>
                         {% endif %}
                     </div>
                     {% empty %}
@@ -408,7 +409,7 @@
                 <ul class="subtitle-list">
                     {% for track in subtitle_tracks %}
                     <li>
-                        <span>{% if track.is_lyrics %}â™ª {% endif %}{{ track.display_label }}</span>
+                        <span>{% if track.is_lyrics %}♪ {% endif %}{{ track.display_label }}</span>
                         <button type="button" class="delete-btn"
                                 onclick="deleteSubtitle('{{ track.language_code }}')">{% trans "Delete" %}</button>
                     </li>
@@ -431,7 +432,7 @@
                 {% if related.display_thumbnail_url %}
                 <img src="{{ related.display_thumbnail_url }}" alt="{{ related.title }}" loading="lazy">
                 {% else %}
-                <span class="thumbnail-placeholder">â–¶</span>
+                <span class="thumbnail-placeholder">▶</span>
                 {% endif %}
                 {% if related.duration_seconds %}
                 <span class="video-duration">{{ related.duration_formatted }}</span>
@@ -442,7 +443,7 @@
                 <p class="related-meta">{{ related.user.username }}</p>
                 <p class="related-meta">
                     {% blocktrans count counter=related.views %}{{ counter }} view{% plural %}{{ counter }} views{% endblocktrans %}
-                    Â· {{ related.created_at|date:"Y" }}
+                    · {{ related.created_at|date:"Y" }}
                 </p>
             </div>
         </a>
@@ -641,7 +642,7 @@ function formatTime(seconds) {
 function refreshPlayPauseIcon() {
     if (!playPauseBtn || !activePlayer) return
     const playing = !activePlayer.paused && !activePlayer.ended
-    playPauseBtn.textContent = playing ? "âšâš" : "â–¶"
+    playPauseBtn.textContent = playing ? "⏸" : "▶"
     playPauseBtn.setAttribute(
         "aria-label", playing ? "{% trans 'Pause' %}" : "{% trans 'Play' %}"
     )
@@ -659,7 +660,7 @@ function refreshSeekBar() {
 function refreshVolume() {
     if (!activePlayer || !volumeBar || !muteBtn) return
     volumeBar.value = String(activePlayer.volume)
-    muteBtn.textContent = activePlayer.muted || activePlayer.volume === 0 ? "ðŸ”‡" : "ðŸ”Š"
+    muteBtn.textContent = activePlayer.muted || activePlayer.volume === 0 ? "🔇" : "🔊"
 }
 
 function refreshAllControls() {
@@ -750,7 +751,7 @@ function wireControls() {
             fullscreenElement()
             || (videoPlayer && videoPlayer.webkitDisplayingFullscreen)
         )
-        fullscreenBtn.textContent = expanded ? "â¤¡" : "â›¶"
+        fullscreenBtn.textContent = expanded ? "⤡" : "⛶"
         fullscreenBtn.setAttribute(
             "aria-label",
             expanded ? "{% trans 'Exit fullscreen' %}" : "{% trans 'Fullscreen' %}"
@@ -1371,7 +1372,7 @@ function generateSubtitles(button) {
     const panel = document.getElementById("autoSubPanel");
     if (!panel) return;
     button.disabled = true;
-    button.textContent = "{% trans 'Startingâ€¦' %}";
+    button.textContent = "{% trans 'Starting…' %}";
     fetch(panel.dataset.generateUrl, {
         method: "POST", headers: { "X-CSRFToken": csrf }
     })
@@ -1383,7 +1384,7 @@ function generateSubtitles(button) {
                 alert(data.error || "{% trans 'Failed.' %}");
                 return;
             }
-            button.textContent = "{% trans 'Transcribing and translatingâ€¦' %}";
+            button.textContent = "{% trans 'Transcribing and translating…' %}";
             const poll = () => {
                 fetch(panel.dataset.statusUrl)
                     .then(r => r.json())
@@ -1412,7 +1413,7 @@ if (autoSubPanel) {
                 // Reload once the run finishes so the new tracks appear in the
                 // player and in the language buttons above it.
                 if (!data.pending) { location.reload(); return }
-                autoSubMessage.textContent = "{% trans 'Transcribing and translatingâ€¦' %}";
+                autoSubMessage.textContent = "{% trans 'Transcribing and translating…' %}";
                 setTimeout(pollSubtitles, 4000);
             })
             .catch(() => setTimeout(pollSubtitles, 8000));
@@ -1420,7 +1421,7 @@ if (autoSubPanel) {
 
     autoSubBtn.addEventListener("click", () => {
         autoSubBtn.disabled = true;
-        autoSubMessage.textContent = "{% trans 'Startingâ€¦' %}";
+        autoSubMessage.textContent = "{% trans 'Starting…' %}";
         fetch(autoSubPanel.dataset.generateUrl, {
             method: "POST", headers: { "X-CSRFToken": csrf }
         })
@@ -1495,7 +1496,7 @@ const SHARE_TITLE = "{{ video.title|escapejs }}"
 
 function shareMessage(kind) {
     return kind === "audio"
-        ? `${SHARE_TITLE} â€” MP3`
+        ? `${SHARE_TITLE} — MP3`
         : SHARE_TITLE
 }
 
@@ -1753,7 +1754,7 @@ function addCommentToDom(comment) {
     const remove = document.createElement("button")
     remove.type = "button"
     remove.className = "icon-btn"
-    remove.textContent = "âœ•"
+    remove.textContent = "✕"
     remove.addEventListener("click", () => deleteComment(comment.id))
 
     el.append(avatar, body, remove)

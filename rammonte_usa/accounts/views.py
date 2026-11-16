@@ -4,6 +4,7 @@ from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.db.models import Count
 from django.http import JsonResponse
+from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.utils.translation import gettext as _
@@ -84,6 +85,45 @@ def manage_users(request):
             "total_users": len(rows),
         },
     )
+
+
+@write_required
+@require_POST
+def create_admin(request):
+    email = (request.POST.get("email") or "").strip()
+    password = request.POST.get("password") or ""
+    password2 = request.POST.get("password2") or ""
+    access_level = request.POST.get("access_level") or Profile.Access.WRITE
+
+    if not email or "@" not in email:
+        messages.error(request, _("A valid email address is required."))
+        return redirect("accounts:manage_users")
+
+    if len(password) < 8:
+        messages.error(request, _("Password must be at least 8 characters."))
+        return redirect("accounts:manage_users")
+
+    if password != password2:
+        messages.error(request, _("Passwords do not match."))
+        return redirect("accounts:manage_users")
+
+    if access_level not in Profile.Access.values:
+        access_level = Profile.Access.WRITE
+
+    if User.objects.filter(username=email).exists() or User.objects.filter(email=email).exists():
+        messages.error(request, _("A user with that email already exists."))
+        return redirect("accounts:manage_users")
+
+    user = User.objects.create_user(username=email, email=email, password=password)
+    user.is_staff = access_level == Profile.Access.WRITE
+    user.save(update_fields=["is_staff"])
+
+    profile = _profile_for(user)
+    profile.access_level = access_level
+    profile.save(update_fields=["access_level"])
+
+    messages.success(request, _("Administrator account created for %(email)s.") % {"email": email})
+    return redirect("accounts:manage_users")
 
 
 @write_required
