@@ -53,6 +53,6 @@ def login_guest(request) -> User:
     login(
         request,
         user,
-        backend="django.contrib.auth.backends.ModelBackend",
+        backend="accounts.backends.AdminOnlyBackend",
     )
     return user

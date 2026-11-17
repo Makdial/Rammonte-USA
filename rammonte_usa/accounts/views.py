@@ -1,6 +1,6 @@
 import logging
 
-from django.contrib.auth import login
+from django.contrib.auth import login, views as auth_views
 from django.contrib.auth.models import User
 from django.db.models import Count
 from django.http import JsonResponse
@@ -31,8 +31,27 @@ class RegisterView(CreateView):
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        login(self.request, self.object)
-        return redirect("/")
+        # Only the administrator may hold a real session; freshly registered
+        # accounts are not superusers, so do not log them in automatically.
+        if getattr(self.object, "is_superuser", False):
+            login(self.request, self.object)
+            return redirect("/")
+        messages.error(
+            self.request, _("Only the administrator can sign in.")
+        )
+        return redirect("accounts:login")
+
+
+class AdminLoginView(auth_views.LoginView):
+    template_name = "accounts/login.html"
+    redirect_authenticated_user = True
+
+    def form_valid(self, form):
+        user = form.get_user()
+        if not getattr(user, "is_superuser", False):
+            form.add_error(None, _("Only the administrator can sign in."))
+            return self.form_invalid(form)
+        return super().form_valid(form)
 
 
 # --- User management (administrators) --------------------------------------

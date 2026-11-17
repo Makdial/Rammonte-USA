@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static i18n %}
 
-{% block title %}{% trans "Sign In" %} - Rammonte USA{% endblock %}
+{% block title %}{% trans "Admin Sign In" %} - Rammonte USA{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/auth.css' %}">
@@ -46,7 +46,7 @@
             <a href="{% url 'accounts:password_reset' %}">{% trans "Forgot your password?" %}</a>
         </div>
 
-        <button type="submit" class="btn-submit">{% trans "Sign In" %}</button>
+        <button type="submit" class="btn-submit">{% trans "Admin Sign In" %}</button>
     </form>
 
     <div class="auth-footer">

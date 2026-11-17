@@ -112,6 +112,10 @@ INSTALLED_APPS = [
     'library',
 ]
 
+AUTHENTICATION_BACKENDS = [
+    'accounts.backends.AdminOnlyBackend',
+]
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     # Serves the collected static files from inside the container. Required on
