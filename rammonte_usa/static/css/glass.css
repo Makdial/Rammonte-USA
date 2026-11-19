@@ -260,6 +260,22 @@ h1, h2, .section-header {
     -webkit-background-clip: text; background-clip: text; color: transparent;
 }
 
+/* Light-mode contrast fixes: keep coloured text readable on light glass. */
+[data-theme="light"] a { color: var(--accent-red); }
+[data-theme="light"] a:hover { color: var(--accent-red-hover); }
+[data-theme="light"] .link-more { color: var(--accent-red); }
+[data-theme="light"] .badge-warning { color: #b45309; }
+[data-theme="light"] .home-hero h1,
+[data-theme="light"] .library-hero h1 {
+    background: linear-gradient(135deg, var(--text-primary), var(--accent-red), var(--accent-cyan));
+}
+[data-theme="light"] .video-details h1,
+[data-theme="light"] .channel-header h1,
+[data-theme="light"] .upload-card h1,
+[data-theme="light"] .auth-header h1 {
+    background: linear-gradient(135deg, var(--text-primary), var(--accent-red));
+}
+
 /* Focus ring global */
 :focus-visible { outline: 2px solid var(--accent-red); outline-offset: 2px; }
 
