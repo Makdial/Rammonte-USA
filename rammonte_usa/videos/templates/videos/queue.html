@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Queue" %} - Rammonte USA{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/videos.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="offline-page">
+    <h1>{% trans "Watch queue" %}</h1>
+    <p class="offline-intro">
+        {% trans "Videos you added play one after another. Open a video and it plays the next queued item when it ends." %}
+    </p>
+
+    <div id="queueList" class="queue-page-list"></div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        if (window.QueueUI) QueueUI.render(document.getElementById("queueList"));
+        document.addEventListener("queue:change", function () {
+            if (window.QueueUI) QueueUI.render(document.getElementById("queueList"));
+        });
+    });
+</script>
+{% endblock %}

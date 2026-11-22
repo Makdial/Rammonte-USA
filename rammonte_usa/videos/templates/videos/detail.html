@@ -245,6 +245,7 @@
                         ＋ {% trans "Save" %}
                     </button>
                     {% endif %}
+                    <button type="button" class="vote-btn" id="queueToggle" onclick="addToQueueCurrent()">☰+ {% trans "Queue" %}</button>
                     <button type="button" class="vote-btn" id="shareToggle" aria-expanded="false"
                             aria-controls="sharePanel" onclick="toggleShareMenu()">
                         ↗ {% trans "Share" %}
@@ -460,6 +461,20 @@ const audioPlayer = document.getElementById("audio-player")
 const audioSrc = "{% url 'videos:audio_stream' video.id %}"
 const videoError = document.getElementById("video-error")
 const videoId = {{ video.id }}
+function addToQueueCurrent() {
+    if (!window.Queue) return;
+    const added = Queue.add({
+        id: videoId,
+        title: "{{ video.title|escapejs }}",
+        url: window.location.pathname,
+        thumb: "{{ video.display_thumbnail_url|escapejs }}",
+        duration: "{{ video.duration_formatted }}"
+    });
+    const btn = document.getElementById("queueToggle");
+    if (btn) btn.textContent = Queue.has(videoId) ? "✓ Queued" : "☰+ Queue";
+    if (typeof showToast === "function") showToast(added ? "Added to queue" : "Already in queue");
+    if (typeof showToast === "undefined" && window.Queue) {}
+}
 
 // --- Automatic MP3 generation -------------------------------------------
 // The detail view starts generating a missing MP3 in the background. While
@@ -1021,6 +1036,7 @@ function wireAutoHide() {
         el.addEventListener("ended", () => {
             refreshBigPlay()
             showControls()
+            if (typeof QueueAutoAdvance === "function") QueueAutoAdvance(videoId)
         })
     })
 

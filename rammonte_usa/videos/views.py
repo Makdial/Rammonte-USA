@@ -230,6 +230,11 @@ def offline_library(request):
     return render(request, "videos/offline.html")
 
 
+def queue_page(request):
+    """A client-rendered list of the videos in this device's watch queue."""
+    return render(request, "videos/queue.html")
+
+
 # Chunk size used while streaming the MP3 back from R2.
 AUDIO_CHUNK_SIZE = 64 * 1024
 

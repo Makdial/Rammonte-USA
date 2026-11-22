@@ -7,6 +7,7 @@ urlpatterns = [
     path("", views.video_list, name="list"),
     path("search/", views.video_search, name="search"),
     path("offline/", views.offline_library, name="offline"),
+    path("queue/", views.queue_page, name="queue"),
     path("upload/", views.video_upload_page, name="upload"),
     path("upload/submit/", views.video_upload, name="upload_submit"),
     path("playlists/", views.playlist_list, name="playlists"),

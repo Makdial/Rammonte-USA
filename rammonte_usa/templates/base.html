@@ -138,6 +138,7 @@
                 <li><a href="{% url 'library:list' %}" class="nav-link">{% trans "Library" %}</a></li>
                 <li><a href="{% url 'shorts:list' %}" class="nav-link">{% trans "Shorts" %}</a></li>
                 <li><a href="{% url 'videos:offline' %}" class="nav-link">{% trans "Offline" %}</a></li>
+<li><a href="{% url 'videos:queue' %}" class="nav-link">{% trans "Queue" %} <span data-queue-badge class="queue-badge" style="display:none"></span></a></li>
                 {% if can_read %}
                     <li><a href="{% url 'dashboard:home' %}" class="nav-link">{% trans "Dashboard" %}</a></li>
                     <li><a href="{% url 'accounts:manage_users' %}" class="nav-link">{% trans "Users" %}</a></li>
@@ -174,6 +175,7 @@
     {# Loaded before offline.js so a page can confirm a removal straight away. #}
     <script src="{% static 'js/confirm.js' %}"></script>
     <script src="{% static 'js/navbar.js' %}"></script>
+    <script src="{% static 'js/queue.js' %}"></script>
     <script src="{% static 'js/offline.js' %}"></script>
     {% block extra_js %}{% endblock %}
 </body>
