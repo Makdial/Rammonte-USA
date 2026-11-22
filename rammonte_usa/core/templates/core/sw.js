@@ -4,7 +4,7 @@
  * Keeps the app shell available offline and feeds the in-app audio player from
  * a local cache for any MP3 the user chose to "Save offline".
  */
-const SHELL_CACHE = "fazakkir-shell-v1";
+const SHELL_CACHE = "fazakkir-shell-v2";
 const MEDIA_CACHE = "fazakkir-media-v1";
 const OFFLINE_URL = "{% url 'videos:offline' %}";
 

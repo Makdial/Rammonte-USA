@@ -270,7 +270,7 @@
 /* phone layout where the bar holds only the logo and a magnifier.      */
 /* ------------------------------------------------------------------ */
 
-@media (max-width: 768px) {
+@media (max-width: 1200px) {
     .navbar {
         padding: 0 12px;
     }

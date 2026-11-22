@@ -290,6 +290,12 @@ MEDIA_ROOT = BASE_DIR / "media"
 # can answer with a message the uploader understands.
 DATA_UPLOAD_MAX_MEMORY_SIZE = 12 * 1024 * 1024
 
+# In development, read straight from the source folders so a CSS/JS edit shows
+# up on the next reload instead of being masked by an old `collectstatic` copy
+# that WhiteNoise would otherwise serve from STATIC_ROOT.
+WHITENOISE_USE_FINDERS = DEBUG
+WHITENOISE_AUTOREFRESH = DEBUG
+
 # In production WhiteNoise serves the collected files (gzipped, with far-future
 # caching). The manifest adds a content hash to every filename so a deploy can
 # never serve a stale CSS or JS file to the service worker's cache.
