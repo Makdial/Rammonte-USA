@@ -47,6 +47,30 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
+    {% if request.path == '/' %}
+    <div id="splash" class="splash-screen" role="presentation" aria-hidden="true">
+        <img src="{% static 'img/splash.jpg' %}" alt="" class="splash-img">
+    </div>
+    <style>
+        .splash-screen { position: fixed; inset: 0; z-index: 99999; display: flex; align-items: center; justify-content: center; background: #000; transition: opacity .7s ease; }
+        .splash-screen .splash-img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .splash-screen.fade-out { opacity: 0; pointer-events: none; }
+    </style>
+    <script>
+        (function () {
+            var el = document.getElementById('splash');
+            if (!el) return;
+            try { if (sessionStorage.getItem('rammonte-splash-shown')) { el.remove(); return; } } catch (e) {}
+            setTimeout(function () {
+                el.classList.add('fade-out');
+                setTimeout(function () {
+                    el.remove();
+                    try { sessionStorage.setItem('rammonte-splash-shown', '1'); } catch (e) {}
+                }, 750);
+            }, 2400);
+        })();
+    </script>
+    {% endif %}
     <nav class="navbar">
         <a href="/" class="navbar-brand">
             <img src="{% static 'img/logo.jpeg' %}" alt="Rammonte USA" class="brand-logo">
