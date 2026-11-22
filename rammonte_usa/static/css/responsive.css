@@ -1,0 +1,53 @@
+/**
+ * Responsive polish for phones and tablets.
+ */
+@media (max-width: 768px) {
+    .main-content { padding: 20px 16px; }
+
+    .btn, .btn-primary, .btn-secondary, .btn-small, .btn-cancel,
+    .btn-submit, .icon-btn, .nav-link {
+        min-height: 44px;
+    }
+
+    .form-input, input, textarea, select {
+        font-size: 16px; /* avoid iOS zoom on focus */
+    }
+
+    .video-title, .book-title, .section-header h1, .home-hero h1 {
+        word-break: break-word;
+        overflow-wrap: anywhere;
+    }
+
+    .card-download, .video-duration {
+        font-size: 0.7rem;
+    }
+
+    .channel-header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .playlist-new-form .form-input {
+        flex: 1 1 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-content { padding: 16px 12px; }
+
+    .auth-container, .success-container, .upload-card {
+        margin: 16px auto;
+        padding: 20px 16px;
+    }
+
+    .home-hero { padding: 20px 16px; }
+    .home-hero h1 { font-size: 1.6rem; }
+
+    .stat-grid { grid-template-columns: 1fr 1fr; }
+    .library-grid { gap: 10px; }
+    .video-grid { column-gap: 12px; row-gap: 20px; }
+}
+
+@media (max-width: 360px) {
+    .stat-grid { grid-template-columns: 1fr; }
+}
