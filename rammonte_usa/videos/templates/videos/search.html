@@ -31,7 +31,7 @@
         <div class="video-grid">
             {% for video in videos %}
                 <div class="video-card-wrap">
-                    <a href="{% url 'videos:detail' video.id %}" class="video-card">
+                    <a href="{% url 'videos:detail' video.id %}" class="video-card" data-preview-url="{{ video.playback_url }}">
                         <div class="video-thumbnail">
                             {% if video.display_thumbnail_url %}
                                 <img src="{{ video.display_thumbnail_url }}" alt="{{ video.title }}" loading="lazy">
