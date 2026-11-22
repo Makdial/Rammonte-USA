@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Liked videos" %} - Rammonte USA{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/videos.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="home-hero glass">
+    <h1>{% trans "Liked videos" %}</h1>
+</div>
+{% if videos %}
+<div class="video-grid">
+    {% for video in videos %}
+        <div class="video-card-wrap">
+            <a href="{% url 'videos:detail' video.id %}" class="video-card" data-preview-url="{{ video.playback_url }}">
+                <div class="video-thumbnail">
+                    {% if video.display_thumbnail_url %}
+                        <img src="{{ video.display_thumbnail_url }}" alt="{{ video.title }}" loading="lazy">
+                    {% else %}
+                        <span class="thumbnail-placeholder"><svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor" aria-hidden="true"><polygon points="6,4 20,12 6,20"></polygon></svg></span>
+                    {% endif %}
+                    {% if video.duration_seconds %}<span class="video-duration">{{ video.duration_formatted }}</span>{% endif %}
+                    <span class="play-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><polygon points="6,4 20,12 6,20"></polygon></svg></span>
+                </div>
+                <div class="video-info">
+                    <span class="video-card-avatar" aria-hidden="true">{{ video.user.username|slice:":1" }}</span>
+                    <div>
+                        <h3 class="video-title">{{ video.title }}</h3>
+                        <p class="video-meta">{{ video.user.username }} · {{ video.views }} views</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <span class="empty-icon">👍</span>
+    <h2>{% trans "No liked videos yet" %}</h2>
+    <p>{% trans "Like a video and it will show up here." %}</p>
+</div>
+{% endif %}
+{% endblock %}

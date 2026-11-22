@@ -158,6 +158,11 @@ def video_detail(request, video_id):
     )
 
 
+def trending(request):
+    videos = Video.objects.all().select_related("user").order_by("-views", "-created_at")[:48]
+    return render(request, "videos/list.html", {"videos": videos})
+
+
 def video_list(request):
     videos = Video.objects.all()
     # Old uploads have no length yet; measure the ones on this page in the
@@ -233,6 +238,27 @@ def offline_library(request):
 def queue_page(request):
     """A client-rendered list of the videos in this device's watch queue."""
     return render(request, "videos/queue.html")
+
+
+def watchlater_page(request):
+    """A client-rendered list of the videos saved for later on this device."""
+    return render(request, "videos/watchlater.html")
+
+
+def history_page(request):
+    """A client-rendered list of the videos watched on this device."""
+    return render(request, "videos/history.html")
+
+
+def liked_videos(request):
+    """Videos the current account has liked."""
+    from .models import VideoLike
+
+    liked_ids = VideoLike.objects.filter(
+        user=request.user, value=VideoLike.LIKE
+    ).values_list("video_id", flat=True)
+    videos = Video.objects.filter(id__in=liked_ids).select_related("user")
+    return render(request, "videos/liked.html", {"videos": videos})
 
 
 # Chunk size used while streaming the MP3 back from R2.

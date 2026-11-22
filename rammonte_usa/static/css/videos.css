@@ -771,3 +771,6 @@
 .queue-dur { font-size: 12px; opacity: .6; }
 .queue-remove { background: none; border: none; color: inherit; cursor: pointer; font-size: 16px; opacity: .6; }
 .queue-remove:hover { opacity: 1; color: #e50914; }
+/* Theater mode: widen the player, hide the Up next sidebar */
+.watch-layout.theater { grid-template-columns: 1fr; }
+.watch-layout.theater .watch-aside { display: none; }

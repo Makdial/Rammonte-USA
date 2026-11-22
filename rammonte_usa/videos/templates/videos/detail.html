@@ -246,6 +246,8 @@
                     </button>
                     {% endif %}
                     <button type="button" class="vote-btn" id="queueToggle" onclick="addToQueueCurrent()">☰+ {% trans "Queue" %}</button>
+                    <button type="button" class="vote-btn" onclick="addToWatchLaterCurrent()">⏱ {% trans "Watch later" %}</button>
+                    <button type="button" class="vote-btn" onclick="toggleTheater()">Theater</button>
                     <button type="button" class="vote-btn" id="shareToggle" aria-expanded="false"
                             aria-controls="sharePanel" onclick="toggleShareMenu()">
                         ↗ {% trans "Share" %}
@@ -473,6 +475,33 @@ function addToQueueCurrent() {
     const btn = document.getElementById("queueToggle");
     if (btn) btn.textContent = Queue.has(videoId) ? "✓ Queued" : "☰+ Queue";
     if (typeof showToast === "function") showToast(added ? "Added to queue" : "Already in queue");
+}
+// Record this view in the device's watch history.
+if (window.recordHistory) {
+    recordHistory({
+        id: videoId,
+        title: "{{ video.title|escapejs }}",
+        url: window.location.pathname,
+        thumb: "{{ video.display_thumbnail_url|escapejs }}",
+        duration: "{{ video.duration_formatted }}"
+    });
+}
+
+function addToWatchLaterCurrent() {
+    if (!window.WatchLater) return;
+    const added = WatchLater.add({
+        id: videoId,
+        title: "{{ video.title|escapejs }}",
+        url: window.location.pathname,
+        thumb: "{{ video.display_thumbnail_url|escapejs }}",
+        duration: "{{ video.duration_formatted }}"
+    });
+    if (typeof showToast === "function") showToast(added ? "Saved to Watch later" : "Already saved");
+}
+function toggleTheater() {
+    var wl = document.querySelector(".watch-layout");
+    if (wl) wl.classList.toggle("theater");
+}
     if (typeof showToast === "undefined" && window.Queue) {}
 }
 

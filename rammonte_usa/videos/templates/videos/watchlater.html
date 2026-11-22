@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Watch later" %} - Rammonte USA{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/videos.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="offline-page">
+    <h1>{% trans "Watch later" %}</h1>
+    <p class="offline-intro">{% trans "Videos you saved to watch later." %}</p>
+    <div id="watchlaterList" class="queue-page-list"></div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        if (window.QueueUI) QueueUI.render(document.getElementById("watchlaterList"), "watchlater");
+        document.addEventListener("vlist:change", function () {
+            if (window.QueueUI) QueueUI.render(document.getElementById("watchlaterList"), "watchlater");
+        });
+    });
+</script>
+{% endblock %}

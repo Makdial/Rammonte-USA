@@ -138,7 +138,11 @@
                 <li><a href="{% url 'library:list' %}" class="nav-link">{% trans "Library" %}</a></li>
                 <li><a href="{% url 'shorts:list' %}" class="nav-link">{% trans "Shorts" %}</a></li>
                 <li><a href="{% url 'videos:offline' %}" class="nav-link">{% trans "Offline" %}</a></li>
+<li><a href="{% url 'videos:trending' %}" class="nav-link">{% trans "Trending" %}</a></li>
 <li><a href="{% url 'videos:queue' %}" class="nav-link">{% trans "Queue" %} <span data-queue-badge class="queue-badge" style="display:none"></span></a></li>
+<li><a href="{% url 'videos:watchlater' %}" class="nav-link">{% trans "Watch later" %} <span data-watchlater-badge class="queue-badge" style="display:none"></span></a></li>
+<li><a href="{% url 'videos:history' %}" class="nav-link">{% trans "History" %}</a></li>
+<li><a href="{% url 'videos:liked' %}" class="nav-link">{% trans "Liked" %}</a></li>
                 {% if can_read %}
                     <li><a href="{% url 'dashboard:home' %}" class="nav-link">{% trans "Dashboard" %}</a></li>
                     <li><a href="{% url 'accounts:manage_users' %}" class="nav-link">{% trans "Users" %}</a></li>

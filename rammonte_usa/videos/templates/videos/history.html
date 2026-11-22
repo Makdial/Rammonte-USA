@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "History" %} - Rammonte USA{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/videos.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="offline-page">
+    <h1>{% trans "Watch history" %}</h1>
+    <p class="offline-intro">{% trans "Videos you watched on this device." %}</p>
+    <div id="historyList" class="queue-page-list"></div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        if (window.QueueUI) QueueUI.render(document.getElementById("historyList"), "history");
+        document.addEventListener("vlist:change", function () {
+            if (window.QueueUI) QueueUI.render(document.getElementById("historyList"), "history");
+        });
+    });
+</script>
+{% endblock %}
