@@ -365,6 +365,7 @@
 }
 .reader-viewer iframe {
     width: 100%;
+    max-width: 100%;
     height: 70vh;
     border: 0;
     border-radius: var(--radius-md);
@@ -549,10 +550,13 @@
     .book-actions { padding: 6px 10px 12px; }
     .book-actions .btn-small { font-size: 0.8rem; padding: 7px 10px; }
     .book-detail-info h1 { font-size: 1.45rem; }
-    .reader-viewer iframe { height: 55vh; }
+    .reader-viewer { padding: 8px; overflow: hidden; }
+    .reader-viewer iframe { height: 62vh; width: 100%; max-width: 100%; }
     .book-text { max-height: 50vh; }
     .lang-row { grid-template-columns: 1fr; }
     .translate-btn-row .btn { flex: 1 1 100%; }
+    .reader-toolbar { gap: 6px; }
+    .reader-tool-btn { padding: 6px 8px; font-size: 0.78rem; }
 }
 @media (max-width: 480px) {
     .library-grid {
@@ -571,9 +575,10 @@
     .library-search { flex: 1 1 auto; }
     .library-sort select { width: 100%; }
     .library-form-card { padding: 18px 14px; }
-    .reader-viewer { padding: 10px; }
-    .reader-viewer iframe { height: 50vh; }
-    .reader-toolbar { padding: 8px; }
+    .reader-viewer { padding: 6px; overflow: hidden; }
+    .reader-viewer iframe { height: 68vh; width: 100%; max-width: 100%; }
+    .reader-toolbar { padding: 6px; gap: 4px; }
+    .reader-tool-btn { padding: 5px 7px; font-size: 0.75rem; }
 }
 @media (max-width: 360px) {
     .library-grid { grid-template-columns: 1fr; }
