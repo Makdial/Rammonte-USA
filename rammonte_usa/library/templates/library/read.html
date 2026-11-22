@@ -32,7 +32,7 @@
 <div class="reader-layout" id="readerLayout">
     <div class="reader-viewer" id="readerViewer">
         {% if file_url %}
-        <iframe src="{{ file_url }}" id="readerFrame" title="{{ book.title }}" loading="lazy" allowfullscreen></iframe>
+        <iframe src="{{ file_url }}" id="readerFrame" title="{{ book.title }}" loading="lazy" allowfullscreen scrolling="auto" style="width:100%;max-width:100%;"></iframe>
         {% else %}
         <p>{% trans "No file available." %}</p>
         {% endif %}
