@@ -1426,3 +1426,109 @@ msgstr ""
 
 msgid "Reduce to normal size"
 msgstr ""
+
+msgid "optional"
+msgstr ""
+
+msgid "YouTube link"
+msgstr ""
+
+msgid "Zoom link"
+msgstr ""
+
+msgid "A YouTube link for this video."
+msgstr ""
+
+msgid "A Zoom meeting link connected to this video."
+msgstr ""
+
+msgid "Watch on YouTube"
+msgstr ""
+
+msgid "Join Zoom meeting"
+msgstr ""
+
+msgid "Optional. A YouTube link for this video."
+msgstr ""
+
+msgid "Optional. A Zoom meeting link connected to this video."
+msgstr ""
+
+
+
+msgid "Admin Sign In"
+msgstr ""
+
+msgid "Admin Sign in"
+msgstr ""
+
+msgid "Can't scroll the document on your phone?"
+msgstr ""
+
+msgid "Close translation panel"
+msgstr ""
+
+msgid "Document"
+msgstr ""
+
+msgid "History"
+msgstr ""
+
+msgid "Like a video and it will show up here."
+msgstr ""
+
+msgid "Liked"
+msgstr ""
+
+msgid "Liked videos"
+msgstr ""
+
+msgid "No liked videos yet"
+msgstr ""
+
+msgid "Open document"
+msgstr ""
+
+msgid "Open in a new tab"
+msgstr ""
+
+msgid "Queue"
+msgstr ""
+
+msgid "Read the extracted text"
+msgstr ""
+
+msgid "Reader controls"
+msgstr ""
+
+msgid "Show the original document"
+msgstr ""
+
+msgid "Tap to select text to translate"
+msgstr ""
+
+msgid "Text available"
+msgstr ""
+
+msgid "Trending"
+msgstr ""
+
+msgid "Videos you added play one after another. Open a video and it plays the next queued item when it ends."
+msgstr ""
+
+msgid "Videos you saved to watch later."
+msgstr ""
+
+msgid "Videos you watched on this device."
+msgstr ""
+
+msgid "Watch history"
+msgstr ""
+
+msgid "Watch later"
+msgstr ""
+
+msgid "Watch queue"
+msgstr ""
+
+

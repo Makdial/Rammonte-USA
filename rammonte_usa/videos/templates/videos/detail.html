@@ -258,6 +258,25 @@
                 </div>
             </div>
 
+            {% if video.youtube_url or video.zoom_url %}
+            <div class="video-external-links">
+                {% if video.youtube_url %}
+                <a class="external-link external-youtube" href="{{ video.youtube_url }}"
+                   target="_blank" rel="noopener noreferrer">
+                    <span class="external-link-icon" aria-hidden="true">▶</span>
+                    {% trans "Watch on YouTube" %}
+                </a>
+                {% endif %}
+                {% if video.zoom_url %}
+                <a class="external-link external-zoom" href="{{ video.zoom_url }}"
+                   target="_blank" rel="noopener noreferrer">
+                    <span class="external-link-icon" aria-hidden="true">🎥</span>
+                    {% trans "Join Zoom meeting" %}
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
+
             {% if user.is_authenticated %}
             <div class="save-panel" id="savePanel" hidden>
                 <div class="save-panel-head">{% trans "Save to playlist" %}</div>

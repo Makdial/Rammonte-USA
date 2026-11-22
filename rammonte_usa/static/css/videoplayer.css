@@ -76,7 +76,10 @@
    must not drift apart: without it the bar anchors to the page instead and
    ends up over the comments far below the video. */
 .video-player-container {
-    position: relative;
+    position: sticky;
+    top: 56px;
+    z-index: 5;
+    /* Keep a positioning context for the absolutely-positioned control bar. */
 }
 
 /* Full-bleed tap target over the picture. It shows and hides the bar, and is

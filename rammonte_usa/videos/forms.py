@@ -52,6 +52,30 @@ class VideoUploadForm(forms.Form):
             }
         ),
     )
+    youtube_url = forms.URLField(
+        required=False,
+        max_length=500,
+        label=_("YouTube link"),
+        widget=forms.URLInput(
+            attrs={
+                "class": "form-input",
+                "placeholder": "https://www.youtube.com/watch?v=...",
+            }
+        ),
+        help_text=_("Optional. A YouTube link for this video."),
+    )
+    zoom_url = forms.URLField(
+        required=False,
+        max_length=500,
+        label=_("Zoom link"),
+        widget=forms.URLInput(
+            attrs={
+                "class": "form-input",
+                "placeholder": "https://zoom.us/j/...",
+            }
+        ),
+        help_text=_("Optional. A Zoom meeting link connected to this video."),
+    )
     video_file = forms.FileField(
         label=_("Video File"),
         required=False,
@@ -137,6 +161,30 @@ class VideoEditForm(forms.Form):
                 "rows": 5,
             }
         ),
+    )
+    youtube_url = forms.URLField(
+        required=False,
+        max_length=500,
+        label=_("YouTube link"),
+        widget=forms.URLInput(
+            attrs={
+                "class": "form-input",
+                "placeholder": "https://www.youtube.com/watch?v=...",
+            }
+        ),
+        help_text=_("Optional. A YouTube link for this video."),
+    )
+    zoom_url = forms.URLField(
+        required=False,
+        max_length=500,
+        label=_("Zoom link"),
+        widget=forms.URLInput(
+            attrs={
+                "class": "form-input",
+                "placeholder": "https://zoom.us/j/...",
+            }
+        ),
+        help_text=_("Optional. A Zoom meeting link connected to this video."),
     )
     thumbnail_file = forms.FileField(
         required=False,

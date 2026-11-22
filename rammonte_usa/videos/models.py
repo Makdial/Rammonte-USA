@@ -19,6 +19,22 @@ class Video(models.Model):
     title = models.CharField(max_length=120)
     description = models.TextField(blank=True)
 
+    # Optional external links the uploader can attach to a recording: the same
+    # video on YouTube, and a Zoom meeting/room connected to it (a live class,
+    # for example). Both are shown on the watch page when present.
+    youtube_url = models.URLField(
+        max_length=500,
+        blank=True,
+        default="",
+        help_text=_("Optional. A YouTube link for this video."),
+    )
+    zoom_url = models.URLField(
+        max_length=500,
+        blank=True,
+        default="",
+        help_text=_("Optional. A Zoom meeting link connected to this video."),
+    )
+
     # An audio-only upload (a recitation with no recording) has no video file
     # at all, so these two are blank for it and ``media_type`` says so.
     MEDIA_TYPE_CHOICES = [

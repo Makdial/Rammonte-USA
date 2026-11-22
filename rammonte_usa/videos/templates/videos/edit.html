@@ -45,6 +45,18 @@
             </div>
 
             <div class="form-group">
+                <label for="{{ form.youtube_url.id_for_label }}">{{ form.youtube_url.label }} <span class="optional">{% trans "optional" %}</span></label>
+                {{ form.youtube_url }}
+                <p class="form-help">{{ form.youtube_url.help_text }}</p>
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.zoom_url.id_for_label }}">{{ form.zoom_url.label }} <span class="optional">{% trans "optional" %}</span></label>
+                {{ form.zoom_url }}
+                <p class="form-help">{{ form.zoom_url.help_text }}</p>
+            </div>
+
+            <div class="form-group">
                 <label for="{{ form.thumbnail_file.id_for_label }}">{{ form.thumbnail_file.label }}</label>
                 {{ form.thumbnail_file }}
                 <p class="form-help">{{ form.thumbnail_file.help_text }}</p>

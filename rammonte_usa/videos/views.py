@@ -495,6 +495,8 @@ def video_upload(request):
             user=request.user,
             title=form.cleaned_data["title"],
             description=form.cleaned_data["description"],
+            youtube_url=form.cleaned_data.get("youtube_url", ""),
+            zoom_url=form.cleaned_data.get("zoom_url", ""),
             media_type="audio",
             file_id="",
             video_url="",
@@ -544,6 +546,8 @@ def video_upload(request):
         user=request.user,
         title=form.cleaned_data["title"],
         description=form.cleaned_data["description"],
+        youtube_url=form.cleaned_data.get("youtube_url", ""),
+        zoom_url=form.cleaned_data.get("zoom_url", ""),
         media_type="video",
         file_id=result["path"],
         video_url=result["url"],
@@ -647,6 +651,8 @@ def video_edit(request, video_id):
 
         video.title = form.cleaned_data["title"].strip()
         video.description = form.cleaned_data["description"]
+        video.youtube_url = form.cleaned_data["youtube_url"]
+        video.zoom_url = form.cleaned_data["zoom_url"]
 
         new_thumbnail = form.cleaned_data.get("thumbnail_file")
         new_video = form.cleaned_data.get("video_file")
@@ -737,7 +743,12 @@ def video_edit(request, video_id):
         {
             "video": video,
             "form": VideoEditForm(
-                initial={"title": video.title, "description": video.description}
+                initial={
+                    "title": video.title,
+                    "description": video.description,
+                    "youtube_url": video.youtube_url,
+                    "zoom_url": video.zoom_url,
+                }
             ),
         },
     )

@@ -67,6 +67,22 @@
                           placeholder="{% trans 'Enter video description' %}" rows="3">{{ form.description.value|default:'' }}</textarea>
             </div>
 
+            <div class="form-group">
+                <label for="id_youtube_url">{% trans "YouTube link" %} <span class="optional">{% trans "optional" %}</span></label>
+                <input type="url" name="youtube_url" id="id_youtube_url" class="form-input"
+                       inputmode="url" placeholder="https://www.youtube.com/watch?v=..."
+                       value="{{ form.youtube_url.value|default:'' }}"/>
+                <span class="help-text">{% trans "A YouTube link for this video." %}</span>
+            </div>
+
+            <div class="form-group">
+                <label for="id_zoom_url">{% trans "Zoom link" %} <span class="optional">{% trans "optional" %}</span></label>
+                <input type="url" name="zoom_url" id="id_zoom_url" class="form-input"
+                       inputmode="url" placeholder="https://zoom.us/j/..."
+                       value="{{ form.zoom_url.value|default:'' }}"/>
+                <span class="help-text">{% trans "A Zoom meeting link connected to this video." %}</span>
+            </div>
+
             <div class="form-group" id="videoFieldGroup">
                 <label for="id_video_file">{% trans "Video File" %}</label>
                 <label class="file-input-wrapper" for="id_video_file">

@@ -414,6 +414,49 @@
     margin: 0;
 }
 
+/* External links attached to a recording: the same video on YouTube and a
+   connected Zoom meeting. Both open in a new tab. */
+.video-external-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 16px 0 0;
+}
+
+.external-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 18px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-full);
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all var(--transition-normal);
+}
+
+.external-link:hover {
+    transform: translateY(-1px);
+}
+
+.external-youtube:hover {
+    border-color: #ff0000;
+    color: #ff0000;
+}
+
+.external-zoom:hover {
+    border-color: #2d8cff;
+    color: #2d8cff;
+}
+
+.external-link-icon {
+    font-size: 0.95rem;
+    line-height: 1;
+}
+
 /* ------------------------------------------------------------------ */
 /* Upload Form                                                         */
 /* ------------------------------------------------------------------ */

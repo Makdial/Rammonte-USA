@@ -15,7 +15,7 @@ class VideoAdmin(admin.ModelAdmin):
         "created_at",
     )
     list_filter = ("created_at", "user", "audio_status")
-    search_fields = ("title", "description", "user__username")
+    search_fields = ("title", "description", "user__username", "youtube_url", "zoom_url")
     readonly_fields = ("views", "likes", "dislikes", "created_at", "updated_at")
     date_hierarchy = "created_at"
 
