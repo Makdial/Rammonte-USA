@@ -636,6 +636,7 @@
         left: 0;
         right: 0;
         bottom: 0;
+        height: calc(100dvh - 56px);
         z-index: 10;
         display: flex;
         flex-direction: column;
@@ -643,6 +644,7 @@
         max-width: none;
         margin: 0;
         padding: 8px 10px calc(8px + env(safe-area-inset-bottom, 0px));
+        overflow-x: hidden;
     }
     .reader-hero {
         flex: 0 0 auto;
