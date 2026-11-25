@@ -4,7 +4,7 @@ from .models import Book
 
 
 class BookForm(forms.ModelForm):
-    file = forms.FileField(required=True)
+    file = forms.FileField(required=False)
     cover = forms.FileField(required=False)
 
     class Meta:
