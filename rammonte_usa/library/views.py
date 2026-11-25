@@ -31,8 +31,9 @@ import urllib.request
 
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, StreamingHttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
 
@@ -47,6 +48,8 @@ from videos.r2_storage import (
     download_url,
     delete_object,
     _object_path,
+    get_object as r2_get_object,
+    StorageError,
 )
 
 
@@ -155,13 +158,51 @@ def library_read(request, book_id):
 
     return render(request, "library/read.html", {
         "book": book,
-        "pdf_url": book.file_url,
+        "pdf_url": reverse("library:pdf", args=[book.id]),
         "start_page": 1,
         "allow_download": bool(book.download_link),
         "download_url": book.download_link,
         "languages_list": languages_list,
         "default_target": default_target,
     })
+
+
+def library_pdf(request, book_id):
+    """Stream a book's PDF through Django (same origin, no CORS issues)."""
+    book = get_object_or_404(Book, id=book_id)
+    if not book.is_public and not (request.user.is_staff or request.user.is_superuser):
+        raise PermissionDenied
+
+    if not book.file_path:
+        return HttpResponse("No PDF", status=400)
+
+    range_header = request.META.get("HTTP_RANGE")
+    try:
+        obj = r2_get_object(book.file_path, range_header=range_header)
+    except StorageError as exc:
+        return HttpResponse(f"Could not load PDF: {exc}", status=400)
+
+    body = obj["Body"]
+
+    def stream():
+        try:
+            for chunk in body.iter_chunks(chunk_size=64 * 1024):
+                yield chunk
+        finally:
+            close = getattr(body, "close", None)
+            if callable(close):
+                close()
+
+    content_length = obj.get("ContentLength")
+    status_code = 206 if range_header and obj.get("ContentRange") else 200
+    resp = StreamingHttpResponse(stream(), content_type="application/pdf", status=status_code)
+    if content_length is not None:
+        resp["Content-Length"] = str(content_length)
+    if obj.get("ContentRange"):
+        resp["Content-Range"] = obj["ContentRange"]
+    resp["Accept-Ranges"] = "bytes"
+    resp["Content-Disposition"] = "inline"
+    return resp
 
 
 @write_required
