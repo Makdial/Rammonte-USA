@@ -6,6 +6,13 @@
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/library.css' %}">
 <link rel="stylesheet" href="{% static 'library/css/reader.css' %}">
+<style>
+  .main-content { max-width: 100% !important; padding: 0 !important; }
+  body { overflow: hidden; }
+  @media (max-width: 768px) {
+    .reader { height: calc(100dvh - 56px); }
+  }
+</style>
 {% endblock %}
 
 {% block content %}

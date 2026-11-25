@@ -1,5 +1,5 @@
 /* ================= Reader layout ================= */
-.reader{display:grid;grid-template-columns:300px 1fr;gap:0;height:calc(100vh - 64px);min-height:480px;}
+.reader{display:grid;grid-template-columns:300px 1fr;gap:0;height:calc(100vh - 56px);min-height:480px;}
 .reader-sidebar{background:var(--lib-card);border-right:1px solid var(--lib-border);padding:1rem;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;}
 .reader-sidebar-head h2{font-size:1.1rem;margin:0 0 .3rem;}
 .reader-sidebar-head p{color:var(--lib-muted);margin:0 0 .8rem;}
@@ -37,7 +37,7 @@
 .text-layer span{color:transparent;position:absolute;white-space:pre;cursor:text;transform-origin:0% 0%;}
 .text-layer span::selection{background:rgba(62,166,255,.4);color:transparent;}
 
-.native-frame{width:100%;height:calc(100vh - 120px);border:none;background:#fff;}
+.native-frame{width:100%;height:calc(100vh - 112px);border:none;background:#fff;}
 
 .reader-status{position:sticky;bottom:.75rem;margin:0 auto .75rem;background:rgba(0,0,0,.78);color:#fff;padding:.55rem 1rem;border-radius:999px;font-size:.85rem;max-width:min(90%,560px);text-align:center;z-index:7;width:max-content;}
 .reader-status:empty{display:none;}
@@ -75,7 +75,7 @@
 
 /* ================= Phones & small tablets (<= 900px) ================= */
 @media (max-width:900px){
-  .reader{display:block;height:auto;min-height:calc(100vh - 64px);}
+  .reader{display:block;height:auto;min-height:calc(100vh - 56px);}
   .reader-sidebar{position:fixed;z-index:60;top:0;bottom:0;width:min(86vw,320px);left:0;transform:translateX(-105%);transition:transform .25s ease;box-shadow:0 8px 30px rgba(0,0,0,.45);border-right:1px solid var(--lib-border);}
   .reader-sidebar.open{transform:translateX(0);}
   .reader-toolbar-mobile{display:flex;}
