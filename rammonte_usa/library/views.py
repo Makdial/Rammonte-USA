@@ -135,10 +135,32 @@ def library_read(request, book_id):
     book = get_object_or_404(Book, id=book_id)
     if not book.is_public and not (request.user.is_staff or request.user.is_superuser):
         raise PermissionDenied
+
+    languages_list = [
+        ("auto", _("Auto")),
+        ("en", _("English")),
+        ("fr", _("Français")),
+        ("ar", _("العربية")),
+        ("wo", _("Wolof")),
+        ("es", _("Español")),
+        ("pt", _("Português")),
+        ("de", _("Deutsch")),
+        ("it", _("Italiano")),
+        ("tr", _("Türkçe")),
+    ]
+
+    preferred = (getattr(request, "LANGUAGE_CODE", "") or "").split("-")[0]
+    valid_targets = [code for code, _name in languages_list if code != "auto"]
+    default_target = preferred if preferred in valid_targets else "en"
+
     return render(request, "library/read.html", {
         "book": book,
-        "file_url": book.file_url,
+        "pdf_url": book.file_url,
+        "start_page": 1,
+        "allow_download": bool(book.download_link),
         "download_url": book.download_link,
+        "languages_list": languages_list,
+        "default_target": default_target,
     })
 
 

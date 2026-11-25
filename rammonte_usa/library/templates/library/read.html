@@ -1,365 +1,104 @@
 {% extends 'base.html' %}
 {% load static i18n %}
 
-{% block title %}{% trans "Read" %} - {{ book.title }}{% endblock %}
+{% block title %}{{ book.title }} - {% trans "Read" %}{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/library.css' %}">
+<link rel="stylesheet" href="{% static 'library/css/reader.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="reader-shell">
-    <div class="reader-hero">
-        <h1>{{ book.title }}</h1>
-        <p>{{ book.author|default:_("Unknown author") }}</p>
-        <div class="reader-subtitle">
-            {% if book.file_size %}<span>{% trans "Size" %}: {{ book.file_size|filesizeformat }}</span>{% endif %}
-            {% if book.content %}<span>{% trans "Text available" %}</span>{% endif %}
-            <span>{% trans "Tap to select text to translate" %}</span>
-        </div>
+<div class="reader" id="reader">
+  <aside class="reader-sidebar" id="readerSidebar">
+    <div class="reader-sidebar-head">
+      <h2>{{ book.title }}</h2>
+      <p>{{ book.author|default:_("Unknown author") }}</p>
+      <a href="{% url 'library:detail' book.id %}" class="btn btn-outline btn-sm">{% trans "Back" %}</a>
     </div>
-
-    <div class="reader-toolbar" role="toolbar" aria-label="{% trans 'Reader controls' %}">
-        <a href="{% url 'library:detail' book.id %}" class="reader-tool-btn">{% trans "Details" %}</a>
-        {% if download_url %}<a href="{{ download_url }}" class="reader-tool-btn">{% trans "Download" %}</a>{% endif %}
-        <span class="spacer"></span>
-        <button type="button" class="reader-tool-btn" id="expandBook" aria-label="{% trans 'Open the book full screen' %}" title="{% trans 'Open widely' %}">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"></path><path d="M9 21H3v-6"></path><path d="M21 3l-7 7"></path><path d="M3 21l7-7"></path></svg>
-        </button>
-        <button type="button" class="reader-tool-btn" id="shrinkBook" aria-label="{% trans 'Reduce to normal size' %}" title="{% trans 'Reduce' %}">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14h6v6"></path><path d="M20 10h-6V4"></path><path d="M14 10l7-7"></path><path d="M10 14l-7 7"></path></svg>
-        </button>
-        <button type="button" class="reader-tool-btn" id="fontDown" aria-label="{% trans 'Decrease font size' %}">A−</button>
-        <button type="button" class="reader-tool-btn" id="fontUp" aria-label="{% trans 'Increase font size' %}">A+</button>
-        <button type="button" class="reader-tool-btn" id="toggleText" aria-label="{% trans 'Read the extracted text' %}">{% trans "Read" %}</button>
-        {% if file_url %}
-        <button type="button" class="reader-tool-btn" id="toggleOriginal" aria-label="{% trans 'Show the original document' %}">{% trans "Document" %}</button>
-        {% endif %}
-        <button type="button" class="reader-tool-btn" id="togglePanel" aria-label="{% trans 'Toggle translation panel' %}">{% trans "Translate" %}</button>
+    <div id="translationBox" class="translation-box" hidden>
+      <div class="translation-box-head">
+        <h4>{% trans "Translation" %}</h4>
+        <button type="button" id="closeTranslation" class="tr-close" aria-label="{% trans 'Close' %}">&times;</button>
+      </div>
+      <div id="translationOriginal" class="tr-original"></div>
+      <div id="translationResult" class="tr-result"></div>
     </div>
-
-    <div class="reader-layout" id="readerLayout">
-        <div class="reader-viewer{% if book.content %} has-text{% endif %}" id="readerViewer">
-            <div class="reader-progress" aria-hidden="true"><div class="reader-progress-bar" id="readerProgressBar"></div></div>
-            {% if file_url %}
-            <iframe src="{{ file_url }}" id="readerFrame" title="{{ book.title }}" loading="lazy" allowfullscreen scrolling="auto" style="width:100%;max-width:100%;"></iframe>
-            {% else %}
-            <p>{% trans "No file available." %}</p>
-            {% endif %}
-            {% if book.content %}
-            <div class="book-text" id="bookText" style="display:none;">{{ book.content }}</div>
-            {% endif %}
-            <div class="reader-actions">
-                {% if file_url %}
-                <a href="{{ file_url }}" target="_blank" rel="noopener" class="btn btn-primary">{% trans "Open document" %}</a>
-                {% endif %}
-                <a href="{{ download_url }}" class="btn btn-secondary">{% trans "Download" %}</a>
-                <a href="{% url 'library:detail' book.id %}" class="btn btn-secondary">{% trans "Back to details" %}</a>
-            </div>
-            {% if file_url %}
-            <div class="reader-doc-hint" id="readerDocHint">
-                <span>{% trans "Can't scroll the document on your phone?" %}</span>
-                <a href="{{ file_url }}" target="_blank" rel="noopener">{% trans "Open in a new tab" %}</a>
-            </div>
-            {% endif %}
-        </div>
-
-        <div class="reader-panel" id="readerPanel">
-            <div class="reader-panel-head">
-                <h2>{% trans "Translate" %}</h2>
-                <button type="button" class="reader-panel-close" id="closePanel" aria-label="{% trans 'Close translation panel' %}">&times;</button>
-            </div>
-            <p class="section-subtitle">{% trans "Highlight or paste a sentence/paragraph to translate." %}</p>
-            <div class="lang-row">
-                <div class="form-group">
-                    <label for="srcLang">{% trans "From" %}</label>
-                    <select id="srcLang" class="form-input">
-                        <option value="en">English</option>
-                        <option value="fr">Français</option>
-                        <option value="ar">العربية</option>
-                        <option value="wo">Wolof</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="tgtLang">{% trans "To" %}</label>
-                    <select id="tgtLang" class="form-input">
-                        <option value="fr">Français</option>
-                        <option value="ar">العربية</option>
-                        <option value="en">English</option>
-                        <option value="wo">Wolof</option>
-                        <option value="es">Español</option>
-                        <option value="pt">Português</option>
-                        <option value="de">Deutsch</option>
-                        <option value="it">Italiano</option>
-                        <option value="tr">Türkçe</option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="srcText">{% trans "Text" %}</label>
-                <textarea id="srcText" class="form-input" rows="4" placeholder="{% trans 'Paste or highlight text...' %}"></textarea>
-            </div>
-            <div class="translate-btn-row">
-                <button type="button" class="btn btn-primary" id="translateBtn">{% trans "Translate" %}</button>
-                <button type="button" class="btn btn-secondary" id="clipBtn">{% trans "Clipboard" %}</button>
-            </div>
-            <div class="form-group">
-                <label for="outText">{% trans "Translation" %}</label>
-                <textarea id="outText" class="form-input" rows="4" readonly></textarea>
-            </div>
-        </div>
+    <div class="reader-controls">
+      <div class="reader-nav">
+        <button id="prevPage" class="btn btn-outline">{% trans "Prev" %}</button>
+        <span id="pageInfo">1 / 1</span>
+        <button id="nextPage" class="btn btn-outline">{% trans "Next" %}</button>
+      </div>
+      <div class="reader-zoom">
+        <button id="zoomOut" class="btn btn-outline">−</button>
+        <span id="zoomLevel">100%</span>
+        <button id="zoomIn" class="btn btn-outline">+</button>
+        <button id="fitWidth" class="btn btn-outline">{% trans "Fit" %}</button>
+      </div>
+      <label class="reader-toggle">
+        <input type="checkbox" id="darkMode"> {% trans "Dark reading" %}
+      </label>
+      <label class="reader-toggle">
+        <input type="checkbox" id="translateToggle" checked> {% trans "Translate on select" %}
+      </label>
+      <div class="reader-lang">
+        <label>{% trans "View mode" %}</label>
+        <select id="viewMode">
+          <option value="sidebyside" selected>{% trans "Side by side" %}</option>
+          <option value="original">{% trans "Original only" %}</option>
+          <option value="translated">{% trans "Translated only" %}</option>
+        </select>
+      </div>
+      <div class="reader-lang">
+        <label>{% trans "Translate to" %}</label>
+        <select id="targetLang">
+          {% for code, name in languages_list %}
+          {% if code != "auto" %}
+          <option value="{{ code }}"{% if code == default_target %} selected{% endif %}>{{ name }}</option>
+          {% endif %}
+          {% endfor %}
+        </select>
+      </div>
+      {% if download_url %}
+      <a href="{{ download_url }}" class="btn btn-outline btn-block">{% trans "Download" %}</a>
+      {% endif %}
+      <a href="{{ pdf_url }}" target="_blank" class="btn btn-outline btn-block">{% trans "Open PDF directly" %}</a>
+      <button id="fullscreenBtn" class="btn btn-outline btn-block">{% trans "Fullscreen" %}</button>
     </div>
+  </aside>
+
+  <main class="reader-main" id="readerMain">
+    <div class="reader-toolbar-mobile">
+      <button id="toggleSidebar" class="btn btn-outline">{% trans "Menu" %}</button>
+      <span id="pageInfoMobile">1 / 1</span>
+    </div>
+    <div id="pdfPages" class="pdf-pages"></div>
+    <iframe id="nativeFrame" class="native-frame" hidden title="PDF viewer"></iframe>
+    <div id="translationToast" class="translation-toast" hidden>
+      <button type="button" id="closeTranslationToast" class="tt-close" aria-label="{% trans 'Close' %}">&times;</button>
+      <div class="tt-original"></div>
+      <div class="tt-result"></div>
+    </div>
+    <div id="readerStatus" class="reader-status">{% trans "Loading..." %}</div>
+  </main>
 </div>
 
+<script src="{% static 'library/js/pdf.min.js' %}"></script>
 <script>
-(function () {
-    const bookText = document.getElementById('bookText');
-    const panel = document.getElementById('readerPanel');
-    const layout = document.getElementById('readerLayout');
-    const viewer = document.getElementById('readerViewer');
-    const frame = document.getElementById('readerFrame');
-    const progressBar = document.getElementById('readerProgressBar');
-    let fontSize = 1;
-    try {
-        const stored = localStorage.getItem('rammonte-reader-font');
-        if (stored) { fontSize = parseFloat(stored) || 1; }
-    } catch (e) {}
-    if (bookText) bookText.style.fontSize = fontSize + 'rem';
-
-    function persistFont() {
-        try { localStorage.setItem('rammonte-reader-font', String(fontSize)); } catch (e) {}
-    }
-    function setFontSize(delta) {
-        if (!bookText) return;
-        fontSize = Math.min(1.8, Math.max(0.8, Math.round((fontSize + delta) * 10) / 10));
-        bookText.style.fontSize = fontSize + 'rem';
-        persistFont();
-    }
-    const fontUp = document.getElementById('fontUp');
-    const fontDown = document.getElementById('fontDown');
-    if (fontUp) fontUp.addEventListener('click', function () { setFontSize(0.1); });
-    if (fontDown) fontDown.addEventListener('click', function () { setFontSize(-0.1); });
-
-    const toggleText = document.getElementById('toggleText');
-    const toggleOriginal = document.getElementById('toggleOriginal');
-    const docHint = document.getElementById('readerDocHint');
-    const hasText = Boolean(bookText);
-    const hasFile = Boolean(frame);
-    let mode = 'original';
-
-    function mediaMatches(query) {
-        try {
-            return typeof window.matchMedia === 'function' && window.matchMedia(query).matches;
-        } catch (e) { return false; }
-    }
-
-    function updateProgress() {
-        if (!progressBar) return;
-        let pct = 0;
-        try {
-            if (mode === 'text' && bookText) {
-                // The text box is always the scroll container: a 60vh box on
-                // desktop, the full reading frame on a phone.
-                if ((bookText.scrollHeight || 0) > (bookText.clientHeight || 0)) {
-                    const max = bookText.scrollHeight - bookText.clientHeight;
-                    pct = max > 0 ? (bookText.scrollTop / max) * 100 : 0;
-                } else if (typeof bookText.getBoundingClientRect === 'function') {
-                    const rect = bookText.getBoundingClientRect();
-                    const viewport = window.innerHeight || document.documentElement.clientHeight || 800;
-                    const total = rect.height - viewport;
-                    if (total > 0) pct = (-rect.top / total) * 100;
-                }
-            }
-        } catch (e) { pct = 0; }
-        if (!isFinite(pct)) pct = 0;
-        progressBar.style.width = Math.max(0, Math.min(100, pct)) + '%';
-    }
-
-    function setMode(next) {
-        if (next === 'text' && !hasText) next = 'original';
-        if (next === 'original' && !hasFile) next = hasText ? 'text' : 'original';
-        mode = next;
-        if (bookText) bookText.style.display = mode === 'text' ? '' : 'none';
-        if (frame) frame.style.display = mode === 'text' ? 'none' : '';
-        if (viewer) {
-            viewer.classList.toggle('is-text', mode === 'text');
-            viewer.classList.toggle('is-original', mode === 'original');
-            // Mobile CSS defaults a book with text to the reading surface;
-            // this class is the explicit opt-in to the embedded document.
-            viewer.classList.toggle('force-original', mode === 'original');
-        }
-        if (toggleText) {
-            toggleText.classList.toggle('active', mode === 'text');
-            toggleText.setAttribute('aria-pressed', mode === 'text' ? 'true' : 'false');
-        }
-        if (toggleOriginal) {
-            toggleOriginal.classList.toggle('active', mode === 'original');
-            toggleOriginal.setAttribute('aria-pressed', mode === 'original' ? 'true' : 'false');
-        }
-        if (docHint) {
-            docHint.style.display =
-                (mode === 'original' && mediaMatches('(max-width: 1200px)')) ? 'flex' : 'none';
-        }
-        updateProgress();
-    }
-
-    if (toggleText) {
-        toggleText.addEventListener('click', function () { setMode('text'); });
-    }
-    if (toggleOriginal) {
-        toggleOriginal.addEventListener('click', function () { setMode('original'); });
-    }
-
-    // A phone cannot reliably scroll a PDF inside an iframe, so the extracted
-    // text is the default reading surface there. The original document stays
-    // one tap away and can always be opened in the phone's own viewer.
-    setMode(hasText && mediaMatches('(max-width: 1200px)') ? 'text' : 'original');
-
-    function requestFull() {
-        const target = viewer || frame;
-        if (!target) return;
-        const request = target.requestFullscreen
-            || target.webkitRequestFullscreen
-            || target.msRequestFullscreen;
-        if (request) {
-            try {
-                const result = request.call(target);
-                if (result && typeof result.catch === 'function') result.catch(function () {});
-            } catch (error) { /* fall through */ }
-            return;
-        }
-        if (frame) {
-            const enter = frame.webkitEnterFullscreen || frame.webkitEnterFullScreen;
-            if (enter) { try { enter.call(frame); } catch (e) {} }
-        }
-    }
-    function exitFull() {
-        const exit = document.exitFullscreen
-            || document.webkitExitFullscreen
-            || document.msExitFullscreen
-            || document.webkitExitFullScreen;
-        if (exit) {
-            try {
-                const result = exit.call ? exit.call(document) : exit();
-                if (result && typeof result.catch === 'function') result.catch(function () {});
-            } catch (error) { /* refused */ }
-        }
-    }
-    const expandBtn = document.getElementById('expandBook');
-    const shrinkBtn = document.getElementById('shrinkBook');
-    if (expandBtn) expandBtn.addEventListener('click', requestFull);
-    if (shrinkBtn) shrinkBtn.addEventListener('click', exitFull);
-
-    const togglePanel = document.getElementById('togglePanel');
-    const closePanel = document.getElementById('closePanel');
-    function setPanelOpen(open) {
-        if (!panel) return;
-        panel.style.display = open ? 'block' : 'none';
-        if (togglePanel) {
-            togglePanel.classList.toggle('active', open);
-            togglePanel.setAttribute('aria-pressed', open ? 'true' : 'false');
-        }
-        if (open && panel.scrollTo) panel.scrollTo(0, 0);
-    }
-    if (togglePanel) {
-        togglePanel.addEventListener('click', function () {
-            setPanelOpen(panel ? panel.style.display === 'none' : false);
-        });
-    }
-    if (closePanel) {
-        closePanel.addEventListener('click', function () { setPanelOpen(false); });
-    }
-
-    // On small screens start with the translation panel collapsed.
-    if (mediaMatches('(max-width: 1200px)') && panel) {
-        setPanelOpen(false);
-    }
-
-    // Reading progress follows the text box on both desktop and phone.
-    if (bookText) bookText.addEventListener('scroll', updateProgress, { passive: true });
-    if (typeof window.addEventListener === 'function') {
-        window.addEventListener('resize', updateProgress);
-    }
-    updateProgress();
-
-    // Keyboard shortcuts for a more interactive reading experience.
-    document.addEventListener('keydown', function (e) {
-        if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) return;
-        if (e.key === '+' || e.key === '=') { setFontSize(0.1); }
-        else if (e.key === '-') { setFontSize(-0.1); }
-        else if (e.key === 't' || e.key === 'T') { if (toggleText) toggleText.click(); }
-        else if (e.key === 'p' || e.key === 'P') { if (togglePanel) togglePanel.click(); }
-        else if (e.key === 'f' || e.key === 'F') { requestFull(); }
-        else if (e.key === 'Escape') { exitFull(); }
-    });
-})();
-
-function doTranslate(text) {
-    const btn = document.getElementById('translateBtn');
-    const source = document.getElementById('srcLang').value;
-    const target = document.getElementById('tgtLang').value;
-    if (!text) return;
-    document.getElementById('srcText').value = text;
-    if (btn) { btn.disabled = true; btn.textContent = '{% trans "Translating…" %}'; }
-    fetch('{% url "library:translate" %}', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
-        body: JSON.stringify({ text: text, source: source, target: target })
-    }).then(r => r.json()).then(data => {
-        document.getElementById('outText').value = data.translated || data.error || '';
-    }).catch(() => {
-        document.getElementById('outText').value = '{% trans "Failed." %}';
-    }).finally(() => {
-        if (btn) { btn.disabled = false; btn.textContent = '{% trans "Translate" %}'; }
-    });
-}
-
-const translateBtn = document.getElementById('translateBtn');
-if (translateBtn) translateBtn.addEventListener('click', function() {
-    doTranslate(document.getElementById('srcText').value.trim());
-});
-
-const clipBtn = document.getElementById('clipBtn');
-if (clipBtn) clipBtn.addEventListener('click', function() {
-    if (navigator.clipboard && navigator.clipboard.readText) {
-        navigator.clipboard.readText().then(function(text) {
-            if (text && text.trim()) {
-                doTranslate(text.trim());
-            }
-        }).catch(function() {
-            alert('{% trans "Clipboard access denied. Paste the text manually." %}');
-        });
-    } else {
-        alert('{% trans "Clipboard not supported. Paste the text manually." %}');
-    }
-});
-
-let selTimer = null;
-document.addEventListener('selectionchange', function() {
-    clearTimeout(selTimer);
-    selTimer = setTimeout(function() {
-        const sel = (typeof window.getSelection === 'function' ? (window.getSelection() || '') : '').toString().trim();
-        if (sel && sel.length > 2) {
-            doTranslate(sel);
-        }
-    }, 600);
-});
-
-const srcTextEl = document.getElementById('srcText');
-if (srcTextEl) {
-    srcTextEl.addEventListener('select', function() {
-        const el = this;
-        const sel = el.value.substring(el.selectionStart, el.selectionEnd).trim();
-        if (sel && sel.length > 2) {
-            clearTimeout(selTimer);
-            selTimer = setTimeout(function() { doTranslate(sel); }, 400);
-        }
-    });
-    srcTextEl.addEventListener('paste', function() {
-        setTimeout(function() {
-            doTranslate(document.getElementById('srcText').value.trim());
-        }, 100);
-    });
-}
+  if (typeof pdfjsLib !== "undefined") {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "{% static 'library/js/pdf.worker.min.js' %}";
+  }
 </script>
+<script>
+  window.LIBRARY_PDF_URL = "{{ pdf_url|escapejs }}";
+  window.LIBRARY_START_PAGE = {{ start_page|default:1 }};
+  window.LIBRARY_SLUG = "{{ book.id }}";
+  window.LIBRARY_TRANSLATE_URL = "{% url 'library:translate' %}";
+  window.LIBRARY_PROGRESS_URL = "";
+  window.LIBRARY_BOOKMARK_URL = "";
+  window.LIBRARY_CSRF = "{{ csrf_token }}";
+  window.LIBRARY_SOURCE_LANG = "en";
+</script>
+<script src="{% static 'library/js/reader.js' %}"></script>
 {% endblock %}
