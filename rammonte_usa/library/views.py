@@ -202,6 +202,7 @@ def library_pdf(request, book_id):
         resp["Content-Range"] = obj["ContentRange"]
     resp["Accept-Ranges"] = "bytes"
     resp["Content-Disposition"] = "inline"
+    resp["Cache-Control"] = "no-store, no-cache, must-revalidate"
     return resp
 
 

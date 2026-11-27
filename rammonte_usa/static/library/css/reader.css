@@ -75,10 +75,11 @@
 
 /* ================= Phones & small tablets (<= 900px) ================= */
 @media (max-width:900px){
-  .reader{display:block;height:auto;min-height:calc(100vh - 56px);}
-  .reader-sidebar{position:fixed;z-index:60;top:0;bottom:0;width:min(86vw,320px);left:0;transform:translateX(-105%);transition:transform .25s ease;box-shadow:0 8px 30px rgba(0,0,0,.45);border-right:1px solid var(--lib-border);}
+  .reader{display:block;height:calc(100dvh - 56px);min-height:0;}
+  .reader-sidebar{position:fixed;z-index:60;top:0;bottom:0;width:min(86vw,320px);left:0;transform:translateX(-105%);transition:transform .25s ease;box-shadow:0 8px 30px rgba(0,0,0,.45);border-right:1px solid var(--lib-border);overflow-y:auto;}
   .reader-sidebar.open{transform:translateX(0);}
   .reader-toolbar-mobile{display:flex;}
+  .reader-main{height:100%;overflow:auto;-webkit-overflow-scrolling:touch;}
   .pdf-pages{padding:10px;gap:12px;}
   .translation-box.mode-sidebyside{grid-template-columns:1fr;}
   .reader-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:55;}
