@@ -750,7 +750,7 @@
   setStatus("Loading document...");
   updateScaleVar();
   if (zoomLevel) zoomLevel.textContent = Math.round(scale * 100) + "%";
-  pdfjsLib.getDocument({url: pdfUrl, disableRange: true, disableStream: true}).promise.then(function(doc){
+  pdfjsLib.getDocument({url: pdfUrl}).promise.then(function(doc){
     pdfDoc = doc;
     numPages = doc.numPages;
     for (var n = 1; n <= numPages; n++) buildShell(n);
