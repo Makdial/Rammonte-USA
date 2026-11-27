@@ -776,7 +776,13 @@
     });
   }).catch(function(err){
     console.error("[reader] PDF load error:", err);
-    if (pdfUrl) window.open(pdfUrl, "_blank", "noopener");
-    fail("Failed to load PDF: " + (err && err.message ? err.message : err) + ". Opened the PDF in a new tab.");
+    if (nativeFrame && pdfUrl) {
+      nativeFrame.src = pdfUrl;
+      nativeFrame.hidden = false;
+      if (pagesContainer) pagesContainer.hidden = true;
+    } else if (pdfUrl) {
+      window.open(pdfUrl, "_blank", "noopener");
+    }
+    fail("Failed to load PDF: " + (err && err.message ? err.message : err) + ". Showing the built-in viewer.");
   });
 })();
